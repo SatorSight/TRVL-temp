@@ -1,0 +1,61 @@
+<?php
+
+namespace Service\ServiceBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Moder
+ *
+ * @ORM\Table(name="moder")
+ * @ORM\Entity
+ */
+class Moder
+{
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="login", type="string", length=64, nullable=false)
+     */
+    private $login;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="password", type="string", length=64, nullable=false)
+     */
+    private $password;
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="admin", type="boolean", nullable=false)
+     */
+    private $admin = '0';
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="active", type="boolean", nullable=false)
+     */
+    private $active = '1';
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(name="inserted", type="datetime", nullable=false)
+     */
+    private $inserted = 'CURRENT_TIMESTAMP';
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+
+}
+

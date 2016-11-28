@@ -1,0 +1,110 @@
+<?php
+
+namespace Service\ServiceBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Station
+ *
+ * @ORM\Table(name="station", uniqueConstraints={@ORM\UniqueConstraint(name="transport_2", columns={"transport", "code"})}, indexes={@ORM\Index(name="code", columns={"code"}), @ORM\Index(name="type", columns={"type"}), @ORM\Index(name="num", columns={"num"}), @ORM\Index(name="name", columns={"name"}), @ORM\Index(name="transport", columns={"transport"}), @ORM\Index(name="country_name_code", columns={"country_name_code"}), @ORM\Index(name="country_name", columns={"country_name"}), @ORM\Index(name="administrative_area_name", columns={"administrative_area_name"}), @ORM\Index(name="locality_name", columns={"point"}), @ORM\Index(name="locality", columns={"locality"})})
+ * @ORM\Entity
+ */
+class Station
+{
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="transport", type="string", nullable=false)
+     */
+    private $transport;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="code", type="string", length=16, nullable=false)
+     */
+    private $code;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="type", type="string", nullable=false)
+     */
+    private $type;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="num", type="integer", nullable=false)
+     */
+    private $num;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="name", type="string", length=64, nullable=false)
+     */
+    private $name;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="country_name_code", type="string", length=2, nullable=false)
+     */
+    private $countryNameCode;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="country_name", type="string", length=64, nullable=false)
+     */
+    private $countryName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="administrative_area_name", type="string", length=64, nullable=false)
+     */
+    private $administrativeAreaName;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="locality", type="string", length=64, nullable=false)
+     */
+    private $locality;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="point", type="string", length=64, nullable=false)
+     */
+    private $point;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="addr", type="string", length=255, nullable=false)
+     */
+    private $addr;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="geocode", type="text", length=65535, nullable=false)
+     */
+    private $geocode;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="IDENTITY")
+     */
+    private $id;
+
+
+}
+

@@ -1,0 +1,36 @@
+security:
+    providers:
+        in_memory:
+            memory:
+                users:
+                    menuarena:
+                        password: restoran-online-serv
+                        roles: 'ROLE_ADMIN'
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+
+        default:
+            anonymous: ~
+            http_basic: ~
+            entry_point: custom_basic_authentication_entry_point
+    access_control:
+            - { path: ^/add_place/*, roles: ROLE_ADMIN }
+            - { path: ^/add_sector/*, roles: ROLE_ADMIN }
+            - { path: ^/add_group/*, roles: ROLE_ADMIN }
+            - { path: ^/add_position/*, roles: ROLE_ADMIN }
+            - { path: ^/add_order/*, roles: ROLE_ADMIN }
+            - { path: ^/start_workday/*, roles: ROLE_ADMIN }
+            - { path: ^/close_workday/*, roles: ROLE_ADMIN }
+            - { path: ^/lock_workday/*, roles: ROLE_ADMIN }
+            - { path: ^/unlock_workday/*, roles: ROLE_ADMIN }
+            - { path: ^/delete_sectors/*, roles: ROLE_ADMIN }
+            - { path: ^/delete_places/*, roles: ROLE_ADMIN }
+            - { path: ^/delete_groups/*, roles: ROLE_ADMIN }
+            - { path: ^/delete_positions/*, roles: ROLE_ADMIN }
+            - { path: ^/add_positions/*, roles: ROLE_ADMIN }
+            - { path: ^/add_groups/*, roles: ROLE_ADMIN }
+    encoders:
+            Symfony\Component\Security\Core\User\User: plaintext

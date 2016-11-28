@@ -1,0 +1,5 @@
+ServiceServiceBundle_index:
+   path:     /
+   defaults: { _controller: "ServiceServiceBundle:Service:index" }
+   requirements:
+        methods:  GET

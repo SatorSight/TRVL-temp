@@ -1,0 +1,8 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: localhost
+    database_port: null
+    database_name: c1together
+    database_user: root
+    database_password:
+    secret: 123

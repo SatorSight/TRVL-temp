@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Service\ServiceBundle\Entity\Profile" table="profile">
+    <indexes>
+      <index name="orientation" columns="orientation"/>
+      <index name="relations" columns="relations"/>
+      <index name="i_want" columns="i_want"/>
+      <index name="gender" columns="gender"/>
+      <index name="bd" columns="bd"/>
+      <index name="name" columns="name"/>
+      <index name="family" columns="family"/>
+      <index name="vk" columns="vk"/>
+      <index name="vk_token" columns="vk_token"/>
+      <index name="fb" columns="fb"/>
+      <index name="fb_token" columns="fb_token"/>
+      <index name="city_id" columns="city_id"/>
+      <index name="last_visit" columns="last_visit"/>
+    </indexes>
+    <unique-constraints>
+      <unique-constraint name="email" columns="email"/>
+    </unique-constraints>
+    <id name="userId" type="integer" column="user_id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="family" type="string" column="family" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="email" type="string" column="email" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="vk" type="string" column="vk" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="vkToken" type="string" column="vk_token" length="128" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="fb" type="string" column="fb" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="fbToken" type="string" column="fb_token" length="128" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="cityId" type="integer" column="city_id" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="lastVisit" type="datetime" column="last_visit" nullable="false">
+      <options>
+        <option name="default">CURRENT_TIMESTAMP</option>
+      </options>
+    </field>
+    <field name="about" type="text" column="about" length="65535" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">О себе</option>
+      </options>
+    </field>
+    <field name="bd" type="date" column="bd" nullable="false">
+      <options>
+        <option name="comment">Д/р</option>
+      </options>
+    </field>
+    <field name="gender" type="string" column="gender" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">пол</option>
+      </options>
+    </field>
+    <field name="iWant" type="string" column="i_want" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">Я хочу</option>
+      </options>
+    </field>
+    <field name="relations" type="string" column="relations" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">Отношения </option>
+      </options>
+    </field>
+    <field name="orientation" type="string" column="orientation" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">Ориентация </option>
+      </options>
+    </field>
+    <field name="appearance" type="text" column="appearance" length="65535" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">Внешность </option>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>

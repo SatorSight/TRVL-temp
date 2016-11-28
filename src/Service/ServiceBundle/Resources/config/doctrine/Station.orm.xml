@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Service\ServiceBundle\Entity\Station" table="station">
+    <indexes>
+      <index name="code" columns="code"/>
+      <index name="type" columns="type"/>
+      <index name="num" columns="num"/>
+      <index name="name" columns="name"/>
+      <index name="transport" columns="transport"/>
+      <index name="country_name_code" columns="country_name_code"/>
+      <index name="country_name" columns="country_name"/>
+      <index name="administrative_area_name" columns="administrative_area_name"/>
+      <index name="locality_name" columns="point"/>
+      <index name="locality" columns="locality"/>
+    </indexes>
+    <unique-constraints>
+      <unique-constraint name="transport_2" columns="transport,code"/>
+    </unique-constraints>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="transport" type="string" column="transport" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="code" type="string" column="code" length="16" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="type" type="string" column="type" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="num" type="integer" column="num" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="name" type="string" column="name" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="countryNameCode" type="string" column="country_name_code" length="2" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="countryName" type="string" column="country_name" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="administrativeAreaName" type="string" column="administrative_area_name" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="locality" type="string" column="locality" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="point" type="string" column="point" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="addr" type="string" column="addr" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="geocode" type="text" column="geocode" length="65535" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>

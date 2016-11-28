@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Service\ServiceBundle\Entity\AirportTest" table="airport_test">
+    <indexes>
+      <index name="iata_code" columns="iata_code"/>
+      <index name="icao_code" columns="icao_code"/>
+      <index name="name_rus" columns="name_rus"/>
+      <index name="name_eng" columns="name_eng"/>
+      <index name="city_rus" columns="city_rus"/>
+      <index name="city_eng" columns="city_eng"/>
+      <index name="gmt_offset" columns="gmt_offset"/>
+      <index name="country_rus" columns="country_rus"/>
+      <index name="country_eng" columns="country_eng"/>
+      <index name="iso_code" columns="iso_code"/>
+    </indexes>
+    <id name="id" type="integer" column="id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="isoCode" type="string" column="iso_code" length="2" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="iataCode" type="string" column="iata_code" length="3" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="icaoCode" type="string" column="icao_code" length="4" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="nameEng" type="string" column="name_eng" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="cityEng" type="string" column="city_eng" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="countryEng" type="string" column="country_eng" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="nameRus" type="string" column="name_rus" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="cityRus" type="string" column="city_rus" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="countryRus" type="string" column="country_rus" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="gmtOffset" type="string" column="gmt_offset" length="5" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="latitude" type="text" column="latitude" length="65535" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="longitude" type="text" column="longitude" length="65535" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>
