@@ -58,6 +58,7 @@ class ServiceController extends Controller
 
 
     public function indexAction(Request $request){
+
 //        $request = $request->query->get();
         $requestData = RequestParser::parseRequest($request);
         $errors = RequestParser::checkApiKey($request, $this->container->getParameter('service_service.api_key'));
@@ -65,14 +66,25 @@ class ServiceController extends Controller
         $return = [];
 
         if(!empty($requestData['action']) && !$errors) {
+//            echo '<pre>';
+//            print_r($requestData);
+//            echo '</pre>';die('---');
             switch ($requestData['action']){
 
+                case 'auth':
+                    $return[] = $this->auth($requestData['id'], $requestData['token']);
+                    break;
+
                 case 'registration':
-                    $return[] = $this->registration($requestData['name'], $requestData['email'], $requestData['city_id'], $requestData['ios_token']);
+                    $return[] = $this->registration($requestData['ios_token']);
                     break;
 
                 case 'save_soc_token':
                     $return[] = $this->save_soc_token($requestData['soc_token'], $requestData['type'], $requestData);
+                    break;
+
+                case 'test':
+                    $return[] = ['test' => 'test'];
                     break;
 
 
@@ -155,7 +167,35 @@ class ServiceController extends Controller
 
     }
 
-    public function registration($name, $email, $city_id, $ios_token){
+    public function auth($id, $token){
+
+
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository('ServiceServiceBundle:User')->findBy(['login' => (int)$id]);
+
+//        echo '<pre>';
+//        print_r($user);
+//        echo '</pre>';die('-');
+
+        if(!$user)
+            return $this->registration($id, $token);
+        else
+            return $user;
+    }
+
+    public function registration($id, $token){
+        $em = $this->getDoctrine()->getManager();
+        $user = new User();
+        $user->setActive(true);
+        $user->setLogin($id);
+        $user->setIosToken($token);
+        $user->setInserted(new \DateTime());
+        $em->persist($user);
+        $em->flush();
+
+        return $user;
+
         //todo В старом апи какая-то ерунда с паролями и смсками, нужно переделать через социалки
     }
 

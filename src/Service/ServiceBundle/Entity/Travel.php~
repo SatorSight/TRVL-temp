@@ -36,5 +36,62 @@ class Travel
     private $id;
 
 
-}
 
+    /**
+     * Set userId
+     *
+     * @param integer $userId
+     *
+     * @return Travel
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+    
+        return $this;
+    }
+
+    /**
+     * Get userId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+
+    /**
+     * Set travelTypeId
+     *
+     * @param integer $travelTypeId
+     *
+     * @return Travel
+     */
+    public function setTravelTypeId($travelTypeId)
+    {
+        $this->travelTypeId = $travelTypeId;
+    
+        return $this;
+    }
+
+    /**
+     * Get travelTypeId
+     *
+     * @return integer
+     */
+    public function getTravelTypeId()
+    {
+        return $this->travelTypeId;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}

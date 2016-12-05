@@ -64,5 +64,158 @@ class Message
     private $id;
 
 
-}
 
+    /**
+     * Set userIdFrom
+     *
+     * @param integer $userIdFrom
+     *
+     * @return Message
+     */
+    public function setUserIdFrom($userIdFrom)
+    {
+        $this->userIdFrom = $userIdFrom;
+    
+        return $this;
+    }
+
+    /**
+     * Get userIdFrom
+     *
+     * @return integer
+     */
+    public function getUserIdFrom()
+    {
+        return $this->userIdFrom;
+    }
+
+    /**
+     * Set userIdTo
+     *
+     * @param integer $userIdTo
+     *
+     * @return Message
+     */
+    public function setUserIdTo($userIdTo)
+    {
+        $this->userIdTo = $userIdTo;
+    
+        return $this;
+    }
+
+    /**
+     * Get userIdTo
+     *
+     * @return integer
+     */
+    public function getUserIdTo()
+    {
+        return $this->userIdTo;
+    }
+
+    /**
+     * Set mediaId
+     *
+     * @param integer $mediaId
+     *
+     * @return Message
+     */
+    public function setMediaId($mediaId)
+    {
+        $this->mediaId = $mediaId;
+    
+        return $this;
+    }
+
+    /**
+     * Get mediaId
+     *
+     * @return integer
+     */
+    public function getMediaId()
+    {
+        return $this->mediaId;
+    }
+
+    /**
+     * Set text
+     *
+     * @param string $text
+     *
+     * @return Message
+     */
+    public function setText($text)
+    {
+        $this->text = $text;
+    
+        return $this;
+    }
+
+    /**
+     * Get text
+     *
+     * @return string
+     */
+    public function getText()
+    {
+        return $this->text;
+    }
+
+    /**
+     * Set active
+     *
+     * @param boolean $active
+     *
+     * @return Message
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+    
+        return $this;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * Set inserted
+     *
+     * @param \DateTime $inserted
+     *
+     * @return Message
+     */
+    public function setInserted($inserted)
+    {
+        $this->inserted = $inserted;
+    
+        return $this;
+    }
+
+    /**
+     * Get inserted
+     *
+     * @return \DateTime
+     */
+    public function getInserted()
+    {
+        return $this->inserted;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}

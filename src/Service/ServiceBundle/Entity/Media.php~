@@ -50,5 +50,110 @@ class Media
     private $id;
 
 
-}
 
+    /**
+     * Set type
+     *
+     * @param string $type
+     *
+     * @return Media
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set path
+     *
+     * @param string $path
+     *
+     * @return Media
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    
+        return $this;
+    }
+
+    /**
+     * Get path
+     *
+     * @return string
+     */
+    public function getPath()
+    {
+        return $this->path;
+    }
+
+    /**
+     * Set active
+     *
+     * @param boolean $active
+     *
+     * @return Media
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+    
+        return $this;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * Set inserted
+     *
+     * @param \DateTime $inserted
+     *
+     * @return Media
+     */
+    public function setInserted($inserted)
+    {
+        $this->inserted = $inserted;
+    
+        return $this;
+    }
+
+    /**
+     * Get inserted
+     *
+     * @return \DateTime
+     */
+    public function getInserted()
+    {
+        return $this->inserted;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}

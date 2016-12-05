@@ -134,5 +134,398 @@ class Profile
     private $userId;
 
 
-}
 
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Profile
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set family
+     *
+     * @param string $family
+     *
+     * @return Profile
+     */
+    public function setFamily($family)
+    {
+        $this->family = $family;
+    
+        return $this;
+    }
+
+    /**
+     * Get family
+     *
+     * @return string
+     */
+    public function getFamily()
+    {
+        return $this->family;
+    }
+
+    /**
+     * Set email
+     *
+     * @param string $email
+     *
+     * @return Profile
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
+    
+        return $this;
+    }
+
+    /**
+     * Get email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Set vk
+     *
+     * @param string $vk
+     *
+     * @return Profile
+     */
+    public function setVk($vk)
+    {
+        $this->vk = $vk;
+    
+        return $this;
+    }
+
+    /**
+     * Get vk
+     *
+     * @return string
+     */
+    public function getVk()
+    {
+        return $this->vk;
+    }
+
+    /**
+     * Set vkToken
+     *
+     * @param string $vkToken
+     *
+     * @return Profile
+     */
+    public function setVkToken($vkToken)
+    {
+        $this->vkToken = $vkToken;
+    
+        return $this;
+    }
+
+    /**
+     * Get vkToken
+     *
+     * @return string
+     */
+    public function getVkToken()
+    {
+        return $this->vkToken;
+    }
+
+    /**
+     * Set fb
+     *
+     * @param string $fb
+     *
+     * @return Profile
+     */
+    public function setFb($fb)
+    {
+        $this->fb = $fb;
+    
+        return $this;
+    }
+
+    /**
+     * Get fb
+     *
+     * @return string
+     */
+    public function getFb()
+    {
+        return $this->fb;
+    }
+
+    /**
+     * Set fbToken
+     *
+     * @param string $fbToken
+     *
+     * @return Profile
+     */
+    public function setFbToken($fbToken)
+    {
+        $this->fbToken = $fbToken;
+    
+        return $this;
+    }
+
+    /**
+     * Get fbToken
+     *
+     * @return string
+     */
+    public function getFbToken()
+    {
+        return $this->fbToken;
+    }
+
+    /**
+     * Set cityId
+     *
+     * @param integer $cityId
+     *
+     * @return Profile
+     */
+    public function setCityId($cityId)
+    {
+        $this->cityId = $cityId;
+    
+        return $this;
+    }
+
+    /**
+     * Get cityId
+     *
+     * @return integer
+     */
+    public function getCityId()
+    {
+        return $this->cityId;
+    }
+
+    /**
+     * Set lastVisit
+     *
+     * @param \DateTime $lastVisit
+     *
+     * @return Profile
+     */
+    public function setLastVisit($lastVisit)
+    {
+        $this->lastVisit = $lastVisit;
+    
+        return $this;
+    }
+
+    /**
+     * Get lastVisit
+     *
+     * @return \DateTime
+     */
+    public function getLastVisit()
+    {
+        return $this->lastVisit;
+    }
+
+    /**
+     * Set about
+     *
+     * @param string $about
+     *
+     * @return Profile
+     */
+    public function setAbout($about)
+    {
+        $this->about = $about;
+    
+        return $this;
+    }
+
+    /**
+     * Get about
+     *
+     * @return string
+     */
+    public function getAbout()
+    {
+        return $this->about;
+    }
+
+    /**
+     * Set bd
+     *
+     * @param \DateTime $bd
+     *
+     * @return Profile
+     */
+    public function setBd($bd)
+    {
+        $this->bd = $bd;
+    
+        return $this;
+    }
+
+    /**
+     * Get bd
+     *
+     * @return \DateTime
+     */
+    public function getBd()
+    {
+        return $this->bd;
+    }
+
+    /**
+     * Set gender
+     *
+     * @param string $gender
+     *
+     * @return Profile
+     */
+    public function setGender($gender)
+    {
+        $this->gender = $gender;
+    
+        return $this;
+    }
+
+    /**
+     * Get gender
+     *
+     * @return string
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * Set iWant
+     *
+     * @param string $iWant
+     *
+     * @return Profile
+     */
+    public function setIWant($iWant)
+    {
+        $this->iWant = $iWant;
+    
+        return $this;
+    }
+
+    /**
+     * Get iWant
+     *
+     * @return string
+     */
+    public function getIWant()
+    {
+        return $this->iWant;
+    }
+
+    /**
+     * Set relations
+     *
+     * @param string $relations
+     *
+     * @return Profile
+     */
+    public function setRelations($relations)
+    {
+        $this->relations = $relations;
+    
+        return $this;
+    }
+
+    /**
+     * Get relations
+     *
+     * @return string
+     */
+    public function getRelations()
+    {
+        return $this->relations;
+    }
+
+    /**
+     * Set orientation
+     *
+     * @param string $orientation
+     *
+     * @return Profile
+     */
+    public function setOrientation($orientation)
+    {
+        $this->orientation = $orientation;
+    
+        return $this;
+    }
+
+    /**
+     * Get orientation
+     *
+     * @return string
+     */
+    public function getOrientation()
+    {
+        return $this->orientation;
+    }
+
+    /**
+     * Set appearance
+     *
+     * @param string $appearance
+     *
+     * @return Profile
+     */
+    public function setAppearance($appearance)
+    {
+        $this->appearance = $appearance;
+    
+        return $this;
+    }
+
+    /**
+     * Get appearance
+     *
+     * @return string
+     */
+    public function getAppearance()
+    {
+        return $this->appearance;
+    }
+
+    /**
+     * Get userId
+     *
+     * @return integer
+     */
+    public function getUserId()
+    {
+        return $this->userId;
+    }
+}

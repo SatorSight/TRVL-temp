@@ -106,5 +106,302 @@ class Station
     private $id;
 
 
-}
 
+    /**
+     * Set transport
+     *
+     * @param string $transport
+     *
+     * @return Station
+     */
+    public function setTransport($transport)
+    {
+        $this->transport = $transport;
+    
+        return $this;
+    }
+
+    /**
+     * Get transport
+     *
+     * @return string
+     */
+    public function getTransport()
+    {
+        return $this->transport;
+    }
+
+    /**
+     * Set code
+     *
+     * @param string $code
+     *
+     * @return Station
+     */
+    public function setCode($code)
+    {
+        $this->code = $code;
+    
+        return $this;
+    }
+
+    /**
+     * Get code
+     *
+     * @return string
+     */
+    public function getCode()
+    {
+        return $this->code;
+    }
+
+    /**
+     * Set type
+     *
+     * @param string $type
+     *
+     * @return Station
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+    
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Set num
+     *
+     * @param integer $num
+     *
+     * @return Station
+     */
+    public function setNum($num)
+    {
+        $this->num = $num;
+    
+        return $this;
+    }
+
+    /**
+     * Get num
+     *
+     * @return integer
+     */
+    public function getNum()
+    {
+        return $this->num;
+    }
+
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return Station
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set countryNameCode
+     *
+     * @param string $countryNameCode
+     *
+     * @return Station
+     */
+    public function setCountryNameCode($countryNameCode)
+    {
+        $this->countryNameCode = $countryNameCode;
+    
+        return $this;
+    }
+
+    /**
+     * Get countryNameCode
+     *
+     * @return string
+     */
+    public function getCountryNameCode()
+    {
+        return $this->countryNameCode;
+    }
+
+    /**
+     * Set countryName
+     *
+     * @param string $countryName
+     *
+     * @return Station
+     */
+    public function setCountryName($countryName)
+    {
+        $this->countryName = $countryName;
+    
+        return $this;
+    }
+
+    /**
+     * Get countryName
+     *
+     * @return string
+     */
+    public function getCountryName()
+    {
+        return $this->countryName;
+    }
+
+    /**
+     * Set administrativeAreaName
+     *
+     * @param string $administrativeAreaName
+     *
+     * @return Station
+     */
+    public function setAdministrativeAreaName($administrativeAreaName)
+    {
+        $this->administrativeAreaName = $administrativeAreaName;
+    
+        return $this;
+    }
+
+    /**
+     * Get administrativeAreaName
+     *
+     * @return string
+     */
+    public function getAdministrativeAreaName()
+    {
+        return $this->administrativeAreaName;
+    }
+
+    /**
+     * Set locality
+     *
+     * @param string $locality
+     *
+     * @return Station
+     */
+    public function setLocality($locality)
+    {
+        $this->locality = $locality;
+    
+        return $this;
+    }
+
+    /**
+     * Get locality
+     *
+     * @return string
+     */
+    public function getLocality()
+    {
+        return $this->locality;
+    }
+
+    /**
+     * Set point
+     *
+     * @param string $point
+     *
+     * @return Station
+     */
+    public function setPoint($point)
+    {
+        $this->point = $point;
+    
+        return $this;
+    }
+
+    /**
+     * Get point
+     *
+     * @return string
+     */
+    public function getPoint()
+    {
+        return $this->point;
+    }
+
+    /**
+     * Set addr
+     *
+     * @param string $addr
+     *
+     * @return Station
+     */
+    public function setAddr($addr)
+    {
+        $this->addr = $addr;
+    
+        return $this;
+    }
+
+    /**
+     * Get addr
+     *
+     * @return string
+     */
+    public function getAddr()
+    {
+        return $this->addr;
+    }
+
+    /**
+     * Set geocode
+     *
+     * @param string $geocode
+     *
+     * @return Station
+     */
+    public function setGeocode($geocode)
+    {
+        $this->geocode = $geocode;
+    
+        return $this;
+    }
+
+    /**
+     * Get geocode
+     *
+     * @return string
+     */
+    public function getGeocode()
+    {
+        return $this->geocode;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}

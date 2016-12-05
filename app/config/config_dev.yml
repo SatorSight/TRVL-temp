@@ -29,7 +29,3 @@ monolog:
         #chromephp:
         #    type:   chromephp
         #    level:  info
-
-swiftmailer:
-    disable_delivery: true
-    delivery_address: satorsight@gmail.com

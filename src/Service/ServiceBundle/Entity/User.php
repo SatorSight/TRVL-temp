@@ -27,20 +27,6 @@ class User
     private $login;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=64, nullable=false)
-     */
-    private $password;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="count_badge", type="integer", nullable=false)
-     */
-    private $countBadge = '0';
-
-    /**
      * @var boolean
      *
      * @ORM\Column(name="active", type="boolean", nullable=false)
@@ -63,6 +49,13 @@ class User
      */
     private $id;
 
+
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="banned", type="boolean", nullable=false)
+     */
+    private $banned = '0';
 
 
     /**
@@ -111,54 +104,6 @@ class User
     public function getLogin()
     {
         return $this->login;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     *
-     * @return User
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Set countBadge
-     *
-     * @param integer $countBadge
-     *
-     * @return User
-     */
-    public function setCountBadge($countBadge)
-    {
-        $this->countBadge = $countBadge;
-    
-        return $this;
-    }
-
-    /**
-     * Get countBadge
-     *
-     * @return integer
-     */
-    public function getCountBadge()
-    {
-        return $this->countBadge;
     }
 
     /**
@@ -217,5 +162,58 @@ class User
     public function getId()
     {
         return $this->id;
+    }
+    /**
+     * @var integer
+     */
+    private $countBadge = '0';
+
+
+    /**
+     * Set countBadge
+     *
+     * @param integer $countBadge
+     *
+     * @return User
+     */
+    public function setCountBadge($countBadge)
+    {
+        $this->countBadge = $countBadge;
+
+        return $this;
+    }
+
+    /**
+     * Get countBadge
+     *
+     * @return integer
+     */
+    public function getCountBadge()
+    {
+        return $this->countBadge;
+    }
+
+    /**
+     * Set banned
+     *
+     * @param boolean $banned
+     *
+     * @return User
+     */
+    public function setBanned($banned)
+    {
+        $this->banned = $banned;
+
+        return $this;
+    }
+
+    /**
+     * Get banned
+     *
+     * @return boolean
+     */
+    public function getBanned()
+    {
+        return $this->banned;
     }
 }

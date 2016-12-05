@@ -43,5 +43,86 @@ class TravelType
     private $id;
 
 
-}
 
+    /**
+     * Set name
+     *
+     * @param string $name
+     *
+     * @return TravelType
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+    
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * Set active
+     *
+     * @param boolean $active
+     *
+     * @return TravelType
+     */
+    public function setActive($active)
+    {
+        $this->active = $active;
+    
+        return $this;
+    }
+
+    /**
+     * Get active
+     *
+     * @return boolean
+     */
+    public function getActive()
+    {
+        return $this->active;
+    }
+
+    /**
+     * Set inserted
+     *
+     * @param \DateTime $inserted
+     *
+     * @return TravelType
+     */
+    public function setInserted($inserted)
+    {
+        $this->inserted = $inserted;
+    
+        return $this;
+    }
+
+    /**
+     * Get inserted
+     *
+     * @return \DateTime
+     */
+    public function getInserted()
+    {
+        return $this->inserted;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+}
