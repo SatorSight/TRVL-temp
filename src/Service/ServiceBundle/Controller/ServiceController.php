@@ -76,7 +76,7 @@ class ServiceController extends Controller
                     break;
 
                 case 'registration':
-                    $return[] = $this->registration($requestData['ios_token']);
+                    $return[] = $this->registration($requestData['id'], $requestData['token']);
                     break;
 
                 case 'save_soc_token':
