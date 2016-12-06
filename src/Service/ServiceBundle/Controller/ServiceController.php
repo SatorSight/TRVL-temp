@@ -84,7 +84,7 @@ class ServiceController extends Controller
                     break;
 
                 case 'test':
-                    $return[] = ['test' => 'test'];
+                    $return[] = ['test' => 'test', 'id' => $requestData['id']];
                     break;
 
 
