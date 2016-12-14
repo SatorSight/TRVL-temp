@@ -3,8 +3,8 @@ parameters:
     database_host: localhost
     database_port: null
     database_name: c1together
-    database_user: root
-    database_password: 
+    database_user: phpmyadmin
+    database_password: 123
     secret: 123
     mailer_transport: smtp
     mailer_host: 127.0.0.1
