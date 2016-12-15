@@ -47,7 +47,7 @@ class Travel
     public function setUserId($userId)
     {
         $this->userId = $userId;
-    
+
         return $this;
     }
 
@@ -71,7 +71,7 @@ class Travel
     public function setTravelTypeId($travelTypeId)
     {
         $this->travelTypeId = $travelTypeId;
-    
+
         return $this;
     }
 

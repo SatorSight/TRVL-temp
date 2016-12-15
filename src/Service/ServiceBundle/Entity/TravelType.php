@@ -54,7 +54,7 @@ class TravelType
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -78,7 +78,7 @@ class TravelType
     public function setActive($active)
     {
         $this->active = $active;
-    
+
         return $this;
     }
 
@@ -102,7 +102,7 @@ class TravelType
     public function setInserted($inserted)
     {
         $this->inserted = $inserted;
-    
+
         return $this;
     }
 

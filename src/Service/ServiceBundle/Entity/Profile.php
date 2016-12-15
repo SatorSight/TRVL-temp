@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Profile
  *
- * @ORM\Table(name="profile", uniqueConstraints={@ORM\UniqueConstraint(name="email", columns={"email"})}, indexes={@ORM\Index(name="orientation", columns={"orientation"}), @ORM\Index(name="relations", columns={"relations"}), @ORM\Index(name="i_want", columns={"i_want"}), @ORM\Index(name="gender", columns={"gender"}), @ORM\Index(name="bd", columns={"bd"}), @ORM\Index(name="name", columns={"name"}), @ORM\Index(name="family", columns={"family"}), @ORM\Index(name="vk", columns={"vk"}), @ORM\Index(name="vk_token", columns={"vk_token"}), @ORM\Index(name="fb", columns={"fb"}), @ORM\Index(name="fb_token", columns={"fb_token"}), @ORM\Index(name="city_id", columns={"city_id"}), @ORM\Index(name="last_visit", columns={"last_visit"})})
+ * @ORM\Table(name="profile", indexes={@ORM\Index(name="orientation", columns={"orientation"}), @ORM\Index(name="name", columns={"name"}), @ORM\Index(name="last_visit", columns={"last_visit"})})
  * @ORM\Entity
  */
 class Profile
@@ -18,55 +18,6 @@ class Profile
      * @ORM\Column(name="name", type="string", length=64, nullable=false)
      */
     private $name;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="family", type="string", length=64, nullable=false)
-     */
-    private $family;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="email", type="string", length=64, nullable=false)
-     */
-    private $email;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="vk", type="string", length=64, nullable=false)
-     */
-    private $vk;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="vk_token", type="string", length=128, nullable=false)
-     */
-    private $vkToken;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="fb", type="string", length=64, nullable=false)
-     */
-    private $fb;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="fb_token", type="string", length=128, nullable=false)
-     */
-    private $fbToken;
-
-    /**
-     * @var integer
-     *
-     * @ORM\Column(name="city_id", type="integer", nullable=false)
-     */
-    private $cityId;
 
     /**
      * @var \DateTime
@@ -83,37 +34,9 @@ class Profile
     private $about;
 
     /**
-     * @var \DateTime
+     * @var integer
      *
-     * @ORM\Column(name="bd", type="date", nullable=false)
-     */
-    private $bd;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="gender", type="string", nullable=false)
-     */
-    private $gender;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="i_want", type="string", nullable=false)
-     */
-    private $iWant;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="relations", type="string", nullable=false)
-     */
-    private $relations;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="orientation", type="string", nullable=false)
+     * @ORM\Column(name="orientation", type="integer", nullable=false)
      */
     private $orientation;
 
@@ -123,6 +46,62 @@ class Profile
      * @ORM\Column(name="appearance", type="text", length=65535, nullable=false)
      */
     private $appearance;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="age", type="string", length=255, nullable=false)
+     */
+    private $age;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="sex", type="string", length=255, nullable=false)
+     */
+    private $sex;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="city", type="string", length=255, nullable=false)
+     */
+    private $city;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="wanna_communicate", type="integer", nullable=false)
+     */
+    private $wannaCommunicate;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="find_companion", type="integer", nullable=false)
+     */
+    private $findCompanion;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="find_couple", type="integer", nullable=false)
+     */
+    private $findCouple;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="find_friends", type="integer", nullable=false)
+     */
+    private $findFriends;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="free", type="integer", nullable=false)
+     */
+    private $free;
 
     /**
      * @var integer
@@ -145,7 +124,7 @@ class Profile
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -160,174 +139,6 @@ class Profile
     }
 
     /**
-     * Set family
-     *
-     * @param string $family
-     *
-     * @return Profile
-     */
-    public function setFamily($family)
-    {
-        $this->family = $family;
-    
-        return $this;
-    }
-
-    /**
-     * Get family
-     *
-     * @return string
-     */
-    public function getFamily()
-    {
-        return $this->family;
-    }
-
-    /**
-     * Set email
-     *
-     * @param string $email
-     *
-     * @return Profile
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Set vk
-     *
-     * @param string $vk
-     *
-     * @return Profile
-     */
-    public function setVk($vk)
-    {
-        $this->vk = $vk;
-    
-        return $this;
-    }
-
-    /**
-     * Get vk
-     *
-     * @return string
-     */
-    public function getVk()
-    {
-        return $this->vk;
-    }
-
-    /**
-     * Set vkToken
-     *
-     * @param string $vkToken
-     *
-     * @return Profile
-     */
-    public function setVkToken($vkToken)
-    {
-        $this->vkToken = $vkToken;
-    
-        return $this;
-    }
-
-    /**
-     * Get vkToken
-     *
-     * @return string
-     */
-    public function getVkToken()
-    {
-        return $this->vkToken;
-    }
-
-    /**
-     * Set fb
-     *
-     * @param string $fb
-     *
-     * @return Profile
-     */
-    public function setFb($fb)
-    {
-        $this->fb = $fb;
-    
-        return $this;
-    }
-
-    /**
-     * Get fb
-     *
-     * @return string
-     */
-    public function getFb()
-    {
-        return $this->fb;
-    }
-
-    /**
-     * Set fbToken
-     *
-     * @param string $fbToken
-     *
-     * @return Profile
-     */
-    public function setFbToken($fbToken)
-    {
-        $this->fbToken = $fbToken;
-    
-        return $this;
-    }
-
-    /**
-     * Get fbToken
-     *
-     * @return string
-     */
-    public function getFbToken()
-    {
-        return $this->fbToken;
-    }
-
-    /**
-     * Set cityId
-     *
-     * @param integer $cityId
-     *
-     * @return Profile
-     */
-    public function setCityId($cityId)
-    {
-        $this->cityId = $cityId;
-    
-        return $this;
-    }
-
-    /**
-     * Get cityId
-     *
-     * @return integer
-     */
-    public function getCityId()
-    {
-        return $this->cityId;
-    }
-
-    /**
      * Set lastVisit
      *
      * @param \DateTime $lastVisit
@@ -337,7 +148,7 @@ class Profile
     public function setLastVisit($lastVisit)
     {
         $this->lastVisit = $lastVisit;
-    
+
         return $this;
     }
 
@@ -361,7 +172,7 @@ class Profile
     public function setAbout($about)
     {
         $this->about = $about;
-    
+
         return $this;
     }
 
@@ -376,119 +187,23 @@ class Profile
     }
 
     /**
-     * Set bd
-     *
-     * @param \DateTime $bd
-     *
-     * @return Profile
-     */
-    public function setBd($bd)
-    {
-        $this->bd = $bd;
-    
-        return $this;
-    }
-
-    /**
-     * Get bd
-     *
-     * @return \DateTime
-     */
-    public function getBd()
-    {
-        return $this->bd;
-    }
-
-    /**
-     * Set gender
-     *
-     * @param string $gender
-     *
-     * @return Profile
-     */
-    public function setGender($gender)
-    {
-        $this->gender = $gender;
-    
-        return $this;
-    }
-
-    /**
-     * Get gender
-     *
-     * @return string
-     */
-    public function getGender()
-    {
-        return $this->gender;
-    }
-
-    /**
-     * Set iWant
-     *
-     * @param string $iWant
-     *
-     * @return Profile
-     */
-    public function setIWant($iWant)
-    {
-        $this->iWant = $iWant;
-    
-        return $this;
-    }
-
-    /**
-     * Get iWant
-     *
-     * @return string
-     */
-    public function getIWant()
-    {
-        return $this->iWant;
-    }
-
-    /**
-     * Set relations
-     *
-     * @param string $relations
-     *
-     * @return Profile
-     */
-    public function setRelations($relations)
-    {
-        $this->relations = $relations;
-    
-        return $this;
-    }
-
-    /**
-     * Get relations
-     *
-     * @return string
-     */
-    public function getRelations()
-    {
-        return $this->relations;
-    }
-
-    /**
      * Set orientation
      *
-     * @param string $orientation
+     * @param integer $orientation
      *
      * @return Profile
      */
     public function setOrientation($orientation)
     {
         $this->orientation = $orientation;
-    
+
         return $this;
     }
 
     /**
      * Get orientation
      *
-     * @return string
+     * @return integer
      */
     public function getOrientation()
     {
@@ -505,7 +220,7 @@ class Profile
     public function setAppearance($appearance)
     {
         $this->appearance = $appearance;
-    
+
         return $this;
     }
 
@@ -517,6 +232,198 @@ class Profile
     public function getAppearance()
     {
         return $this->appearance;
+    }
+
+    /**
+     * Set age
+     *
+     * @param string $age
+     *
+     * @return Profile
+     */
+    public function setAge($age)
+    {
+        $this->age = $age;
+
+        return $this;
+    }
+
+    /**
+     * Get age
+     *
+     * @return string
+     */
+    public function getAge()
+    {
+        return $this->age;
+    }
+
+    /**
+     * Set sex
+     *
+     * @param string $sex
+     *
+     * @return Profile
+     */
+    public function setSex($sex)
+    {
+        $this->sex = $sex;
+
+        return $this;
+    }
+
+    /**
+     * Get sex
+     *
+     * @return string
+     */
+    public function getSex()
+    {
+        return $this->sex;
+    }
+
+    /**
+     * Set city
+     *
+     * @param string $city
+     *
+     * @return Profile
+     */
+    public function setCity($city)
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+
+    /**
+     * Get city
+     *
+     * @return string
+     */
+    public function getCity()
+    {
+        return $this->city;
+    }
+
+    /**
+     * Set wannaCommunicate
+     *
+     * @param integer $wannaCommunicate
+     *
+     * @return Profile
+     */
+    public function setWannaCommunicate($wannaCommunicate)
+    {
+        $this->wannaCommunicate = $wannaCommunicate;
+
+        return $this;
+    }
+
+    /**
+     * Get wannaCommunicate
+     *
+     * @return integer
+     */
+    public function getWannaCommunicate()
+    {
+        return $this->wannaCommunicate;
+    }
+
+    /**
+     * Set findCompanion
+     *
+     * @param integer $findCompanion
+     *
+     * @return Profile
+     */
+    public function setFindCompanion($findCompanion)
+    {
+        $this->findCompanion = $findCompanion;
+
+        return $this;
+    }
+
+    /**
+     * Get findCompanion
+     *
+     * @return integer
+     */
+    public function getFindCompanion()
+    {
+        return $this->findCompanion;
+    }
+
+    /**
+     * Set findCouple
+     *
+     * @param integer $findCouple
+     *
+     * @return Profile
+     */
+    public function setFindCouple($findCouple)
+    {
+        $this->findCouple = $findCouple;
+
+        return $this;
+    }
+
+    /**
+     * Get findCouple
+     *
+     * @return integer
+     */
+    public function getFindCouple()
+    {
+        return $this->findCouple;
+    }
+
+    /**
+     * Set findFriends
+     *
+     * @param integer $findFriends
+     *
+     * @return Profile
+     */
+    public function setFindFriends($findFriends)
+    {
+        $this->findFriends = $findFriends;
+
+        return $this;
+    }
+
+    /**
+     * Get findFriends
+     *
+     * @return integer
+     */
+    public function getFindFriends()
+    {
+        return $this->findFriends;
+    }
+
+    /**
+     * Set free
+     *
+     * @param integer $free
+     *
+     * @return Profile
+     */
+    public function setFree($free)
+    {
+        $this->free = $free;
+
+        return $this;
+    }
+
+    /**
+     * Get free
+     *
+     * @return integer
+     */
+    public function getFree()
+    {
+        return $this->free;
     }
 
     /**

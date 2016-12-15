@@ -75,6 +75,10 @@ class ServiceController extends Controller
                     $return[] = $this->auth($requestData['id'], $requestData['token']);
                     break;
 
+                case 'save_profile':
+                    $return[] = $this->saveProfile($requestData);
+                    break;
+                
                 case 'registration':
                     $return[] = $this->registration($requestData['id'], $requestData['token']);
                     break;
@@ -167,6 +171,47 @@ class ServiceController extends Controller
 
     }
 
+    public function saveProfile($requestData){
+        $em = $this->getDoctrine()->getManager();
+        /** @var Profile $userProfile */
+        $userProfile = $em->getRepository('ServiceServiceBundle:User')->findBy(['user_id' => (int)$requestData['id']]);
+
+        $created = false;
+        if(!$userProfile) {
+            $userProfile = new Profile();
+            $created = true;
+        }
+
+        $this->sanitizeUserProfileData($requestData);
+
+        $userProfile->setName($requestData['name']);
+        $userProfile->setAge($requestData['age']);
+        $userProfile->setSex($requestData['sex']);
+        $userProfile->setCity($requestData['city']);
+        $userProfile->setAppearance($requestData['appearance']);
+        $userProfile->setAbout($requestData['aboutMe']);
+        $userProfile->setWannaCommunicate($requestData['wannaCommunicate']);
+        $userProfile->setFindCompanion($requestData['findCompanion']);
+        $userProfile->setFindCouple($requestData['findCouple']);
+        $userProfile->setFindFriends($requestData['findFriends']);
+        $userProfile->setFree($requestData['free']);
+        $userProfile->setOrientation($requestData['orientation']);
+
+        if($created)
+            $em->persist($userProfile);
+        $em->flush();
+
+        return $userProfile;
+    }
+
+
+    public function loadProfile($requestData){
+        $em = $this->getDoctrine()->getManager();
+        /** @var Profile $userProfile */
+        $userProfile = $em->getRepository('ServiceServiceBundle:User')->findBy(['user_id' => (int)$requestData['id']]);
+        return $userProfile;
+    }
+    
     public function auth($id, $token){
 
 
@@ -1485,6 +1530,41 @@ class ServiceController extends Controller
 		unlink($truePath);
 		
 	}
+
+
+    /**
+     * @param array $requestData
+     * sanitizing user profile data
+     * int casting for numbers and real_escape_string for strings
+     */
+    public static function sanitizeUserProfileData(&$requestData){
+        $mysqli = new \mysqli();
+        if(!empty($requestData['id']))
+            $requestData['id'] = (int)$requestData['id'];
+        if(!empty($requestData['age']))
+            $requestData['age'] = $mysqli->real_escape_string($requestData['age']);
+        if(!empty($requestData['city']))
+            $requestData['city'] = $mysqli->real_escape_string($requestData['city']);
+        if(!empty($requestData['appearance']))
+            $requestData['appearance'] = $mysqli->real_escape_string($requestData['appearance']);
+        if(!empty($requestData['aboutMe']))
+            $requestData['aboutMe'] = $mysqli->real_escape_string($requestData['aboutMe']);
+        if(!empty($requestData['sex']))
+            $requestData['sex'] = (int)$requestData['sex'];
+        if(!empty($requestData['wannaCommunicate']))
+            $requestData['wannaCommunicate'] = (int)$requestData['wannaCommunicate'];
+        if(!empty($requestData['findCompanion']))
+            $requestData['findCompanion'] = (int)$requestData['findCompanion'];
+        if(!empty($requestData['findCouple']))
+            $requestData['findCouple'] = (int)$requestData['findCouple'];
+        if(!empty($requestData['findFriends']))
+            $requestData['findFriends'] = (int)$requestData['findFriends'];
+        if(!empty($requestData['free']))
+            $requestData['free'] = (int)$requestData['free'];
+        if(!empty($requestData['orientation']))
+            $requestData['orientation'] = (int)$requestData['orientation'];
+
+    }
 	
 
 }

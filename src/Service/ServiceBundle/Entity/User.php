@@ -41,6 +41,13 @@ class User
     private $inserted = 'CURRENT_TIMESTAMP';
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="banned", type="boolean", nullable=false)
+     */
+    private $banned;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="id", type="integer")
@@ -49,13 +56,6 @@ class User
      */
     private $id;
 
-
-    /**
-     * @var boolean
-     *
-     * @ORM\Column(name="banned", type="boolean", nullable=false)
-     */
-    private $banned = '0';
 
 
     /**
@@ -68,7 +68,7 @@ class User
     public function setIosToken($iosToken)
     {
         $this->iosToken = $iosToken;
-    
+
         return $this;
     }
 
@@ -92,7 +92,7 @@ class User
     public function setLogin($login)
     {
         $this->login = $login;
-    
+
         return $this;
     }
 
@@ -116,7 +116,7 @@ class User
     public function setActive($active)
     {
         $this->active = $active;
-    
+
         return $this;
     }
 
@@ -140,7 +140,7 @@ class User
     public function setInserted($inserted)
     {
         $this->inserted = $inserted;
-    
+
         return $this;
     }
 
@@ -152,45 +152,6 @@ class User
     public function getInserted()
     {
         return $this->inserted;
-    }
-
-    /**
-     * Get id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-    /**
-     * @var integer
-     */
-    private $countBadge = '0';
-
-
-    /**
-     * Set countBadge
-     *
-     * @param integer $countBadge
-     *
-     * @return User
-     */
-    public function setCountBadge($countBadge)
-    {
-        $this->countBadge = $countBadge;
-
-        return $this;
-    }
-
-    /**
-     * Get countBadge
-     *
-     * @return integer
-     */
-    public function getCountBadge()
-    {
-        return $this->countBadge;
     }
 
     /**
@@ -215,5 +176,15 @@ class User
     public function getBanned()
     {
         return $this->banned;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }

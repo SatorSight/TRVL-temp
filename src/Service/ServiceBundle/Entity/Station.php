@@ -117,7 +117,7 @@ class Station
     public function setTransport($transport)
     {
         $this->transport = $transport;
-    
+
         return $this;
     }
 
@@ -141,7 +141,7 @@ class Station
     public function setCode($code)
     {
         $this->code = $code;
-    
+
         return $this;
     }
 
@@ -165,7 +165,7 @@ class Station
     public function setType($type)
     {
         $this->type = $type;
-    
+
         return $this;
     }
 
@@ -189,7 +189,7 @@ class Station
     public function setNum($num)
     {
         $this->num = $num;
-    
+
         return $this;
     }
 
@@ -213,7 +213,7 @@ class Station
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 
@@ -237,7 +237,7 @@ class Station
     public function setCountryNameCode($countryNameCode)
     {
         $this->countryNameCode = $countryNameCode;
-    
+
         return $this;
     }
 
@@ -261,7 +261,7 @@ class Station
     public function setCountryName($countryName)
     {
         $this->countryName = $countryName;
-    
+
         return $this;
     }
 
@@ -285,7 +285,7 @@ class Station
     public function setAdministrativeAreaName($administrativeAreaName)
     {
         $this->administrativeAreaName = $administrativeAreaName;
-    
+
         return $this;
     }
 
@@ -309,7 +309,7 @@ class Station
     public function setLocality($locality)
     {
         $this->locality = $locality;
-    
+
         return $this;
     }
 
@@ -333,7 +333,7 @@ class Station
     public function setPoint($point)
     {
         $this->point = $point;
-    
+
         return $this;
     }
 
@@ -357,7 +357,7 @@ class Station
     public function setAddr($addr)
     {
         $this->addr = $addr;
-    
+
         return $this;
     }
 
@@ -381,7 +381,7 @@ class Station
     public function setGeocode($geocode)
     {
         $this->geocode = $geocode;
-    
+
         return $this;
     }
 

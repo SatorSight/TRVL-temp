@@ -61,7 +61,7 @@ class Blacklist
     public function setUserId($userId)
     {
         $this->userId = $userId;
-    
+
         return $this;
     }
 
@@ -85,7 +85,7 @@ class Blacklist
     public function setUserIdBlocked($userIdBlocked)
     {
         $this->userIdBlocked = $userIdBlocked;
-    
+
         return $this;
     }
 
@@ -109,7 +109,7 @@ class Blacklist
     public function setActive($active)
     {
         $this->active = $active;
-    
+
         return $this;
     }
 
@@ -133,7 +133,7 @@ class Blacklist
     public function setInserted($inserted)
     {
         $this->inserted = $inserted;
-    
+
         return $this;
     }
 

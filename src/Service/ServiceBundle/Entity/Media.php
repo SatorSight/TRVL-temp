@@ -61,7 +61,7 @@ class Media
     public function setType($type)
     {
         $this->type = $type;
-    
+
         return $this;
     }
 
@@ -85,7 +85,7 @@ class Media
     public function setPath($path)
     {
         $this->path = $path;
-    
+
         return $this;
     }
 
@@ -109,7 +109,7 @@ class Media
     public function setActive($active)
     {
         $this->active = $active;
-    
+
         return $this;
     }
 
@@ -133,7 +133,7 @@ class Media
     public function setInserted($inserted)
     {
         $this->inserted = $inserted;
-    
+
         return $this;
     }
 

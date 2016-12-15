@@ -75,7 +75,7 @@ class Message
     public function setUserIdFrom($userIdFrom)
     {
         $this->userIdFrom = $userIdFrom;
-    
+
         return $this;
     }
 
@@ -99,7 +99,7 @@ class Message
     public function setUserIdTo($userIdTo)
     {
         $this->userIdTo = $userIdTo;
-    
+
         return $this;
     }
 
@@ -123,7 +123,7 @@ class Message
     public function setMediaId($mediaId)
     {
         $this->mediaId = $mediaId;
-    
+
         return $this;
     }
 
@@ -147,7 +147,7 @@ class Message
     public function setText($text)
     {
         $this->text = $text;
-    
+
         return $this;
     }
 
@@ -171,7 +171,7 @@ class Message
     public function setActive($active)
     {
         $this->active = $active;
-    
+
         return $this;
     }
 
@@ -195,7 +195,7 @@ class Message
     public function setInserted($inserted)
     {
         $this->inserted = $inserted;
-    
+
         return $this;
     }
 

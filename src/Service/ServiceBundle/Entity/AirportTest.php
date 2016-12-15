@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class AirportTest
 {
     /**
-     * @var stringphp app/console doctrine:generate:entities AcmeBlogBundle
+     * @var string
      *
      * @ORM\Column(name="iso_code", type="string", length=2, nullable=false)
      */
@@ -117,7 +117,7 @@ class AirportTest
     public function setIsoCode($isoCode)
     {
         $this->isoCode = $isoCode;
-    
+
         return $this;
     }
 
@@ -141,7 +141,7 @@ class AirportTest
     public function setIataCode($iataCode)
     {
         $this->iataCode = $iataCode;
-    
+
         return $this;
     }
 
@@ -165,7 +165,7 @@ class AirportTest
     public function setIcaoCode($icaoCode)
     {
         $this->icaoCode = $icaoCode;
-    
+
         return $this;
     }
 
@@ -189,7 +189,7 @@ class AirportTest
     public function setNameEng($nameEng)
     {
         $this->nameEng = $nameEng;
-    
+
         return $this;
     }
 
@@ -213,7 +213,7 @@ class AirportTest
     public function setCityEng($cityEng)
     {
         $this->cityEng = $cityEng;
-    
+
         return $this;
     }
 
@@ -237,7 +237,7 @@ class AirportTest
     public function setCountryEng($countryEng)
     {
         $this->countryEng = $countryEng;
-    
+
         return $this;
     }
 
@@ -261,7 +261,7 @@ class AirportTest
     public function setNameRus($nameRus)
     {
         $this->nameRus = $nameRus;
-    
+
         return $this;
     }
 
@@ -285,7 +285,7 @@ class AirportTest
     public function setCityRus($cityRus)
     {
         $this->cityRus = $cityRus;
-    
+
         return $this;
     }
 
@@ -309,7 +309,7 @@ class AirportTest
     public function setCountryRus($countryRus)
     {
         $this->countryRus = $countryRus;
-    
+
         return $this;
     }
 
@@ -333,7 +333,7 @@ class AirportTest
     public function setGmtOffset($gmtOffset)
     {
         $this->gmtOffset = $gmtOffset;
-    
+
         return $this;
     }
 
@@ -357,7 +357,7 @@ class AirportTest
     public function setLatitude($latitude)
     {
         $this->latitude = $latitude;
-    
+
         return $this;
     }
 
@@ -381,7 +381,7 @@ class AirportTest
     public function setLongitude($longitude)
     {
         $this->longitude = $longitude;
-    
+
         return $this;
     }
 

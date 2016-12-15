@@ -68,7 +68,7 @@ class Moder
     public function setLogin($login)
     {
         $this->login = $login;
-    
+
         return $this;
     }
 
@@ -92,7 +92,7 @@ class Moder
     public function setPassword($password)
     {
         $this->password = $password;
-    
+
         return $this;
     }
 
@@ -116,7 +116,7 @@ class Moder
     public function setAdmin($admin)
     {
         $this->admin = $admin;
-    
+
         return $this;
     }
 
@@ -140,7 +140,7 @@ class Moder
     public function setActive($active)
     {
         $this->active = $active;
-    
+
         return $this;
     }
 
@@ -164,7 +164,7 @@ class Moder
     public function setInserted($inserted)
     {
         $this->inserted = $inserted;
-    
+
         return $this;
     }
 
