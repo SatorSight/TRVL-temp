@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
+  <entity name="Service\ServiceBundle\Entity\Profile" table="profile">
+    <indexes>
+      <index name="orientation" columns="orientation"/>
+      <index name="name" columns="name"/>
+      <index name="last_visit" columns="last_visit"/>
+    </indexes>
+    <id name="userId" type="integer" column="user_id">
+      <generator strategy="IDENTITY"/>
+    </id>
+    <field name="name" type="string" column="name" length="64" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="lastVisit" type="datetime" column="last_visit" nullable="false">
+      <options>
+        <option name="default">CURRENT_TIMESTAMP</option>
+      </options>
+    </field>
+    <field name="about" type="text" column="about" length="65535" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">О себе</option>
+      </options>
+    </field>
+    <field name="orientation" type="integer" column="orientation" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="appearance" type="text" column="appearance" length="65535" nullable="false">
+      <options>
+        <option name="fixed"/>
+        <option name="comment">Внешность </option>
+      </options>
+    </field>
+    <field name="age" type="string" column="age" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="sex" type="string" column="sex" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="city" type="string" column="city" length="255" nullable="false">
+      <options>
+        <option name="fixed"/>
+      </options>
+    </field>
+    <field name="wannaCommunicate" type="integer" column="wanna_communicate" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="findCompanion" type="integer" column="find_companion" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="findCouple" type="integer" column="find_couple" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="findFriends" type="integer" column="find_friends" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+    <field name="free" type="integer" column="free" nullable="false">
+      <options>
+        <option name="unsigned"/>
+      </options>
+    </field>
+  </entity>
+</doctrine-mapping>

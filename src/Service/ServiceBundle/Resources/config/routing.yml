@@ -3,3 +3,8 @@ ServiceServiceBundle_index:
    defaults: { _controller: "ServiceServiceBundle:Service:index" }
    requirements:
         methods:  GET
+ServiceServiceBundle_clear:
+   path:     /cache_clear
+   defaults: { _controller: "ServiceServiceBundle:Service:cacheClear" }
+   requirements:
+        methods:  GET
