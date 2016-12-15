@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Service\ServiceBundle\Entity\AirportTest;
 use Service\ServiceBundle\Entity\Blacklist;
-use Service\ServiceBundle\Entity\Consts;
 use Service\ServiceBundle\Entity\Media;
 use Service\ServiceBundle\Entity\Message;
 use Service\ServiceBundle\Entity\Moder;
@@ -22,6 +21,8 @@ use Service\ServiceBundle\Entity\Repository\RequestParser;
 use Service\ServiceBundle\Entity\Repository\OutputHandler;
 
 use Service\ServiceBundle\Resources\ServiceException;
+
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Service controller.
@@ -1564,6 +1565,12 @@ class ServiceController extends Controller
         if(!empty($requestData['orientation']))
             $requestData['orientation'] = (int)$requestData['orientation'];
 
+    }
+
+    public function cacheClearAction(){
+        $fs = new Filesystem();
+        $fs->remove($this->container->getParameter('kernel.cache_dir'));
+        return 'done';
     }
 	
 
