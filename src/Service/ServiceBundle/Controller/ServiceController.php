@@ -174,6 +174,9 @@ class ServiceController extends Controller
 
     public function saveProfile($requestData){
         $em = $this->getDoctrine()->getManager();
+
+        die('lol');
+
         /** @var Profile $userProfile */
         $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findBy(['user_id' => (int)$requestData['id']]);
 
