@@ -2,3 +2,7 @@
 /web/bundles/*
 /app/cache/*
 /app/config/parameters.yml
+/.idea/*
+/app/logs/*
+/app/bootstrap.php.cache
+/composer.lock
