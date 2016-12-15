@@ -1570,8 +1570,8 @@ class ServiceController extends Controller
     public function cacheClearAction(){
         $fs = new Filesystem();
         $fs->remove($this->container->getParameter('kernel.cache_dir'));
-        return 'done';
+        die('done');
     }
-	
+
 
 }
