@@ -193,7 +193,7 @@ class ServiceController extends Controller
 //        die('0');
 
         /** @var Profile $userProfile */
-        $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findBy(['userId' => $user->getId()]);
+        $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
 
 
         $created = false;
