@@ -185,7 +185,7 @@ class ServiceController extends Controller
         $em = $this->getDoctrine()->getManager();
 
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$data['id']]);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id']]);
 
 //        echo '<pre>';
 //        print_r($user);
