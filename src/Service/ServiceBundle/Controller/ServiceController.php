@@ -174,16 +174,18 @@ class ServiceController extends Controller
 
     public function saveProfile($requestData){
 
-        echo '<pre>';
-        print_r($requestData);
-        echo '</pre>';
-        die('0');
+//        echo '<pre>';
+//        print_r($requestData);
+//        echo '</pre>';
+//        die('0');
+
+        $data = json_decode($requestData['data']);
 
 
         $em = $this->getDoctrine()->getManager();
 
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id']]);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$data['id']]);
 
 //        echo '<pre>';
 //        print_r($user);
@@ -201,21 +203,21 @@ class ServiceController extends Controller
             $created = true;
         }
 
-        $this->sanitizeUserProfileData($requestData);
+        $this->sanitizeUserProfileData($data);
 
         $userProfile->setLastVisit(new \DateTime());
-        $userProfile->setName($requestData['name']);
-        $userProfile->setAge($requestData['age']);
-        $userProfile->setSex($requestData['sex']);
-        $userProfile->setCity($requestData['city']);
-        $userProfile->setAppearance($requestData['appearance']);
-        $userProfile->setAbout($requestData['aboutMe']);
-        $userProfile->setWannaCommunicate($requestData['wannaCommunicate']);
-        $userProfile->setFindCompanion($requestData['findCompanion']);
-        $userProfile->setFindCouple($requestData['findCouple']);
-        $userProfile->setFindFriends($requestData['findFriends']);
-        $userProfile->setFree($requestData['free']);
-        $userProfile->setOrientation($requestData['orientation']);
+        $userProfile->setName($data['name']);
+        $userProfile->setAge($data['age']);
+        $userProfile->setSex($data['sex']);
+        $userProfile->setCity($data['city']);
+        $userProfile->setAppearance($data['appearance']);
+        $userProfile->setAbout($data['aboutMe']);
+        $userProfile->setWannaCommunicate($data['wannaCommunicate']);
+        $userProfile->setFindCompanion($data['findCompanion']);
+        $userProfile->setFindCouple($data['findCouple']);
+        $userProfile->setFindFriends($data['findFriends']);
+        $userProfile->setFree($data['free']);
+        $userProfile->setOrientation($data['orientation']);
 
         if($created)
             $em->persist($userProfile);
