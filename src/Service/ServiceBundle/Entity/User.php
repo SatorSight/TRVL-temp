@@ -15,16 +15,23 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="ios_token", type="string", length=128, nullable=false)
+     * @ORM\Column(name="token", type="string", nullable=false)
      */
-    private $iosToken;
+    private $token;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="login", type="string", length=64, nullable=false)
+     * @ORM\Column(name="app_id", type="integer", nullable=false)
      */
-    private $login;
+    private $appId;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="app_type", type="string", nullable=false)
+     */
+    private $appType;
 
     /**
      * @var boolean
@@ -58,52 +65,77 @@ class User
 
 
 
+
     /**
-     * Set iosToken
+     * Set token
      *
-     * @param string $iosToken
+     * @param string $token
      *
      * @return User
      */
-    public function setIosToken($iosToken)
+    public function setToken($token)
     {
-        $this->iosToken = $iosToken;
+        $this->token = $token;
 
         return $this;
     }
 
     /**
-     * Get iosToken
+     * Get token
      *
      * @return string
      */
-    public function getIosToken()
+    public function getToken()
     {
-        return $this->iosToken;
+        return $this->token;
     }
 
     /**
-     * Set login
+     * Set appId
      *
-     * @param string $login
+     * @param integer $appId
      *
      * @return User
      */
-    public function setLogin($login)
+    public function setAppId($appId)
     {
-        $this->login = $login;
+        $this->appId = $appId;
 
         return $this;
     }
 
     /**
-     * Get login
+     * Get appId
+     *
+     * @return integer
+     */
+    public function getAppId()
+    {
+        return $this->appId;
+    }
+
+    /**
+     * Set appType
+     *
+     * @param string $appType
+     *
+     * @return User
+     */
+    public function setAppType($appType)
+    {
+        $this->appType = $appType;
+
+        return $this;
+    }
+
+    /**
+     * Get appType
      *
      * @return string
      */
-    public function getLogin()
+    public function getAppType()
     {
-        return $this->login;
+        return $this->appType;
     }
 
     /**

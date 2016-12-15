@@ -175,19 +175,28 @@ class ServiceController extends Controller
     public function saveProfile($requestData){
         $em = $this->getDoctrine()->getManager();
 
-        die('lol');
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id']]);
+
+//        echo '<pre>';
+//        print_r($user);
+//        echo '</pre>';
+//        die('0');
 
         /** @var Profile $userProfile */
-        $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findBy(['user_id' => (int)$requestData['id']]);
+        $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findBy(['userId' => $user->getId()]);
+
 
         $created = false;
         if(!$userProfile) {
             $userProfile = new Profile();
+            $userProfile->setUserId($user->getId());
             $created = true;
         }
 
         $this->sanitizeUserProfileData($requestData);
 
+        $userProfile->setLastVisit(new \DateTime());
         $userProfile->setName($requestData['name']);
         $userProfile->setAge($requestData['age']);
         $userProfile->setSex($requestData['sex']);

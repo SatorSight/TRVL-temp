@@ -15,91 +15,91 @@ class Profile
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=64, nullable=false)
+     * @ORM\Column(name="name", type="string", length=64, nullable=true)
      */
     private $name;
 
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="last_visit", type="datetime", nullable=false)
+     * @ORM\Column(name="last_visit", type="datetime", nullable=true)
      */
     private $lastVisit = 'CURRENT_TIMESTAMP';
 
     /**
      * @var string
      *
-     * @ORM\Column(name="about", type="text", length=65535, nullable=false)
+     * @ORM\Column(name="about", type="text", length=65535, nullable=true)
      */
     private $about;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="orientation", type="integer", nullable=false)
+     * @ORM\Column(name="orientation", type="integer", nullable=true)
      */
     private $orientation;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="appearance", type="text", length=65535, nullable=false)
+     * @ORM\Column(name="appearance", type="text", length=65535, nullable=true)
      */
     private $appearance;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="age", type="string", length=255, nullable=false)
+     * @ORM\Column(name="age", type="string", length=255, nullable=true)
      */
     private $age;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="sex", type="string", length=255, nullable=false)
+     * @ORM\Column(name="sex", type="string", length=255, nullable=true)
      */
     private $sex;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="city", type="string", length=255, nullable=false)
+     * @ORM\Column(name="city", type="string", length=255, nullable=true)
      */
     private $city;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="wanna_communicate", type="integer", nullable=false)
+     * @ORM\Column(name="wanna_communicate", type="integer", nullable=true)
      */
     private $wannaCommunicate;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="find_companion", type="integer", nullable=false)
+     * @ORM\Column(name="find_companion", type="integer", nullable=true)
      */
     private $findCompanion;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="find_couple", type="integer", nullable=false)
+     * @ORM\Column(name="find_couple", type="integer", nullable=true)
      */
     private $findCouple;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="find_friends", type="integer", nullable=false)
+     * @ORM\Column(name="find_friends", type="integer", nullable=true)
      */
     private $findFriends;
 
     /**
      * @var integer
      *
-     * @ORM\Column(name="free", type="integer", nullable=false)
+     * @ORM\Column(name="free", type="integer", nullable=true)
      */
     private $free;
 
@@ -107,10 +107,17 @@ class Profile
      * @var integer
      *
      * @ORM\Column(name="user_id", type="integer")
+     */
+    private $userId;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $userId;
+    private $id;
 
 
 
@@ -427,6 +434,20 @@ class Profile
     }
 
     /**
+     * Set userId
+     *
+     * @param integer $userId
+     *
+     * @return Profile
+     */
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+
+        return $this;
+    }
+
+    /**
      * Get userId
      *
      * @return integer
@@ -434,5 +455,15 @@ class Profile
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
     }
 }
