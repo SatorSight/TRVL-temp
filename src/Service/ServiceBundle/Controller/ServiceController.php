@@ -179,7 +179,8 @@ class ServiceController extends Controller
 //        echo '</pre>';
 //        die('0');
 
-        $data = json_decode($requestData['data']);
+        $data = (array)json_decode($requestData['data']);
+
 
 
         $em = $this->getDoctrine()->getManager();
