@@ -203,7 +203,7 @@ class ServiceController extends Controller
             $created = true;
         }
 
-        $this->sanitizeUserProfileData($data);
+       // $this->sanitizeUserProfileData($data);
 
         $userProfile->setLastVisit(new \DateTime());
         $userProfile->setName($data['name']);
