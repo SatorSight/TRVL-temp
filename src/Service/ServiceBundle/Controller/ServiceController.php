@@ -1561,10 +1561,7 @@ class ServiceController extends Controller
      */
     public static function sanitizeUserProfileData(&$requestData){
         $mysqli = new \mysqli();
-        echo '<pre>';
-        print_r($requestData);
-        echo '</pre>';
-        die('sfd');
+        $requestData = (array)$requestData;
         if(!empty($requestData['age']))
             $requestData['age'] = $mysqli->real_escape_string($requestData['age']);
         if(!empty($requestData['city']))
