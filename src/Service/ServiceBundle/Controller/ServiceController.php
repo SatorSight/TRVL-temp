@@ -1563,10 +1563,6 @@ class ServiceController extends Controller
         $mysqli = new \mysqli();
         $requestData = (array)$requestData;
 
-        echo '<pre>';
-        print_r($requestData);
-        echo '</pre>';
-        die();
         if(!empty($requestData['age']))
             $requestData['age'] = $mysqli->real_escape_string($requestData['age']);
         if(!empty($requestData['city']))
