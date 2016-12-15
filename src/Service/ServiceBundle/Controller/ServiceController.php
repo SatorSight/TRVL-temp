@@ -173,6 +173,13 @@ class ServiceController extends Controller
     }
 
     public function saveProfile($requestData){
+
+        echo '<pre>';
+        print_r($requestData);
+        echo '</pre>';
+        die('0');
+
+
         $em = $this->getDoctrine()->getManager();
 
         /** @var User $user */
