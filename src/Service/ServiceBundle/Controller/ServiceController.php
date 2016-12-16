@@ -73,7 +73,7 @@ class ServiceController extends Controller
             switch ($requestData['action']){
 
                 case 'auth':
-                    $return[] = $this->auth($requestData['id'], $requestData['token']);
+                    $return[] = $this->auth($requestData['id'], $requestData['token'], $requestData['app_type']);
                     break;
 
                 case 'save_profile':
@@ -173,29 +173,14 @@ class ServiceController extends Controller
     }
 
     public function saveProfile($requestData){
-
-//        echo '<pre>';
-//        print_r($requestData);
-//        echo '</pre>';
-//        die('0');
-
         $data = (array)json_decode($requestData['data']);
-
-
-
         $em = $this->getDoctrine()->getManager();
 
         /** @var User $user */
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id']]);
 
-//        echo '<pre>';
-//        print_r($user);
-//        echo '</pre>';
-//        die('0');
-
         /** @var Profile $userProfile */
         $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
-
 
         $created = false;
         if(!$userProfile) {
@@ -203,8 +188,6 @@ class ServiceController extends Controller
             $userProfile->setUserId($user->getId());
             $created = true;
         }
-
-       // $this->sanitizeUserProfileData($data);
 
         $userProfile->setLastVisit(new \DateTime());
         $userProfile->setName($data['name']);
@@ -235,30 +218,26 @@ class ServiceController extends Controller
         return $userProfile;
     }
     
-    public function auth($id, $token){
-
-
-
+    public function auth($id, $token, $appType){
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository('ServiceServiceBundle:User')->findBy(['login' => (int)$id]);
-
-//        echo '<pre>';
-//        print_r($user);
-//        echo '</pre>';die('-');
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findBy(['appId' => (int)$id, 'appType' => $appType]);
 
         if(!$user)
-            return $this->registration($id, $token);
+            return $this->registration($id, $token, $appType);
         else
             return $user;
     }
 
-    public function registration($id, $token){
+    public function registration($id, $token, $appType){
         $em = $this->getDoctrine()->getManager();
         $user = new User();
-        $user->setActive(true);
-        $user->setLogin($id);
-        $user->setIosToken($token);
         $user->setInserted(new \DateTime());
+        $user->setActive(true);
+        $user->setAppId((int)$id);
+        $user->setToken($token);
+        $user->setAppType($appType);
+        $user->setBanned(false);
         $em->persist($user);
         $em->flush();
 
