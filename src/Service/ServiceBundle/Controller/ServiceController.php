@@ -84,8 +84,7 @@ class ServiceController extends Controller
                     break;
 
                 case 'reload_data':
-//                    $return[] = $this->saveProfile($requestData);
-                    $return[] = ['nice'];
+                    $return[] = $this->reloadData($requestData);
                     break;
 
                 case 'registration':
@@ -194,6 +193,33 @@ class ServiceController extends Controller
         }
     }
 
+    public function reloadData($requestData){
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
+        if(!$user) return ['User not found'];
+        /** @var Profile $userProfile */
+        $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
+        if(!$userProfile) return ['Profile not found'];
+        return[
+            'userID' => $user->getAppId(),
+            'userToken' => $user->getToken(),
+            'userAppType' => $user->getAppType(),
+            'name' => $userProfile->getName(),
+            'age' => $userProfile->getAge(),
+            'sex' => $userProfile->getSex(),
+            'city' => $userProfile->getCity(),
+            'appearance' => $userProfile->getAppearance(),
+            'aboutMe' => $userProfile->getAbout(),
+            'wannaCommunicate' => $userProfile->getWannaCommunicate(),
+            'findCompanion' => $userProfile->getFindCompanion(),
+            'findCouple' => $userProfile->getFindCouple(),
+            'findFriends' => $userProfile->getFindFriends(),
+            'free' => $userProfile->getFree(),
+            'orientation' => $userProfile->getOrientation()
+        ];
+    }
+
 
     /**
      * Functions checks if query token matches user token in db
@@ -249,7 +275,7 @@ class ServiceController extends Controller
         $data = (array)json_decode($requestData['data']);
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id']]);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
         if(!$user) return ['User not found'];
         /** @var Profile $userProfile */
         $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
