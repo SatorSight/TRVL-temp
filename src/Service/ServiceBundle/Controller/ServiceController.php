@@ -172,7 +172,21 @@ class ServiceController extends Controller
 
     }
 
+    public function checkToken($requestData){
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
+//        return $user->getToken() == $requestData['token'];
+        if($user->getToken() != $requestData['token'])
+            return $this->errorsMessage(['Auth error' => 'Token does not match'], ['data' => $requestData]);
+        else return true;
+    }
+
     public function saveProfile($requestData){
+
+        $tokenCheckResult = $this->checkToken($requestData);
+        if(!$tokenCheckResult) return $tokenCheckResult;
         $data = (array)json_decode($requestData['data']);
         $em = $this->getDoctrine()->getManager();
 
