@@ -82,7 +82,12 @@ class ServiceController extends Controller
                 case 'save_profile':
                     $return[] = $this->saveProfile($requestData);
                     break;
-                
+
+                case 'reload_data':
+//                    $return[] = $this->saveProfile($requestData);
+                    $return[] = ['nice'];
+                    break;
+
                 case 'registration':
                     $return[] = $this->registration($requestData['id'], $requestData['token']);
                     break;
@@ -210,7 +215,7 @@ class ServiceController extends Controller
             //todo make check for other app type
             switch ($requestData['app_type']) {
                 case 'vk':
-                    $vk_response = file_get_contents('https://api.vk.com/method/users.isAppUser?access_token=' . $token);
+                    $vk_response = file_get_contents('https://api.vk.com/method/users.isAppUser?access_token='.$token);
                     $vk_response_decoded = (array)json_decode($vk_response);
                     if (isset($vk_response_decoded['response']))
                         $tokenValid = true;
