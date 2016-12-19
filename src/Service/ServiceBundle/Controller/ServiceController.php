@@ -64,6 +64,9 @@ class ServiceController extends Controller
         $requestData = RequestParser::parseRequest($request);
         $errors = RequestParser::checkApiKey($request, $this->container->getParameter('service_service.api_key'));
 
+        if($requestData['action'] != 'auth' && !$errors)
+            $errors = $this->checkToken($requestData) ? false : ['Token mismatch'];
+
         $return = [];
 
         if(!empty($requestData['action']) && !$errors) {
@@ -73,7 +76,7 @@ class ServiceController extends Controller
             switch ($requestData['action']){
 
                 case 'auth':
-                    $return[] = $this->auth($requestData['id'], $requestData['token'], $requestData['app_type']);
+                    $return[] = $this->auth($requestData);
                     break;
 
                 case 'save_profile':
@@ -172,27 +175,77 @@ class ServiceController extends Controller
 
     }
 
-    public function checkToken($requestData){
+    public function auth($requestData){
         $em = $this->getDoctrine()->getManager();
-
         /** @var User $user */
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
-//        return $user->getToken() == $requestData['token'];
-        if($user->getToken() != $requestData['token'])
-            return $this->errorsMessage(['Auth error' => 'Token does not match'], ['data' => $requestData]);
-        else return true;
+
+        if(!$user)
+            return $this->registration($requestData);
+        else{
+            if($this->authToken($user, $requestData, $em))
+                return ['message' => 'user authenticated', 'data' => ['id' => $user->getId(), 'token' => $user->getToken(), 'app_type' => $user->getAppType()]];
+            else return ['Failed to authorize'];
+        }
+    }
+
+
+    /**
+     * Functions checks if query token matches user token in db
+     * and if its not, trying to validate query token with social network api.
+     * If new token is valid token in db refreshed
+     * @param $requestData
+     * $requestData:
+     *      id
+     *      token
+     *      app_type
+     * @return bool
+     */
+    public function authToken(User $user, $requestData, $em){
+        $token = $requestData['token'];
+        if($user->getToken() == $token)
+            return true;
+        else{
+            $tokenValid = false;
+            //todo make check for other app type
+            switch ($requestData['app_type']) {
+                case 'vk':
+                    $vk_response = file_get_contents('https://api.vk.com/method/users.isAppUser?access_token=' . $token);
+                    $vk_response_decoded = (array)json_decode($vk_response);
+                    if (isset($vk_response_decoded['response']))
+                        $tokenValid = true;
+                    break;
+                default:
+                    return false;
+            }
+            if($tokenValid){
+                $user->setToken($token);
+                $em->flush();
+                return true;
+            }else return false;
+        }
+    }
+
+    /**
+     * Checks if query token matches user token in db
+     * @param $requestData
+     * @return array|bool
+     */
+    public function checkToken($requestData){
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
+        if(!$user) return ['User not found'];
+        return $user->getToken() != $requestData['token'] ? false : true;
     }
 
     public function saveProfile($requestData){
 
-        $tokenCheckResult = $this->checkToken($requestData);
-        if(!$tokenCheckResult) return $tokenCheckResult;
         $data = (array)json_decode($requestData['data']);
         $em = $this->getDoctrine()->getManager();
-
         /** @var User $user */
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id']]);
-
+        if(!$user) return ['User not found'];
         /** @var Profile $userProfile */
         $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
 
@@ -221,7 +274,21 @@ class ServiceController extends Controller
             $em->persist($userProfile);
         $em->flush();
 
-        return $userProfile;
+        return [
+            'message' => $created ? 'User profile created' : 'User profile saved',
+            'last_visit' => $userProfile->getLastVisit(),
+            'name' => $userProfile->getName(),
+            'age' => $userProfile->getAge(),
+            'sex' => $userProfile->getSex(),
+            'city' => $userProfile->getCity(),
+            'appearance' => $userProfile->getAppearance(),
+            'aboutMe' => $userProfile->getAbout(),
+            'wannaCommunicate' => $userProfile->getWannaCommunicate(),
+            'findCompanion' => $userProfile->getFindCompanion(),
+            'findCouple' => $userProfile->getFindCouple(),
+            'findFriends' => $userProfile->getFindFriends(),
+            'orientation' => $userProfile->getOrientation()
+        ];
     }
 
 
@@ -232,30 +299,19 @@ class ServiceController extends Controller
         return $userProfile;
     }
     
-    public function auth($id, $token, $appType){
-        $em = $this->getDoctrine()->getManager();
-        /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findBy(['appId' => (int)$id, 'appType' => $appType]);
-
-        if(!$user)
-            return $this->registration($id, $token, $appType);
-        else
-            return $user;
-    }
-
-    public function registration($id, $token, $appType){
+    public function registration($requestData){
         $em = $this->getDoctrine()->getManager();
         $user = new User();
         $user->setInserted(new \DateTime());
         $user->setActive(true);
-        $user->setAppId((int)$id);
-        $user->setToken($token);
-        $user->setAppType($appType);
+        $user->setAppId((int)$requestData['id']);
+        $user->setToken($requestData['token']);
+        $user->setAppType($requestData['app_type']);
         $user->setBanned(false);
         $em->persist($user);
         $em->flush();
 
-        return $user;
+        return ['message' => 'user registered', 'data' => ['id' => $user->getId(), 'token' => $user->getToken(), 'app_type' => $user->getAppType()]];
 
         //todo В старом апи какая-то ерунда с паролями и смсками, нужно переделать через социалки
     }
