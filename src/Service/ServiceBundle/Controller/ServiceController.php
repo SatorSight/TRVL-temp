@@ -69,6 +69,8 @@ class ServiceController extends Controller
 
         $return = [];
 
+        $resCode = 'OK';
+
         if(!empty($requestData['action']) && !$errors) {
 //            echo '<pre>';
 //            print_r($requestData);
@@ -84,7 +86,7 @@ class ServiceController extends Controller
                     break;
 
                 case 'reload_data':
-                    $return[] = $this->reloadData($requestData);
+                    $return[] = $this->reloadData($requestData, $resCode);
                     break;
 
                 case 'registration':
@@ -171,7 +173,7 @@ class ServiceController extends Controller
             echo json_encode($errors);
 
         return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-            'result' => OutputHandler::handle(null, $return, null, '', 'ERR')
+            'result' => OutputHandler::handle(null, $return, null, '', $resCode)
         ));
 
 //        $em = $this->getDoctrine()->getManager();
@@ -193,14 +195,20 @@ class ServiceController extends Controller
         }
     }
 
-    public function reloadData($requestData){
+    public function reloadData($requestData, &$resCode){
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
-        if(!$user) return ['User not found'];
+        if(!$user){
+            $resCode = 'ERR';
+            return ['User not found'];
+        }
         /** @var Profile $userProfile */
         $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
-        if(!$userProfile) return ['Profile not found'];
+        if(!$userProfile){
+            $resCode = 'ERR';
+            return ['Profile not found'];
+        }
         return[
             'userID' => $user->getAppId(),
             'userToken' => $user->getToken(),
