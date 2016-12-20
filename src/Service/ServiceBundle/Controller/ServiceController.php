@@ -254,6 +254,18 @@ class ServiceController extends Controller
                     if (isset($vk_response_decoded['response']))
                         $tokenValid = true;
                     break;
+                case 'fb':
+                    //$token = 'EAACEdEose0cBALTUv09lMiigGQcyPZAIxuasZAFWGZC6a4FZBHKGMGVGN3U0hUs9pNHeavDJZAjbDG4k86cN4TbqN0petbZCCAIgx6Ks66nGWxLOxjmYmJbqvkGjwhzM7RRH3IiQK3p5DfXZAiKYCmmSwt2kPE3CPiIgycpxOeS5AZDZD';
+                    $fb_response = file_get_contents('https://graph.facebook.com/v2.8/me?access_token='.$token.'&debug=all&fields=id&format=json&method=get&pretty=0&suppress_http_code=1');
+                    $fb_response_decoded = (array)json_decode($fb_response);
+
+                    echo '<pre>';
+                    print_r($fb_response_decoded);
+                    echo '</pre>';
+                    die('-');
+                    if (isset($vk_response_decoded['response']))
+                        $tokenValid = true;
+                    break;
                 default:
                     return false;
             }
