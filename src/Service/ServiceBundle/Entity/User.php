@@ -22,7 +22,7 @@ class User
     /**
      * @var string
      *
-     * @ORM\Column(name="app_id", type="integer", nullable=false)
+     * @ORM\Column(name="app_id", type="bigint", nullable=false)
      */
     private $appId;
 
