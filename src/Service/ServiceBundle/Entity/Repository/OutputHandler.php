@@ -13,9 +13,9 @@ use Service\ServiceBundle\Entity\WorkDay as WD;
 
 class OutputHandler
 {
-    public static function handle($data = null, $objectArr, $inputArr = null, $modifier = ''){
+    public static function handle($data = null, $objectArr, $inputArr = null, $modifier = '', $res = 'OK'){
 
-        return self::preRenderOutput($objectArr);
+        return self::preRenderOutput($objectArr, $res);
         
         $result = array();
         if(!is_array($objectArr)){
@@ -48,7 +48,7 @@ class OutputHandler
             file_put_contents($file, $current);
         }
 		
-		return self::preRenderOutput($result);
+		return self::preRenderOutput($result, $res);
 		
         //$result = array('result' => 'OK', 'data' => $result);
 

@@ -171,7 +171,7 @@ class ServiceController extends Controller
             echo json_encode($errors);
 
         return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-            'result' => OutputHandler::handle(null, $return)
+            'result' => OutputHandler::handle(null, $return, null, '', 'ERR')
         ));
 
 //        $em = $this->getDoctrine()->getManager();
