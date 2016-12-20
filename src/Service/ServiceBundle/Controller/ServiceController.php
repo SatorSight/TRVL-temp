@@ -263,7 +263,7 @@ class ServiceController extends Controller
 //                    print_r($fb_response_decoded);
 //                    echo '</pre>';
 //                    die('-');
-                    if (isset($fb_response_decoded['id']) && $fb_response_decoded == $user->getAppId())
+                    if (isset($fb_response_decoded['id']) && $fb_response_decoded['id'] == $user->getAppId())
                         $tokenValid = true;
                     break;
                 default:
