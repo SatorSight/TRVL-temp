@@ -259,11 +259,11 @@ class ServiceController extends Controller
                     $fb_response = file_get_contents('https://graph.facebook.com/v2.8/me?access_token='.$token.'&debug=all&fields=id&format=json&method=get&pretty=0&suppress_http_code=1');
                     $fb_response_decoded = (array)json_decode($fb_response);
 
-                    echo '<pre>';
-                    print_r($fb_response_decoded);
-                    echo '</pre>';
-                    die('-');
-                    if (isset($vk_response_decoded['response']))
+//                    echo '<pre>';
+//                    print_r($fb_response_decoded);
+//                    echo '</pre>';
+//                    die('-');
+                    if (isset($fb_response_decoded['id']) && $fb_response_decoded == $user->getAppId())
                         $tokenValid = true;
                     break;
                 default:
