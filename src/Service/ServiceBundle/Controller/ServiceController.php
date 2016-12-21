@@ -374,7 +374,7 @@ class ServiceController extends Controller
         $em->persist($user);
         $em->flush();
 
-        return ['message' => 'user registered', 'data' => ['id' => $user->getId(), 'token' => $user->getToken(), 'app_type' => $user->getAppType()]];
+        return ['message' => 'user registered', 'init_credentials' => 1, 'data' => ['id' => $user->getId(), 'token' => $user->getToken(), 'app_type' => $user->getAppType()]];
 
         //todo В старом апи какая-то ерунда с паролями и смсками, нужно переделать через социалки
     }
