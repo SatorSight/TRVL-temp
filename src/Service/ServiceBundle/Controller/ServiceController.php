@@ -267,6 +267,17 @@ class ServiceController extends Controller
                     if (isset($in_response_decoded['data']->id) && $in_response_decoded['data']->id == $user->getAppId())
                         $tokenValid = true;
                     break;
+                case 'ok':
+                    $app_key = $this->container->getParameter('service_service.ok_app_key');
+                    $app_secret_key = $this->container->getParameter('service_service.ok_app_secret_key');
+                    $sig = md5($token.$app_secret_key);
+                    $sig = md5('application_key='.$app_key.'format=jsonmethod=users.getCurrentUser'.$sig);
+                    $ok_response = file_get_contents('https://api.ok.ru/fb.do?application_key='.$app_key.'&format=json&method=users.getCurrentUser&sig='.$sig.'&access_token='.$token);
+                    $ok_response_decoded = (array)json_decode($ok_response);
+
+                    if (isset($ok_response_decoded['uid']) && $ok_response_decoded['uid'] == $user->getAppId())
+                        $tokenValid = true;
+                    break;
                 default:
                     return false;
             }
