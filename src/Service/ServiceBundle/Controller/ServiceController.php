@@ -2,7 +2,10 @@
 
 namespace Service\ServiceBundle\Controller;
 
+use Doctrine\ORM\EntityManager;
+use Service\ServiceBundle\Entity\Flight;
 use Service\ServiceBundle\Entity\Repository\Messager;
+use Service\ServiceBundle\Entity\Repository\FlightRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,10 +15,12 @@ use Service\ServiceBundle\Entity\Media;
 use Service\ServiceBundle\Entity\Message;
 use Service\ServiceBundle\Entity\Moder;
 use Service\ServiceBundle\Entity\Profile;
-use Service\ServiceBundle\Entity\Station;
+use Service\ServiceBundle\Entity\UserFlight;
 use Service\ServiceBundle\Entity\Travel;
 use Service\ServiceBundle\Entity\TravelType;
 use Service\ServiceBundle\Entity\User;
+
+use Service\ServiceBundle\Resources\SUtils;
 
 use Service\ServiceBundle\Entity\Repository\RequestParser;
 use Service\ServiceBundle\Entity\Repository\OutputHandler;
@@ -29,38 +34,10 @@ use Symfony\Component\Filesystem\Filesystem;
  */
 class ServiceController extends Controller
 {
-	
-	/*public function testAction(Request $request){
-		$data = RequestParser::parseRequest($request);
-		
-		echo '<pre>';
-		print_r($data['image']);
-		echo '</pre>';
-		$t = base64_decode($data['image']);
-		//echo '<pre>';
-		//print_r($t);
-		//echo '</pre>';
-		$hexstr = unpack('H*', $t);
-
-		echo '<br>'.$hexstr[1];
-		
-		$times = time();
-		
-		$imgUrl = $this->saveImage($data['image'], 1, '/dev/service/project/web/images/', $times);
-		//$imgUrl = $this->saveImage($data['image'], 1, '/dev/service/images/');
-		
-		echo '<img src="/dev/service/project/web/images/'.$times.'.jpg"/>';
-		echo '<br>';
-		
-		return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-			'result' => OutputHandler::handle(null, realpath($imgUrl))
-		));
-	}*/
 
 
     public function indexAction(Request $request){
 
-//        $request = $request->query->get();
         $requestData = RequestParser::parseRequest($request);
         $errors = RequestParser::checkApiKey($request, $this->container->getParameter('service_service.api_key'));
 
@@ -72,9 +49,7 @@ class ServiceController extends Controller
         $resCode = 'OK';
 
         if(!empty($requestData['action']) && !$errors) {
-//            echo '<pre>';
-//            print_r($requestData);
-//            echo '</pre>';die('---');
+
             switch ($requestData['action']){
 
                 case 'auth':
@@ -92,6 +67,44 @@ class ServiceController extends Controller
                 case 'registration':
                     $return[] = $this->registration($requestData['id'], $requestData['token']);
                     break;
+
+
+
+                //////////////////////////////FLIGHTS INTERACTIONS//////////////////////////////
+                //Show flights for date and directions
+                case 'get_flight_codes':
+                    $return[] = $this->getFlightCodesFromData($requestData);
+                    break;
+
+                case 'get_flight_details':
+                    $return[] = $this->getFlightDetails($requestData);
+                    break;
+
+                case 'add_user_to_flight':
+                    $return[] = $this->addUserToFlight($requestData);
+                    break;
+
+                case 'get_flight_users':
+                    $return[] = $this->getFlightUsers($requestData);
+                    break;
+
+                case 'get_flights_with_users':
+                    $return[] = $this->getFlightsWithUsers($requestData);
+                    break;
+                //////////////////////////////FLIGHTS INTERACTIONS END//////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
 
                 case 'save_soc_token':
                     $return[] = $this->save_soc_token($requestData['soc_token'], $requestData['type'], $requestData);
@@ -184,7 +197,7 @@ class ServiceController extends Controller
     public function auth($requestData){
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
 
         if(!$user)
             return $this->registration($requestData);
@@ -198,7 +211,7 @@ class ServiceController extends Controller
     public function reloadData($requestData, &$resCode){
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
         if(!$user){
             $resCode = 'ERR';
             return ['User not found'];
@@ -240,7 +253,7 @@ class ServiceController extends Controller
      *      app_type
      * @return bool
      */
-    public function authToken(User $user, $requestData, $em){
+    public function authToken(User $user, $requestData, EntityManager $em){
         $token = $requestData['token'];
         if($user->getToken() == $token)
             return true;
@@ -297,7 +310,7 @@ class ServiceController extends Controller
     public function checkToken($requestData){
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
         if(!$user) return ['User not found'];
         return $user->getToken() != $requestData['token'] ? false : true;
     }
@@ -307,7 +320,7 @@ class ServiceController extends Controller
         $data = (array)json_decode($requestData['data']);
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => (int)$requestData['id'], 'appType' => $requestData['app_type']]);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
         if(!$user) return ['User not found'];
         /** @var Profile $userProfile */
         $userProfile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
@@ -354,11 +367,213 @@ class ServiceController extends Controller
         ];
     }
 
+    public function getFlightDetails($requestData){
+
+        $code = strtoupper(str_replace(' ','',trim($requestData['code'])));
+        if(empty($code)) return ['Flight not found'];
+        $flights = $this->getFlightsFromData($requestData);
+        if(empty($flights) || array_shift($flights) == 'Empty data') return ['Flight not found'];
+
+        foreach($flights as $flight)
+            if($flight['code'] == $code)
+                return $flight;
+
+        return ['Flight not found'];
+    }
+
+    /**
+     *
+     * @param $requestData
+     * @return array
+     */
+    public function getFlightCodesFromData($requestData){
+        $flights = $this->getFlightsFromData($requestData);
+
+        $flightCodes = [];
+        foreach($flights as $flight)
+            $flightCodes[] = $flight['airlineCode'].' '.$flight['no'];
+        return $flightCodes;
+    }
+
+
+    /**
+     *
+     * @param $requestData
+     * @return array
+     */
+    public function getFlightsFromData($requestData){
+        $data = json_decode($requestData['data']);
+        if(empty($data)) return ['Empty data'];
+        $data = (array)array_shift($data);
+
+        $date = $data['date'];
+        $from = strtoupper($data['from']);
+        $to = strtoupper($data['to']);
+
+        $apiQuery =  'http://partners.ozon.travel/search_v1_0/flight/?Flight='.$from.$to.'&Date1='.$date.'&Dlts=1&OnlyDirect=true';
+
+        $response = json_decode(file_get_contents($apiQuery));
+
+
+
+
+        $flights = [];
+        foreach($response->data as $key => $data){
+            foreach($data->segments as $key2 => $segment){
+                foreach($segment->flights as $key3 => $flight){
+                    $fl = [];
+                    $fl['fromCode'] = $from;
+                    $fl['toCode'] = $to;
+                    $fl['no'] = $flight->flightLegs[0]->flightNo;
+                    $fl['airlineCode'] = $flight->flightLegs[0]->airlineCode;
+                    $fl['code'] = strtoupper($fl['airlineCode'].$fl['no']);
+                    $fl['from'] = $flight->flightLegs[0]->from;
+                    $fl['to'] = $flight->flightLegs[0]->to;
+                    $fl['fromDate'] = $flight->flightLegs[0]->fromDate;
+                    $fl['fromTime'] = $flight->flightLegs[0]->fromTime;
+                    $fl['toDate'] = $flight->flightLegs[0]->toDate;
+                    $fl['toTime'] = $flight->flightLegs[0]->toTime;
+                    $flights[] = $fl;
+                }
+            }
+        }
+
+        return $flights;
+    }
+
+
+    public function addUserToFlight($requestData){
+
+        $flightData = $this->getFlightDetails($requestData);
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+        /** @var Flight $flight */
+        $flight = $em->getRepository('ServiceServiceBundle:Flight')->findOneBy(['code' => $flightData['code'], 'fromDate' => new \DateTime($flightData['fromDate'].' '.$flightData['fromTime'])]);
+
+        if(!$flight){
+
+            $newFlight = new Flight();
+            $newFlight->setCode($flightData['code']);
+            $newFlight->setAirlineCode($flightData['airlineCode']);
+            $newFlight->setNo($flightData['no']);
+
+            $newFlight->setFrom($flightData['fromCode']);
+            $newFlight->setTo($flightData['toCode']);
+
+            $newFlight->setFromAirport($flightData['from']->airport);
+            $newFlight->setFromCity($flightData['from']->city);
+            $newFlight->setFromCode($flightData['from']->code);
+            $newFlight->setFromCountry($flightData['from']->country);
+            $newFlight->setFromDate(new \DateTime($flightData['fromDate'].' '.$flightData['fromTime']));
+
+            $newFlight->setToAirport($flightData['to']->airport);
+            $newFlight->setToCity($flightData['to']->city);
+            $newFlight->setToCode($flightData['to']->code);
+            $newFlight->setToCountry($flightData['to']->country);
+            $newFlight->setToDate(new \DateTime($flightData['toDate'].' '.$flightData['toTime']));
+
+            $em->persist($newFlight);
+            $em->flush();
+
+            $flight = $em->getRepository('ServiceServiceBundle:Flight')->findOneBy(['code' => $flightData['code'], 'fromDate' => new \DateTime($flightData['fromDate'].' '.$flightData['fromTime'])]);
+        }
+
+        if(!$flight) return ['Flight error'];
+
+        $userFlight = $em->getRepository('ServiceServiceBundle:UserFlight')->findOneBy(['user' => $user->getId(), 'flight' => $flight->getId()]);
+        if(!$userFlight) {
+            $userFlight = new UserFlight();
+            $userFlight->setFlight($flight);
+            $userFlight->setUser($user);
+            $em->persist($userFlight);
+            $em->flush();
+        }
+
+        return $userFlight;
+    }
+
+    public function getFlightUsers($requestData){
+        $em = $this->getDoctrine()->getManager();
+        /** @var Flight $flight */
+        $flight = $em->getRepository('ServiceServiceBundle:Flight')->findOneBy(['id' => $requestData['flight_id']]);
+        if(!$flight) return [];
+        $userFlights = $flight->getUserFlights();
+        $flightUserIDs = [];
+        /** @var UserFlight $userFlight */
+        foreach($userFlights as $userFlight)
+            $flightUserIDs[] = $userFlight->getUser()->getId();
+
+        $users = $em->getRepository('ServiceServiceBundle:User')->findBy(['id' => $flightUserIDs]);
+        $returnUsers = [];
+
+        if(!$users) return [];
+
+        /** @var User $user */
+        foreach($users as $user){
+            /** @var Profile $profile */
+            $profile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
+
+            $usr = [];
+            $usr['id'] = $user->getId();
+            $usr['name'] = $profile->getName();
+            $usr['age'] = $profile->getAge();
+            $usr['city'] = $profile->getCity();
+
+            $returnUsers[] = $usr;
+
+        }
+        return $returnUsers;
+    }
+
+    /**
+     * gets flights with users on selected date and direction
+     * @param $requestData
+     * @return array
+     */
+    public function getFlightsWithUsers($requestData){
+
+        $data = json_decode($requestData['data']);
+        if(empty($data)) return ['Empty data'];
+        $data = (array)array_shift($data);
+
+        $from = strtoupper($data['from']);
+        $to = strtoupper($data['to']);
+
+        $em = $this->getDoctrine()->getManager();
+        /** @var Flight $flight */
+        $flights = $em->getRepository('ServiceServiceBundle:Flight')->getFlightsByDateAndDir($from, $to, new \DateTime($data['date']));
+
+        if(empty($flights)) return [];
+
+        $returnFlights = [];
+        
+        foreach($flights as $flight){
+            $fl = [];
+            $fl['id'] = $flight->getId();
+            $fl['fromCode'] = $flight->getFromCode();
+            $fl['toCode'] = $flight->getToCode();
+            $fl['no'] = $flight->getNo();
+            $fl['airlineCode'] = $flight->getAirlineCode();
+            $fl['code'] = $flight->getCode();
+            $fl['from'] = $flight->getFrom();
+            $fl['to'] = $flight->getTo();
+            $fl['fromDate'] = $flight->getFromDate()->format('Y-m-d');
+            $fl['fromTime'] = $flight->getFromDate()->format('H:i');
+            $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
+            $fl['toTime'] = $flight->getToDate()->format('H:i');
+            $returnFlights[] = $fl;
+        }
+
+        return $returnFlights;
+    }
 
     public function loadProfile($requestData){
         $em = $this->getDoctrine()->getManager();
         /** @var Profile $userProfile */
-        $userProfile = $em->getRepository('ServiceServiceBundle:User')->findBy(['user_id' => (int)$requestData['id']]);
+        $userProfile = $em->getRepository('ServiceServiceBundle:User')->findBy(['user_id' => $requestData['id']]);
         return $userProfile;
     }
     
@@ -367,7 +582,7 @@ class ServiceController extends Controller
         $user = new User();
         $user->setInserted(new \DateTime());
         $user->setActive(true);
-        $user->setAppId((int)$requestData['id']);
+        $user->setAppId($requestData['id']);
         $user->setToken($requestData['token']);
         $user->setAppType($requestData['app_type']);
         $user->setBanned(false);
@@ -391,7 +606,7 @@ class ServiceController extends Controller
 
     public function user_list_id($id){
         $em = $this->getDoctrine()->getManager();
-        $user = $em->getRepository('ServiceServiceBundle:User')->findBy(['id' => (int)$id, 'active' => '1']);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findBy(['id' => $id, 'active' => '1']);
         return $user;
     }
 
@@ -402,7 +617,7 @@ class ServiceController extends Controller
     public function user_del($id){
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findBy(['id' => (int)$id, 'active' => '1']);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findBy(['id' => $id, 'active' => '1']);
         $user->setActive(true);
         $em->flush();
         return $user;
@@ -421,7 +636,7 @@ class ServiceController extends Controller
     public function user_edit($fields){
         $em = $this->getDoctrine()->getManager();
         /** @var Profile $user */
-        $user = $em->getRepository('ServiceServiceBundle:Profile')->findBy(['id' => (int)$fields['id'], 'active' => '1']);
+        $user = $em->getRepository('ServiceServiceBundle:Profile')->findBy(['id' => $fields['id'], 'active' => '1']);
         if(!empty($fields['name']))
             $user->setName($fields['name']);
         if(!empty($fields['family']))
@@ -521,1075 +736,6 @@ class ServiceController extends Controller
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    //todo GET LIST ACTIONS ///////////////////
-
-    public function getGroupsAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            //$groups = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:Group')->findAll();
-            $groups = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:Group')->getGroupsSorted();
-			return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle(null, $groups)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_groups/', 1);
-        }
-    }
-    public function getPlacesAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            //$places = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:Place')->findAll();
-			$places = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:Place')->getPlacesSorted();
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle(null, $places)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_places/', 2);
-        }
-    }
-    public function getSectorsAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $sectors = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:Sector')->findAll();
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle(null, $sectors)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_sectors/', 3);
-        }
-    }
-    public function getPositionsAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            //$positions = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:Position')->findAll();
-            $positions = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:Position')->getPositionsSorted();
-			
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle(null, $positions) 
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_positions/', 4);
-        }
-    }
-    public function getOrdersAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $orders = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:Order')->findAll();
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle(null, $orders, null, 'workday')
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_orders/', 5);
-        }
-    }
-    public function getWorkDaysAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $workdays = $this->getDoctrine()->getManager()->getRepository('ServiceServiceBundle:WorkDay')->findAll();
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle(null, $workdays)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_workdays/', 6);
-        }
-    }
-
-
-    //todo GET LIST ACTIONS END ///////////////////
-
-
-    //todo ADD--UPDATE ACTIONS ///////////////////
-
-    public function addPlaceAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-
-
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-            /** @var Place $place */
-            $place = $em->getRepository('ServiceServiceBundle:Place')->find($data['id']);
-            if(!$place) {
-
-                $place = new Place();
-                $place->setId($data['id']);
-                $place->setName($data['name']);
-				if(!empty($data['sort']))
-					$place->setSort($data['sort']);
-				if(!empty($data['image']))
-					$place->setImage($this->saveImage($data['image'], $data['id']));
-				if(!empty($data['url']))
-					$place->setUrl($data['url']);
-                $em->persist($place);
-
-            }else{
-                if(!empty($data['name']))
-                    $place->setName($data['name']);
-                if(!empty($data['sort']))
-                    $place->setSort($data['sort']);
-				if(!empty($data['image']))
-					$place->setImage($this->saveImage($data['image'], $data['id']));
-				if(!empty($data['url']))
-					$place->setUrl($data['url']);
-            }
-
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /add_place/', 7);
-        }
-    }
-    public function addSectorAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id', 'id_place');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            /** @var Sector $sector */
-            $sector = $em->getRepository('ServiceServiceBundle:Sector')->find($data['id']);
-            if(!$sector) {
-                $sector = new Sector();
-                $sector->setId($data['id']);
-                $sector->setName($data['name']);
-                $sector->setPlace($em->getRepository('ServiceServiceBundle:Place')->find($data['id_place']));
-
-                $em->persist($sector);
-            }else{
-                if(!empty($data['name']))
-                    $sector->setName($data['name']);
-                if(!empty($data['id_place']))
-                    $sector->setPlace($em->getRepository('ServiceServiceBundle:Place')->find($data['id_place']));
-            }
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /add_sector/', 8);
-        }
-    }
-    public function addGroupAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            /** @var Group $group */
-            $group = $em->getRepository('ServiceServiceBundle:Group')->find($data['id']);
-            if(!$group) {
-
-                $group = new Group();
-                $group->setId($data['id']);
-                $group->setName($data['name']);
-                $group->setUrl($data['url']);
-                $group->setPresent($data['present']);
-                $imgUrl = $this->saveImage($data['image'], $data['id']);
-                $group->setImage($imgUrl);
-                $group->setSort($data['sort']);
-                $group->setPlace($em->getRepository('ServiceServiceBundle:Place')->find($data['id_place']));
-
-                $em->persist($group);
-            }else{
-                if(!empty($data['name']))
-                    $group->setName($data['name']);
-                if(!empty($data['sort']))
-                    $group->setSort($data['sort']);
-				if(!empty($data['present']))
-                    $group->setPresent($data['present']);
-                if(!empty($data['url']))
-                    $group->setUrl($data['url']);
-                if(!empty($data['image'])){
-                    $imgUrl = $this->saveImage($data['image'], $data['id']);
-                    $group->setImage($imgUrl);
-                }
-                if(!empty($data['id_place']))
-                    $group->setPlace($em->getRepository('ServiceServiceBundle:Place')->find($data['id_place']));
-            }
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /add_group/', 9);
-        }
-    }
-    public function addPositionAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            /** @var Position $position */
-            $position = $em->getRepository('ServiceServiceBundle:Position')->find($data['id']);
-            if(!$position){
-				
-                $position = new Position();
-                $position->setId($data['id']);
-                $position->setName($data['name']);
-				$position->setPresent($data['present']);
-                $position->setSort($data['sort']);
-                $position->setDescription($data['description']);
-				
-                $imgUrl = $this->saveImage($data['image'], $data['id']);
-
-                $position->setImage($imgUrl);
-                $position->setUrl($data['url']);
-                $position->setPrice($data['price']);
-                $position->setGroup($em->getRepository('ServiceServiceBundle:Group')->find($data['id_group']));
-
-                $em->persist($position);
-				
-            }else{
-                if(!empty($data['name']))
-                    $position->setName($data['name']);
-				if(!empty($data['present']))
-                    $position->setPresent($data['present']);
-                if(!empty($data['description']))
-                    $position->setDescription($data['description']);
-                if(!empty($data['price']))
-                    $position->setPrice($data['price']);
-                if(!empty($data['url']))
-                    $position->setUrl($data['url']);
-                if(!empty($data['image'])){
-					$this->deleteImage($position->getImage());
-                    $imgUrl = $this->saveImage($data['image'], $data['id']);
-                    $position->setImage($imgUrl);
-                }
-                if(!empty($data['sort']))
-                    $position->setSort($data['sort']);
-                if(!empty($data['id_group']))
-                    $position->setGroup($em->getRepository('ServiceServiceBundle:Group')->find($data['id_group']));
-            }
-
-
-            $em->flush();
-			
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /add_position/', 10);
-        }
-    }
-    public function addOrderAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            /** @var Order $order */
-            $order = $em->getRepository('ServiceServiceBundle:Order')->find($data['id']);
-            if(!$order) {
-
-                $order = new Order();
-                $order->setId($data['id']);
-                $order->setDate(new \DateTime($data['time']));
-                $order->setPlace($data['place']);
-                $order->setWorkday($em->getRepository('ServiceServiceBundle:WorkDay')->find($data['id_workday']));
-
-                $em->persist($order);
-            }else{
-                if(!empty($data['time']))
-                    $order->setDate(new \DateTime(date('Y-m-d H:i:s',$data['time'])));
-                if(!empty($data['place']))
-                    $order->setPlace($data['place']);
-                if(!empty($data['id_workday']))
-                    $order->setWorkday($em->getRepository('ServiceServiceBundle:WorkDay')->find($data['id_workday']));
-            }
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /add_order/', 11);
-        }
-    }
-
-    //todo ADD--UPDATE ACTIONS END ///////////////////
-
-    //todo WORKDAY ACTIONS ///////////////////
-
-    public function startWorkDayAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-			
-			$workday = $em->getRepository('ServiceServiceBundle:WorkDay')->findOneBy(array('closed' => null));
-			if($workday) throw new ServiceException('Method: /start_workday/ Workday already opened', 12);
-
-            $workday = new WorkDay();
-            $workday->setOpened(new \DateTime());
-			$workday->setLocked(1);
-			
-            $em->persist($workday);
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /start_workday/', 12);
-        }
-    }
-    public function closeWorkDayAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-            /** @var WorkDay $workday */
-            $workday = $em->getRepository('ServiceServiceBundle:WorkDay')->findOneBy(array('closed' => null));
-			if(!$workday) throw new ServiceException('Method: /close_workday/ No active workdays found', 201);
-
-
-            /** @var \Doctrine\Common\Collections\Collection $orders */
-            $orders = $workday->getOrders()->getValues();
-
-            foreach($orders as $order){
-                $orderPositions = $order->getPositionOrderContents();
-                foreach($orderPositions as $orderPosition){
-
-                    /** @var OrderContent $orderPosition */
-                    ($orderPosition);
-                    /** @var Position $position */
-                    $position = $orderPosition->getPosition();
-
-                    /** @var Archive $archive */
-                    $archive = new Archive();
-                    $archive->setIdWorkday($workday->getId());
-                    $archive->setPlace($order->getPlace());
-                    $archive->setPaymentId($order->getPaymentId());
-                    $archive->setDate($order->getDate());
-                    $archive->setAmount($orderPosition->getAmount());
-                    $archive->setIdOrder($order->getId());
-                    $archive->setIdPosition($position->getId());
-                    $archive->setSum($orderPosition->getSum());
-
-                    $em->persist($archive);
-                    $em->flush();
-
-                }
-
-            }
-
-            $workday->setClosed(new \DateTime());
-
-            $em->persist($workday);
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /close_workday/', 13);
-        }
-    }
-
-    //todo WORKDAY ACTIONS END ///////////////////
-
-
-    //todo GET ACTIONS ///////////////////
-
-    public function getGroupByIDAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $group = $em->getRepository('ServiceServiceBundle:Group')->find($data['id']);
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $group)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_group_by_id/', 14);
-        }
-    }
-    public function getPlaceByIDAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $place = $em->getRepository('ServiceServiceBundle:Place')->find($data['id']);
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $place)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_place_by_id/', 15);
-        }
-    }
-    public function getSectorByIDAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $sector = $em->getRepository('ServiceServiceBundle:Sector')->find($data['id']);
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $sector)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_sector_by_id/', 16);
-        }
-    }
-    public function getPositionByIDAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $position = $em->getRepository('ServiceServiceBundle:Position')->find($data['id']);
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $position)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_position_by_id/', 17);
-        }
-    }
-    public function getOrderByIDAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $order = $em->getRepository('ServiceServiceBundle:Order')->find($data['id']);
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $order)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_order_by_id/', 18);
-        }
-    }
-    public function getWorkDayByIDAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $workday = $em->getRepository('ServiceServiceBundle:WorkDay')->find($data['id']);
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $workday)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_workday_by_id/', 19);
-        }
-    }
-
-    //todo GET ACTIONS END ///////////////////
-
-    //todo NEW ORDER ///////////////////
-
-    public function newOrderAction(Request $request){
-        try {
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if ($errors !== false) if (!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $em = $this->getDoctrine()->getManager();
-
-            $order = new Order();
-            $order->setDate(new \DateTime(date('Y-m-d H:i:s', $data['time'])));
-            $order->setPlace($data['place']);
-            $order->setPaymentId($data['payment_id']);
-
-            $workday = $em->getRepository('ServiceServiceBundle:WorkDay')->findOneBy(array('closed' => null));
-            
-            if(!$workday) throw new ServiceException('Method: /new_order/ No active workdays found!', 200);
-            
-            $order->setWorkday($workday);
-
-            foreach ($data['positions'] as $key => $pos) {
-                $position = $em->getRepository('ServiceServiceBundle:Position')->find((int)$key);
-
-                $orderContent = new OrderContent();
-                $orderContent->setAmount($pos->amount);
-                $orderContent->setSum($pos->price * $pos->amount);
-                $orderContent->setPosition($position);
-                $orderContent->setOrder($order);
-
-                $order->addPositionOrderContent($orderContent);
-            }
-
-            $em->persist($order);
-            $em->flush();
-
-
-            if (!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /new_order/', 20);
-        }
-    }
-
-    //todo NEW ORDER END ///////////////////
-
-
-    //todo GET BY ACTIONS ///////////////////
-
-    public function getGroupsByPlaceAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-            $groups = $em->getRepository('ServiceServiceBundle:Group')->findBy(array('place' => $data['id']));
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $groups)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_groups_by_place/', 21);
-        }
-    }
-    public function getPositionsByGroupAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $positions =$em->getRepository('ServiceServiceBundle:Position')->findBy(array('group' => $data['id']));
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $positions)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_positions_by_group/', 22);
-        }
-    }
-    public function getSectorsByPlaceAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $sectors = $em->getRepository('ServiceServiceBundle:Sector')->findBy(array('place' => $data['id']));
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $sectors)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_sectors_by_place/', 23);
-        }
-    }
-    public function getOrdersByWorkDayAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $orders = $em->getRepository('ServiceServiceBundle:Order')->findBy(array('workday' => $data['id']));
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $orders)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_orders_by_workday/', 24);
-        }
-    }
-    public function getOrdersByTimeAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'time');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            $dateFrom = new \DateTime(date('Y-m-d H:i:s', $data['time']));
-            $orders = $em->getRepository('ServiceServiceBundle:Order')->getOrdersFromTime($dateFrom);
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $orders)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_orders_by_time/', 25);
-        }
-    }
-	public function getOrdersByIDAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            //$dateFrom = new \DateTime(date('Y-m-d H:i:s', $data['time']));
-			$id = (int)$data['id'];
-            $orders = $em->getRepository('ServiceServiceBundle:Order')->getOrdersFromId($id);
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $orders)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_orders_by_id/', 38);
-        }
-    }
-    public function getPositionsByOrderAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $errors = RequestParser::requestValidate($data, 'id');
-            if(!empty($errors)) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-            $em = $this->getDoctrine()->getManager();
-
-            /** @var Order $order */
-            $order = $em->getRepository('ServiceServiceBundle:Order')->find($data['id']);
-
-
-            /** @var  \Doctrine\Common\Collections\Collection $positionsRes */
-            $positionsRes = $order->getPositionOrderContents()->getValues();
-            $positions = array();
-            foreach($positionsRes as $orderPosition) {
-
-                /** @var Position $position */
-                $position = $orderPosition->getPosition();
-                $position->setOrderPrice($orderPosition->getSum());
-                $position->setOrderSum($orderPosition->getAmount());
-                $positions[] = $position;
-            }
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $positions, null, 'cut')
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_positions_by_order/', 26);
-        }
-    }
-    public function getCurrentWorkDayAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-            $workday = $em->getRepository('ServiceServiceBundle:WorkDay')->findOneBy(array('closed' => null));
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle(null, $workday)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_current_workday/', 27);
-        }
-    }
-
-    public function getArchiveByDayAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-
-            $data = RequestParser::parseRequest($request);
-            $em = $this->getDoctrine()->getManager();
-
-            $connection = $em->getConnection();
-            $statement = $connection->prepare("
-            SELECT *
-            FROM archive as a
-            WHERE DATE(a.date) = DATE('".date('Y-m-d H:i:s',$data['time'])."')
-        ");
-
-            $statement->execute();
-            $results = $statement->fetchAll();
-
-            $archives = array();
-            foreach($results as $result){
-                $ar = new Archive();
-                $ar->setId($result['id']);
-                $ar->setIdOrder($result['id_order']);
-                $ar->setDate(new \DateTime($result['date']));
-                $ar->setPlace($result['place']);
-                $ar->setIdPosition($result['id_position']);
-                $ar->setIdWorkday($result['id_workday']);
-                $ar->setSum($result['sum']);
-                $ar->setAmount($result['amount']);
-
-                $archives[] = $ar;
-
-            }
-
-            return $this->render('ServiceServiceBundle:Service:index.html.php', array(
-                'result' => OutputHandler::handle($data, $archives)
-            ));
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /get_archive_by_day/', 28);
-        }
-    }
-
-    //todo GET BY ACTIONS END ///////////////////
-
-
-    //todo DELETE ACTIONS ///////////////////
-
-
-    public function deleteSectorsAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-            $sectors = $em->getRepository('ServiceServiceBundle:Sector')->findAll();
-            foreach($sectors as $sector){
-                $em->remove($sector);
-            }
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /delete_sectors/', 29);
-        }
-    }
-
-    public function deletePlacesAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-            $places = $em->getRepository('ServiceServiceBundle:Place')->findAll();
-            foreach($places as $place){
-                $em->remove($place);
-            }
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /delete_places/', 30);
-        }
-    }
-
-    public function deleteGroupsAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-            $groups = $em->getRepository('ServiceServiceBundle:Group')->findAll();
-            foreach($groups as $group){
-                $em->remove($group);
-            }
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /delete_groups/', 31);
-        }
-    }
-
-    public function deletePositionsAction(Request $request){
-         try{
-			$errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-			if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-			$em = $this->getDoctrine()->getManager();
-			$positions = $em->getRepository('ServiceServiceBundle:Position')->findAll();
-
-			foreach($positions as $position){
-				$this->deleteImage($position->getImage());
-				$em->remove($position);
-			}
-			$em->flush();
-
-        if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-			throw new ServiceException('Method: /delete_positions/', 32);
-        }
-    }
-
-
-    //todo DELETE ACTIONS END ///////////////////
-
-
-
-    //todo ADD MULTIPLE ACTIONS ///////////////////
-
-
-    public function addPositionsAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $em = $this->getDoctrine()->getManager();
-
-            if(isset($data['id'])){
-                $tmp = $data;
-                $data = array($tmp);
-            }
-
-            foreach($data as $position){
-
-                /** @var Position $pos */
-                $pos = $em->getRepository('ServiceServiceBundle:Position')->find($position['id']);
-                if(!$pos){
-                    $pos = new Position();
-                    $pos->setId($position['id']);
-                    $pos->setName($position['name']);
-                    $pos->setSort($position['sort']);
-					$pos->setPresent($position['present']);
-                    $pos->setDescription($position['description']);
-
-                    $imgUrl = $this->saveImage($data['image'], $position['id']);
-
-                    $pos->setImage($imgUrl);
-                    $pos->setUrl($position['url']);
-                    $pos->setPrice($position['price']);
-                    $pos->setGroup($em->getRepository('ServiceServiceBundle:Group')->find($position['id_group']));
-
-                    $em->persist($pos);
-                }else{
-                    if(!empty($position['name']))
-                        $pos->setName($position['name']);
-                    if(!empty($position['sort']))
-                        $pos->setSort($position['sort']);
-					if(!empty($position['present']))
-                        $pos->setPresent($position['present']);
-                    if(!empty($position['description']))
-                        $pos->setDescription($position['description']);
-                    if(!empty($position['image'])){
-						$this->deleteImage($pos->getImage());
-                        $imgUrl = $this->saveImage($data['image'], $position['id']);
-                        $pos->setImage($imgUrl);
-                    }
-                    if(!empty($position['url']))
-                        $pos->setUrl($position['url']);
-                    if(!empty($position['price']))
-                        $pos->setPrice($position['price']);
-                    if(!empty($position['id_group']))
-                        $pos->setGroup($em->getRepository('ServiceServiceBundle:Group')->find($position['id_group']));
-
-                }
-
-            }
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /add_positions/', 33);
-        }
-    }
-
-    public function addGroupsAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $data = RequestParser::parseRequest($request);
-            $em = $this->getDoctrine()->getManager();
-
-            if(isset($data['id'])){
-                $tmp = $data;
-                $data = array($tmp);
-            }
-
-            foreach($data as $group){
-                /** @var Group $gr */
-                $gr = $em->getRepository('ServiceServiceBundle:Group')->find($group['id']);
-                if(!$gr){
-
-                    $gr = new Group();
-                    $gr->setId($group['id']);
-                    $gr->setName($group['name']);
-					$gr->setPresent($group['present']);
-                    $gr->setSort($group['sort']);
-                    $gr->setUrl($group['url']);
-                    $imgUrl = $this->saveImage($group['image'], $group['id']);
-                    $gr->setImage($imgUrl);
-                    $gr->setPlace($em->getRepository('ServiceServiceBundle:Group')->find($group['id_place']));
-
-                    $em->persist($gr);
-                }else{
-                    if(!empty($group['id']))
-                        $gr->setId($group['id']);
-					if(!empty($group['present']))
-                        $gr->setPresent($group['present']);
-                    if(!empty($group['name']))
-                        $gr->setName($group['name']);
-                    if(!empty($group['sort']))
-                        $gr->setSort($group['sort']);
-                    if(!empty($group['url']))
-                        $gr->setUrl($group['url']);
-                    if(!empty($group['image'])){
-                        $imgUrl = $this->saveImage($group['image'], $group['id']);
-                        $gr->setImage($imgUrl);
-                    }
-                    if(!empty($group['id_place']))
-                        $gr->setPlace($em->getRepository('ServiceServiceBundle:Group')->find($group['id_place']));
-
-                }
-
-            }
-            $em->flush();
-
-            if(!empty($data)) return $this->successMessage($data); else return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /add_groups/', 34);
-        }
-    }
-
-
-
-    //todo ADD MULTIPLE ACTIONS END ///////////////////
-	
-	public function lockWorkdayAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-			$workday = $em->getRepository('ServiceServiceBundle:WorkDay')->findOneBy(array('closed' => null));
-
-            if(!$workday) throw new ServiceException('Method: /lock_workday/ No active workday', 156);
-			$workday->setLocked(1);
-			$em->flush();
-
-            return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /lock_workday/', 157);
-        }
-    }
-	
-	public function unlockWorkdayAction(Request $request){
-        try{
-            $errors = RequestParser::checkVersion($request, $this->container->getParameter('service_service.versions.current'));
-            if($errors !== false) if(!empty($data)) return $this->errorsMessage($errors, $data); else return $this->errorsMessage($errors);
-
-            $em = $this->getDoctrine()->getManager();
-			$workday = $em->getRepository('ServiceServiceBundle:WorkDay')->findOneBy(array('closed' => null));
-
-            if(!$workday) throw new ServiceException('Method: /lock_workday/ No active workday', 156);
-			$workday->setLocked(0);
-			$em->flush();
-
-            return $this->successMessage();
-        }catch (\Exception $e){
-            throw new ServiceException('Method: /lock_workday/', 157);
-        }
-    }
-	
-	
-	
-	
 
 
 

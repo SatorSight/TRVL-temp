@@ -63,7 +63,10 @@ class User
      */
     private $id;
 
-
+    /**
+     * @ORM\OneToMany(targetEntity="UserFlight", mappedBy="user", cascade={"all"})
+     */
+    private $userFlights;
 
 
     /**
@@ -218,5 +221,46 @@ class User
     public function getId()
     {
         return $this->id;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->userFlights = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add userFlight
+     *
+     * @param \Service\ServiceBundle\Entity\UserFlight $userFlight
+     *
+     * @return User
+     */
+    public function addUserFlight(\Service\ServiceBundle\Entity\UserFlight $userFlight)
+    {
+        $this->userFlights[] = $userFlight;
+
+        return $this;
+    }
+
+    /**
+     * Remove userFlight
+     *
+     * @param \Service\ServiceBundle\Entity\UserFlight $userFlight
+     */
+    public function removeUserFlight(\Service\ServiceBundle\Entity\UserFlight $userFlight)
+    {
+        $this->userFlights->removeElement($userFlight);
+    }
+
+    /**
+     * Get userFlights
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUserFlights()
+    {
+        return $this->userFlights;
     }
 }

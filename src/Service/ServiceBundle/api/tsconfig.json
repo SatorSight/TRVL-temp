@@ -1,0 +1,21 @@
+{
+  "code": "SCE",
+  "name": "State College",
+  "coordinates": {
+    "lon": -77.84823,
+    "lat": 40.85372
+  },
+  "time_zone": "America/New_York",
+  "name_translations": {
+    "de": "State College",
+    "en": "State College",
+    "zh-CN": "大学城",
+    "tr": "State College",
+    "ru": "Стейт Колледж",
+    "it": "State College",
+    "es": "State College",
+    "fr": "State College",
+    "th": "สเตทคอลเลจ"
+  },
+  "country_code": "US"
+}
