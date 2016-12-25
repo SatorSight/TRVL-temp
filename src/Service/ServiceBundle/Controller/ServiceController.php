@@ -213,6 +213,7 @@ class ServiceController extends Controller
             $c['code'] = $city->getCode();
             $c['country_code'] = $city->getCountryCode();
             $c['name_ru'] = $city->getNameRu();
+            $c['country'] = $city->getCountry()->getRuName();
             $citiesArr[] = $c;
         }
 
