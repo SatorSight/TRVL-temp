@@ -3,6 +3,7 @@
 namespace Service\ServiceBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
+use Service\ServiceBundle\Entity\City;
 use Service\ServiceBundle\Entity\Flight;
 use Service\ServiceBundle\Entity\Repository\Messager;
 use Service\ServiceBundle\Entity\Repository\FlightRepository;
@@ -64,8 +65,12 @@ class ServiceController extends Controller
                     $return[] = $this->reloadData($requestData, $resCode);
                     break;
 
-                case 'registration':
-                    $return[] = $this->registration($requestData['id'], $requestData['token']);
+//                case 'registration':
+//                    $return[] = $this->registration($requestData['id'], $requestData['token']);
+//                    break;
+
+                case 'get_cities':
+                    $return[] = $this->getCities();
                     break;
 
 
@@ -192,6 +197,24 @@ class ServiceController extends Controller
 //        $em = $this->getDoctrine()->getManager();
 //        $airports = $em->getRepository('ServiceServiceBundle:AirportTest')->findAll();
 
+    }
+
+    public function getCities(){
+        $em = $this->getDoctrine()->getManager();
+        $cities = $em->getRepository('ServiceServiceBundle:City')->findAll();
+        $citiesArr = [];
+        /** @var City $city */
+        foreach($cities as $city){
+            $c = [];
+            $c['id'] = $city->getId();
+            $c['name'] = $city->getName();
+            $c['code'] = $city->getCode();
+            $c['country_code'] = $city->getCountryCode();
+            $c['name_ru'] = $city->getNameRu();
+            $citiesArr[] = $c;
+        }
+
+        return $citiesArr;
     }
 
     public function auth($requestData){
