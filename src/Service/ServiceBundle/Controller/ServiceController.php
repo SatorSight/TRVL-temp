@@ -42,7 +42,9 @@ class ServiceController extends Controller
         $requestData = RequestParser::parseRequest($request);
         $errors = RequestParser::checkApiKey($request, $this->container->getParameter('service_service.api_key'));
 
-        if($requestData['action'] != 'auth' && !$errors)
+        $noAuthActions = ['auth', 'get_cities'];
+
+        if(!in_array($requestData['action'], $noAuthActions) && !$errors)
             $errors = $this->checkToken($requestData) ? false : ['Token mismatch'];
 
         $return = [];
