@@ -430,7 +430,7 @@ class ServiceController extends Controller
     public function getFlightsFromData($requestData){
         $data = json_decode($requestData['data']);
         if(empty($data)) return ['Empty data'];
-        $data = (array)array_shift($data);
+        $data = (array)$data;
 
         $date = $data['date'];
         $from = strtoupper($data['from']);
