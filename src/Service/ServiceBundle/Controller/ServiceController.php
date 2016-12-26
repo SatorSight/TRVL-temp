@@ -91,6 +91,11 @@ class ServiceController extends Controller
                     $return[] = $this->addUserToFlight($requestData);
                     break;
 
+                case 'add_user_to_existing_flight':
+                    $return[] = $this->addUserToExistingFlight($requestData);
+                    break;
+
+
                 case 'get_flight_users':
                     $return[] = $this->getFlightUsers($requestData);
                     break;
@@ -467,6 +472,29 @@ class ServiceController extends Controller
         return $flights;
     }
 
+    public function addUserToExistingFlight($requestData){
+        $flightID = $requestData['flight_id'];
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+        /** @var Flight $flight */
+        $flight = $em->getRepository('ServiceServiceBundle:Flight')->findOneBy(['id' => $flightID]);
+
+        if(!$user || !$flight) return ['Wrong data'];
+
+        $userFlight = $em->getRepository('ServiceServiceBundle:UserFlight')->findOneBy(['user' => $user->getId(), 'flight' => $flight->getId()]);
+        if(!$userFlight) {
+            $userFlight = new UserFlight();
+            $userFlight->setFlight($flight);
+            $userFlight->setUser($user);
+            $em->persist($userFlight);
+            $em->flush();
+        }
+
+        return $userFlight;
+
+    }
 
     public function addUserToFlight($requestData){
 
