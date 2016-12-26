@@ -563,7 +563,10 @@ class ServiceController extends Controller
 
         $data = json_decode($requestData['data']);
         if(empty($data)) return ['Empty data'];
-        $data = (array)array_shift($data);
+
+        if(is_array($data))
+            $data = array_shift($data);
+        $data = (array)$data;
 
         $from = strtoupper($data['from']);
         $to = strtoupper($data['to']);
