@@ -649,24 +649,25 @@ class ServiceController extends Controller
         $returnFlights = [];
         
         foreach($flights as $flight){
-            $fl = [];
-            $fl['id'] = $flight->getId();
-            $fl['fromCode'] = $flight->getFromCode();
-            $fl['toCode'] = $flight->getToCode();
-            $fl['no'] = $flight->getNo();
-            $fl['airlineCode'] = $flight->getAirlineCode();
-            $fl['code'] = $flight->getCode();
-            $fl['from'] = $flight->getFrom();
-            $fl['from_city'] = $flight->getFromCity();
-            $fl['to'] = $flight->getTo();
-            $fl['to_city'] = $flight->getToCity();
-            $fl['fromDate'] = $flight->getFromDate()->format('Y-m-d');
-            $fl['fromTime'] = $flight->getFromDate()->format('H:i');
-            $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
-            $fl['toTime'] = $flight->getToDate()->format('H:i');
-            $fl['user_count'] = count($flight->getUserFlights());
-
-            $returnFlights[] = $fl;
+            if(count($flight->getUserFlights()) > 0) {
+                $fl = [];
+                $fl['id'] = $flight->getId();
+                $fl['fromCode'] = $flight->getFromCode();
+                $fl['toCode'] = $flight->getToCode();
+                $fl['no'] = $flight->getNo();
+                $fl['airlineCode'] = $flight->getAirlineCode();
+                $fl['code'] = $flight->getCode();
+                $fl['from'] = $flight->getFrom();
+                $fl['from_city'] = $flight->getFromCity();
+                $fl['to'] = $flight->getTo();
+                $fl['to_city'] = $flight->getToCity();
+                $fl['fromDate'] = $flight->getFromDate()->format('Y-m-d');
+                $fl['fromTime'] = $flight->getFromDate()->format('H:i');
+                $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
+                $fl['toTime'] = $flight->getToDate()->format('H:i');
+                $fl['user_count'] = count($flight->getUserFlights());
+                $returnFlights[] = $fl;
+            }
         }
 
         return $returnFlights;
