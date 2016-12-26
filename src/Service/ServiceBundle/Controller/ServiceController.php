@@ -237,6 +237,7 @@ class ServiceController extends Controller
             $fl['fromTime'] = $flight->getFromDate()->format('H:i');
             $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
             $fl['toTime'] = $flight->getToDate()->format('H:i');
+            $fl['user_count'] = count($flight->getUserFlights());
             $flights[] = $fl;
 
         }
@@ -663,6 +664,8 @@ class ServiceController extends Controller
             $fl['fromTime'] = $flight->getFromDate()->format('H:i');
             $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
             $fl['toTime'] = $flight->getToDate()->format('H:i');
+            $fl['user_count'] = count($flight->getUserFlights());
+
             $returnFlights[] = $fl;
         }
 
