@@ -8,7 +8,6 @@ use Doctrine\ORM\Mapping as ORM;
  * Flight
  *
  * @ORM\Table(name="flight")
- * @ORM\Entity
  * @ORM\Entity(repositoryClass="Service\ServiceBundle\Entity\Repository\FlightRepository")
  */
 class Flight
@@ -16,103 +15,103 @@ class Flight
     /**
      * @var integer
      *
-     * @ORM\Column(name="no", type="integer")
+     * @ORM\Column(name="no", type="integer", nullable=true)
      */
     private $no;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="from", type="string")
+     * @ORM\Column(name="from_hello", type="string", nullable=true)
      */
     private $from;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="to", type="string")
+     * @ORM\Column(name="to_hello", type="string", nullable=true)
      */
     private $to;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="airlineCode", type="string")
+     * @ORM\Column(name="airlineCode", type="string", nullable=true)
      */
     private $airlineCode;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="code", type="string")
+     * @ORM\Column(name="code", type="string", nullable=true)
      */
     private $code;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="from_code", type="string")
+     * @ORM\Column(name="from_code", type="string", nullable=true)
      */
     private $fromCode;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="from_airport", type="string")
+     * @ORM\Column(name="from_airport", type="string", nullable=true)
      */
     private $fromAirport;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="from_city", type="string")
+     * @ORM\Column(name="from_city", type="string", nullable=true)
      */
     private $fromCity;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="from_country", type="string")
+     * @ORM\Column(name="from_country", type="string", nullable=true)
      */
     private $fromCountry;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="to_code", type="string")
+     * @ORM\Column(name="to_code", type="string", nullable=true)
      */
     private $toCode;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="to_airport", type="string")
+     * @ORM\Column(name="to_airport", type="string", nullable=true)
      */
     private $toAirport;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="to_city", type="string")
+     * @ORM\Column(name="to_city", type="string", nullable=true)
      */
     private $toCity;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="to_country", type="string")
+     * @ORM\Column(name="to_country", type="string", nullable=true)
      */
     private $toCountry;
 
     /**
      * @var \DateTime
-     * @ORM\Column(name="from_date", type="datetime")
+     * @ORM\Column(name="from_date", type="datetime", nullable=true)
      */
     protected $fromDate;
 
     /**
      * @var \DateTime
-     * @ORM\Column(name="to_date", type="datetime")
+     * @ORM\Column(name="to_date", type="datetime", nullable=true)
      */
     protected $toDate;
 
