@@ -588,7 +588,9 @@ class ServiceController extends Controller
             $fl['airlineCode'] = $flight->getAirlineCode();
             $fl['code'] = $flight->getCode();
             $fl['from'] = $flight->getFrom();
+            $fl['from_city'] = $flight->getFromCity();
             $fl['to'] = $flight->getTo();
+            $fl['to_city'] = $flight->getToCity();
             $fl['fromDate'] = $flight->getFromDate()->format('Y-m-d');
             $fl['fromTime'] = $flight->getFromDate()->format('H:i');
             $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
