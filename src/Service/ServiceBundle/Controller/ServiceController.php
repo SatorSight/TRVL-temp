@@ -463,7 +463,7 @@ class ServiceController extends Controller
 
         $flightCodes = [];
         foreach($flights as $flight)
-            $flightCodes[] = $flight['airlineCode'].' '.$flight['no'];
+            $flightCodes[] = $flight['airlineCode'].$flight['no'];
         return $flightCodes;
     }
 
