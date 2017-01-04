@@ -69,6 +69,13 @@ class Profile
     private $city;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="image", type="string", nullable=true)
+     */
+    private $image;
+
+    /**
      * @var integer
      *
      * @ORM\Column(name="wanna_communicate", type="integer", nullable=true)
@@ -465,5 +472,29 @@ class Profile
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set image
+     *
+     * @param string $image
+     *
+     * @return Profile
+     */
+    public function setImage($image)
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    /**
+     * Get image
+     *
+     * @return string
+     */
+    public function getImage()
+    {
+        return $this->image;
     }
 }

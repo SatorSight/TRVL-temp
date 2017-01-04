@@ -63,6 +63,14 @@ class ServiceController extends Controller
                     $return[] = $this->saveProfile($requestData);
                     break;
 
+                case 'save_profile_image':
+                    $return[] = $this->saveProfileImage($requestData);
+                    break;
+
+                case 'get_profile_image':
+                    $return[] = $this->getProfileImage($requestData);
+                    break;
+
                 case 'reload_data':
                     $return[] = $this->reloadData($requestData, $resCode);
                     break;
@@ -435,9 +443,59 @@ class ServiceController extends Controller
             'findCompanion' => $userProfile->getFindCompanion(),
             'findCouple' => $userProfile->getFindCouple(),
             'findFriends' => $userProfile->getFindFriends(),
-            'orientation' => $userProfile->getOrientation()
+            'orientation' => $userProfile->getOrientation(),
+            'image' => $userProfile->getImage()
         ];
     }
+
+
+    public function saveProfileImage($requestData){
+        $img = '/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQIBAQICAgICAgICAwUDAwMDAwYEBAMFBwYHBwcGBwcICQsJCAgKCAcHCg0KCgsMDAwMBwkODw0MDgsMDAz/2wBDAQICAgMDAwYDAwYMCAcIDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAz/wAARCAAcADUDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD9/KK+EP8Agpl/wXz+HP8AwSp/ax8DfDn4keEPGc2i+MtFOsSeKNMhSW20/NxJAsflMVaUqYy8mxtyK8RCOXwPb/8Ah7F+yz/0ct8AP/Dh6R/8kUAfQFFfNvjH/gsb+yf4F8LX+sXv7SPwSntNNhaeWPT/ABlYajdOq8kR29vLJNK3okaMx7A18G/Fv/g7ItvHX7QGreBf2Wf2evG/7TcGm6Uuof2xorahaOQRGJJBp406W58iKSaONpJPKy5wOGR2AP0z/bR/a98H/sF/sxeLPi149fUU8KeDoIprwWFv9oupWlnjt4o40JUF3mljQbmVQWyWABI+U/8Ag3G/4KGfFD/gpj+wz4l+InxWGnHWbfx1qGk6bJY6f9igewS2s5owoHDhJJ5o9/JIiAYlgxP5+fEP9kf/AIKQf8F+PGPhTTPjfps37NXwK1fTJRqNvpmYbWZone4ge+0ObUftk9w1xHbqBP5aRCNZFUMP3n7j/swfA+3/AGZP2afh58NrO/m1W0+HvhnTfDUF7NGI5LxLK1itllZQSFZhGGIBwCaAO5ooooA8o/bH/Yf+Fn/BQH4RJ4E+L3hK38Y+For+LVIrOS8ubNobqJXVJUlt5I5UYLJIvyuMq7A5BIr5X/4hcf2FP+iG/wDl5+IP/k6vv+igD4A/4hcf2FP+iG/+Xn4g/wDk6vqz9nb9h74N/sj7m+GHws8AeArmWyj0+e80PQbazvLyBMbUnuEQSzcqCTIzEt8xJPNep0UAFFFFABRRRQB//9k=';
+
+        //$img = $requestData['image'];
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+        $userProfile = $user->getProfile();
+
+        $link = $this->saveImage($img, $userProfile->getId());
+        $userProfile->setImage($link);
+        $em->flush();
+
+        return [
+            'last_visit' => $userProfile->getLastVisit(),
+            'name' => $userProfile->getName(),
+            'age' => $userProfile->getAge(),
+            'sex' => $userProfile->getSex(),
+            'city' => $userProfile->getCity(),
+            'appearance' => $userProfile->getAppearance(),
+            'aboutMe' => $userProfile->getAbout(),
+            'wannaCommunicate' => $userProfile->getWannaCommunicate(),
+            'findCompanion' => $userProfile->getFindCompanion(),
+            'findCouple' => $userProfile->getFindCouple(),
+            'findFriends' => $userProfile->getFindFriends(),
+            'orientation' => $userProfile->getOrientation(),
+            'image' => $userProfile->getImage()
+        ];
+
+    }
+
+    public function getProfileImage($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+        $userProfile = $user->getProfile();
+
+        $imgPath = $userProfile->getImage();
+        $data = file_get_contents($_SERVER['DOCUMENT_ROOT'].$imgPath);
+        $base64 = base64_encode($data);
+
+        return $base64;
+    }
+
 
     public function getFlightDetails($requestData){
 
@@ -611,13 +669,15 @@ class ServiceController extends Controller
             /** @var Profile $profile */
             $profile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
 
-            $usr = [];
-            $usr['id'] = $user->getId();
-            $usr['name'] = $profile->getName();
-            $usr['age'] = $profile->getAge();
-            $usr['city'] = $profile->getCity();
+            if($profile) {
+                $usr = [];
+                $usr['id'] = $user->getId();
+                $usr['name'] = $profile->getName();
+                $usr['age'] = $profile->getAge();
+                $usr['city'] = $profile->getCity();
 
-            $returnUsers[] = $usr;
+                $returnUsers[] = $usr;
+            }
 
         }
         return $returnUsers;
@@ -875,24 +935,23 @@ class ServiceController extends Controller
     }
 
     public function saveImage($image, $id, $alterPath = null, $originalName = false){
+
 		if($alterPath !== null) $imgUploadPath = $alterPath;
 		else
 			$imgUploadPath = $this->container->getParameter('service_service.image.url');
         try {
-			$image = str_replace(' ', '+', $image);
+            $image = str_replace(' ', '+', $image);
 			$imgDecoded = base64_decode($image);
-		
+
             $imgInfo = getimagesizefromstring($imgDecoded);
-		
+
 			if(strpos($imgInfo['mime'], 'jpeg') !== false || strpos($imgInfo['mime'], 'jpg') !== false)
 				$imgExt = '.jpg';
 			elseif(strpos($imgInfo['mime'], 'png') !== false)
 				$imgExt = '.png';
 			else
 				$imgExt = '.img';
-			
 			$imgName = md5($id.time());
-			$imgUrl = $_SERVER['DOCUMENT_ROOT'].$imgUploadPath.$imgName.$imgExt;
 			$imgLink = $imgUploadPath.$imgName.$imgExt;
 			
 			if($originalName !== false)
@@ -900,9 +959,9 @@ class ServiceController extends Controller
 			else
 				$imgUrl = $_SERVER['DOCUMENT_ROOT'].$imgUploadPath.$imgName.$imgExt;
 			
-			$a = file_put_contents($imgUrl, $imgDecoded);
+			file_put_contents($imgUrl, $imgDecoded);
 		
-		}catch (Exception $e){
+		}catch (\Exception $e){
             throw new ServiceException('Method: /add_position/ Failed to save image', 100);
         }
         return $imgLink;

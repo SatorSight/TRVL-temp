@@ -68,6 +68,12 @@ class User
      */
     private $userFlights;
 
+    /**
+     * @ORM\OneToOne(targetEntity="Profile", orphanRemoval=true)
+     * @ORM\JoinColumn(name="profile_id", referencedColumnName="id")
+     */
+    private $profile;
+
 
     /**
      * Set token
@@ -262,5 +268,29 @@ class User
     public function getUserFlights()
     {
         return $this->userFlights;
+    }
+
+    /**
+     * Set profile
+     *
+     * @param \Service\ServiceBundle\Entity\Profile $profile
+     *
+     * @return User
+     */
+    public function setProfile(\Service\ServiceBundle\Entity\Profile $profile = null)
+    {
+        $this->profile = $profile;
+
+        return $this;
+    }
+
+    /**
+     * Get profile
+     *
+     * @return \Service\ServiceBundle\Entity\Profile
+     */
+    public function getProfile()
+    {
+        return $this->profile;
     }
 }
