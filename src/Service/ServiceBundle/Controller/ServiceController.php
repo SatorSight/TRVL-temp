@@ -490,7 +490,7 @@ class ServiceController extends Controller
         $userProfile = $user->getProfile();
 
         $imgPath = $userProfile->getImage();
-        $data = file_get_contents($_SERVER['DOCUMENT_ROOT'].$imgPath);
+        $data = file_get_contents($imgPath);
         $base64 = base64_encode($data);
 
         return $base64;
