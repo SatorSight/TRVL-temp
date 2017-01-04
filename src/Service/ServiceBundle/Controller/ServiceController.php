@@ -489,6 +489,9 @@ class ServiceController extends Controller
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
         $userProfile = $user->getProfile();
 
+        if(!$userProfile || empty($userProfile->getImage()))
+            return ['Profile or image not found'];
+
         $imgPath = $userProfile->getImage();
         $data = file_get_contents($imgPath);
         $base64 = base64_encode($data);
