@@ -955,9 +955,9 @@ class ServiceController extends Controller
 			$imgLink = $imgUploadPath.$imgName.$imgExt;
 			
 			if($originalName !== false)
-				$imgUrl = $_SERVER['DOCUMENT_ROOT'].$imgUploadPath.$originalName.$imgExt;
+				$imgUrl = $imgUploadPath.$originalName.$imgExt;
 			else
-				$imgUrl = $_SERVER['DOCUMENT_ROOT'].$imgUploadPath.$imgName.$imgExt;
+				$imgUrl = $imgUploadPath.$imgName.$imgExt;
 			
 			file_put_contents($imgUrl, $imgDecoded);
 		
