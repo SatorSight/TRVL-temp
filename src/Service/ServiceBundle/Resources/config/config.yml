@@ -2,4 +2,4 @@ parameters:
       service_service.api_key: 123
       service_service.ok_app_key: CBADGFHLEBABABABA
       service_service.ok_app_secret_key: F0E47DD9BB65C81A2BE6C24A
-      service_service.image.url: \..\web\images\
+      service_service.image.url: /../web/images/
