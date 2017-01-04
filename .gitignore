@@ -7,3 +7,4 @@
 /app/bootstrap.php.cache
 /composer.lock
 /web/images/
+/src/Service/ServiceBundle/Resources/config/config.yml
