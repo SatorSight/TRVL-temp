@@ -758,6 +758,9 @@ class ServiceController extends Controller
         $user->setToken($requestData['token']);
         $user->setAppType($requestData['app_type']);
         $user->setBanned(false);
+
+        $user->setProfile(new Profile());
+
         $em->persist($user);
         $em->flush();
 
