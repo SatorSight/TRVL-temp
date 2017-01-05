@@ -317,7 +317,8 @@ class ServiceController extends Controller
             'findCouple' => $userProfile->getFindCouple(),
             'findFriends' => $userProfile->getFindFriends(),
             'free' => $userProfile->getFree(),
-            'orientation' => $userProfile->getOrientation()
+            'orientation' => $userProfile->getOrientation(),
+            'ava' => $this->getProfileImage($requestData)
         ];
     }
 
@@ -465,7 +466,7 @@ class ServiceController extends Controller
         $oldImage = $userProfile->getImage();
         if(!empty($oldImage))
             unlink($oldImage);
-        
+
         $userProfile->setImage($link);
         $em->flush();
 
