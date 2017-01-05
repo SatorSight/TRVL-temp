@@ -759,15 +759,17 @@ class ServiceController extends Controller
         $user->setAppType($requestData['app_type']);
         $user->setBanned(false);
 
+        $em->persist($user);
+        $em->flush();
+
         $userProfile = new Profile();
         $userProfile->setUserId($user->getId());
         $em->persist($userProfile);
         $em->flush();
 
-        //$user->setProfile($userProfile);
-
-        $em->persist($user);
+        $user->setProfile($userProfile);
         $em->flush();
+
 
         return ['message' => 'user registered', 'init_credentials' => 1, 'data' => ['id' => $user->getId(), 'token' => $user->getToken(), 'app_type' => $user->getAppType()]];
 
