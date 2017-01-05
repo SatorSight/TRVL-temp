@@ -764,6 +764,7 @@ class ServiceController extends Controller
 
         $userProfile = new Profile();
         $userProfile->setUserId($user->getId());
+        $userProfile->setLastVisit(new \DateTime());
         $em->persist($userProfile);
         $em->flush();
 
