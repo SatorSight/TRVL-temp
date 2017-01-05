@@ -496,7 +496,7 @@ class ServiceController extends Controller
         $userProfile = $user->getProfile();
 
         if(!$userProfile || empty($userProfile->getImage()))
-            return ['Profile or image not found'];
+            return null;
 
         $imgPath = $userProfile->getImage();
         $data = file_get_contents($imgPath);
