@@ -461,6 +461,11 @@ class ServiceController extends Controller
         $userProfile = $user->getProfile();
 
         $link = $this->saveImage($img, $userProfile->getId());
+
+        $oldImage = $userProfile->getImage();
+        if(!empty($oldImage))
+            unlink($oldImage);
+        
         $userProfile->setImage($link);
         $em->flush();
 
