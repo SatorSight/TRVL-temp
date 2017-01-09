@@ -547,7 +547,8 @@ class ServiceController extends Controller
         $code = strtoupper(str_replace(' ','',trim($requestData['code'])));
         if(empty($code)) return ['Flight not found'];
         $flights = $this->getFlightsFromData($requestData);
-        if(empty($flights) || array_shift($flights) == 'Empty data') return ['Flight not found'];
+
+        if(empty($flights) || $flights[key($flights)] == 'Empty data') return ['Flight not found'];
 
         foreach($flights as $flight)
             if($flight['code'] == $code)
