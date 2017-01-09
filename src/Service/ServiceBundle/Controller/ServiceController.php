@@ -315,8 +315,7 @@ class ServiceController extends Controller
                         'token' => $user->getToken(),
                         'app_type' => $user->getAppType(),
                         'chat_id' => $user->getChatId(),
-                        'chat_pass' => $user->getChatPass(),
-                        'chat_login' => $user->getId().$user->getAppType()
+                        'chat_pass' => $user->getChatPass()
                     ]
                 ];
             else return ['Failed to authorize'];
