@@ -718,6 +718,7 @@ class ServiceController extends Controller
                 $usr['name'] = $profile->getName();
                 $usr['age'] = $profile->getAge();
                 $usr['city'] = $profile->getCity();
+                $usr['chat_id'] = $user->getChatId();
 
                 $returnUsers[] = $usr;
             }
@@ -791,7 +792,7 @@ class ServiceController extends Controller
         $user->setAppId($requestData['id']);
         $user->setToken($requestData['token']);
         $user->setAppType($requestData['app_type']);
-        $user->setChatPass(substr(md5($user->getAppId().$user->getAppType()),0,7));
+        $user->setChatPass(substr(md5($user->getAppId().$user->getAppType()),0,12));
         $user->setBanned(false);
 
         $em->persist($user);
