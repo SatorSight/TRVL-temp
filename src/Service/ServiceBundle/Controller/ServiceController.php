@@ -230,9 +230,7 @@ class ServiceController extends Controller
         /** @var User $user */
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
         $chatId = (int)$requestData['chat_id'];
-        $chatPass = substr(md5($user->getAppId().$user->getAppType()),0,7);
         $user->setChatId($chatId);
-        $user->setChatPass($chatPass);
 
         $em->flush();
 
@@ -794,6 +792,7 @@ class ServiceController extends Controller
         $user->setAppId($requestData['id']);
         $user->setToken($requestData['token']);
         $user->setAppType($requestData['app_type']);
+        $user->setChatPass(substr(md5($user->getAppId().$user->getAppType()),0,7));
         $user->setBanned(false);
 
         $em->persist($user);
@@ -809,7 +808,13 @@ class ServiceController extends Controller
         $em->flush();
 
 
-        return ['message' => 'user registered', 'init_credentials' => 1, 'data' => ['id' => $user->getId(), 'token' => $user->getToken(), 'app_type' => $user->getAppType()]];
+        return ['message' => 'user registered', 'init_credentials' => 1,
+            'data' => [
+                'id' => $user->getId(),
+                'token' => $user->getToken(),
+                'app_type' => $user->getAppType(),
+                'chat_pass' => $user->getChatPass()
+            ]];
 
         //todo В старом апи какая-то ерунда с паролями и смсками, нужно переделать через социалки
     }
