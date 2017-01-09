@@ -541,6 +541,26 @@ class ServiceController extends Controller
         return $base64;
     }
 
+    public function getUserImage($id){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => $id]);
+
+        if(!$user) return null;
+
+        $userProfile = $user->getProfile();
+
+        if(!$userProfile || empty($userProfile->getImage()))
+            return null;
+
+        $imgPath = $userProfile->getImage();
+        $data = file_get_contents($imgPath);
+        $base64 = base64_encode($data);
+
+        return $base64;
+    }
+
 
     public function getFlightDetails($requestData){
 
@@ -722,6 +742,7 @@ class ServiceController extends Controller
                 $usr['age'] = $profile->getAge();
                 $usr['city'] = $profile->getCity();
                 $usr['chat_id'] = $user->getChatId();
+                $usr['ava'] = $this->getUserImage($user->getId());
 
                 $returnUsers[] = $usr;
             }
