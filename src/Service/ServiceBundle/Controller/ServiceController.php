@@ -352,6 +352,8 @@ class ServiceController extends Controller
             'findFriends' => $userProfile->getFindFriends(),
             'free' => $userProfile->getFree(),
             'orientation' => $userProfile->getOrientation(),
+            'chat_id' => $user->getChatId(),
+            'chat_pass' => $user->getChatPass(),
             'ava' => $this->getProfileImage($requestData)
         ];
     }
