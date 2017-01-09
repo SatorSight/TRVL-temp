@@ -118,7 +118,9 @@ class ServiceController extends Controller
                 //////////////////////////////FLIGHTS INTERACTIONS END//////////////////////////////
 
 
-
+                case 'chat_register':
+                    $return[] = $this->chatRegister($requestData);
+                    break;
 
 
 
@@ -218,6 +220,31 @@ class ServiceController extends Controller
 
     }
 
+
+
+
+
+    public function chatRegister($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+        $chatId = (int)$requestData['chat_id'];
+        $chatPass = substr(md5($user->getAppId().$user->getAppType()),0,7);
+        $user->setChatId($chatId);
+        $user->setChatPass($chatPass);
+
+        $em->flush();
+
+        return [
+            'log' => $user->getAppId().$user->getAppType(),
+            'pass' => $user->getChatPass(),
+            'id' => $user->getChatId()
+        ];
+    }
+
+
+
     public function getUserFlights($requestData){
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
@@ -275,6 +302,7 @@ class ServiceController extends Controller
     }
 
     public function auth($requestData){
+        /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
@@ -283,7 +311,16 @@ class ServiceController extends Controller
             return $this->registration($requestData);
         else{
             if($this->authToken($user, $requestData, $em))
-                return ['message' => 'user authenticated', 'data' => ['id' => $user->getId(), 'token' => $user->getToken(), 'app_type' => $user->getAppType()]];
+                return ['message' => 'user authenticated', 'data' =>
+                    [
+                        'id' => $user->getId(),
+                        'token' => $user->getToken(),
+                        'app_type' => $user->getAppType(),
+                        'chat_id' => $user->getChatId(),
+                        'chat_pass' => $user->getChatPass(),
+                        'chat_login' => $user->getId().$user->getAppType()
+                    ]
+                ];
             else return ['Failed to authorize'];
         }
     }

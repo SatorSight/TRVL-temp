@@ -13,6 +13,18 @@ use Doctrine\ORM\Mapping as ORM;
 class User
 {
     /**
+     * @var integer
+     *
+     * @ORM\Column(name="chat_id", type="integer", nullable=true)
+     */
+    private $chatId;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="chat_pass", type="string", nullable=true)
+     */
+    private $chatPass;
+    /**
      * @var string
      *
      * @ORM\Column(name="token", type="string", nullable=false)
@@ -292,5 +304,53 @@ class User
     public function getProfile()
     {
         return $this->profile;
+    }
+
+    /**
+     * Set chatId
+     *
+     * @param integer $chatId
+     *
+     * @return User
+     */
+    public function setChatId($chatId)
+    {
+        $this->chatId = $chatId;
+
+        return $this;
+    }
+
+    /**
+     * Get chatId
+     *
+     * @return integer
+     */
+    public function getChatId()
+    {
+        return $this->chatId;
+    }
+
+    /**
+     * Set chatPass
+     *
+     * @param string $chatPass
+     *
+     * @return User
+     */
+    public function setChatPass($chatPass)
+    {
+        $this->chatPass = $chatPass;
+
+        return $this;
+    }
+
+    /**
+     * Get chatPass
+     *
+     * @return string
+     */
+    public function getChatPass()
+    {
+        return $this->chatPass;
     }
 }
