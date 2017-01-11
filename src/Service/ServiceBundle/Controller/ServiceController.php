@@ -122,7 +122,9 @@ class ServiceController extends Controller
                     $return[] = $this->chatRegister($requestData);
                     break;
 
-
+                case 'get_user_profile':
+                    $return[] = $this->getUserProfile($requestData);
+                    break;
 
 
 
@@ -238,6 +240,33 @@ class ServiceController extends Controller
             'log' => $user->getAppId().$user->getAppType(),
             'pass' => $user->getChatPass(),
             'id' => $user->getChatId()
+        ];
+    }
+
+    public function getUserProfile($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => (int)$requestData['id']]);
+        $userProfile = $user->getProfile();
+
+        return [
+            'userID' => $user->getAppId(),
+            'name' => $userProfile->getName(),
+            'age' => $userProfile->getAge(),
+            'sex' => $userProfile->getSex(),
+            'city' => $userProfile->getCity(),
+            'appearance' => $userProfile->getAppearance(),
+            'aboutMe' => $userProfile->getAbout(),
+            'wannaCommunicate' => $userProfile->getWannaCommunicate(),
+            'findCompanion' => $userProfile->getFindCompanion(),
+            'findCouple' => $userProfile->getFindCouple(),
+            'findFriends' => $userProfile->getFindFriends(),
+            'free' => $userProfile->getFree(),
+            'orientation' => $userProfile->getOrientation(),
+            'chat_id' => $user->getChatId(),
+            'chat_pass' => $user->getChatPass(),
+            'ava' => $this->getUserImage($requestData['id'])
         ];
     }
 
