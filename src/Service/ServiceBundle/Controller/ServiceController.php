@@ -248,7 +248,9 @@ class ServiceController extends Controller
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => (int)$requestData['user_id']]);
+        if(!$user) return ['User not found'];
         $userProfile = $user->getProfile();
+        if(!$userProfile) return ['User profile not found'];
 
         return [
             'userID' => $user->getAppId(),
