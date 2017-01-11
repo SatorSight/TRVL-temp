@@ -247,7 +247,7 @@ class ServiceController extends Controller
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         /** @var User $user */
-        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => (int)$requestData['id']]);
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => (int)$requestData['user_id']]);
         $userProfile = $user->getProfile();
 
         return [
@@ -266,7 +266,7 @@ class ServiceController extends Controller
             'orientation' => $userProfile->getOrientation(),
             'chat_id' => $user->getChatId(),
             'chat_pass' => $user->getChatPass(),
-            'ava' => $this->getUserImage($requestData['id'])
+            'ava' => $this->getUserImage($requestData['user_id'])
         ];
     }
 
