@@ -91,6 +91,10 @@ class ServiceController extends Controller
                     $return[] = $this->getFlightCodesFromData($requestData);
                     break;
 
+                case 'get_flight_codes_with_date':
+                    $return[] = $this->getFlightCodesWithDateFromData($requestData);
+                    break;
+
                 case 'get_user_flights':
                     $return[] = $this->getUserFlights($requestData);
                     break;
@@ -619,6 +623,23 @@ class ServiceController extends Controller
         $flightCodes = [];
         foreach($flights as $flight)
             $flightCodes[] = $flight['airlineCode'].$flight['no'];
+        return $flightCodes;
+    }
+
+
+    /**
+     * @param $requestData
+     * @return array
+     */
+    public function getFlightCodesWithDateFromData($requestData){
+        $flights = $this->getFlightsFromData($requestData);
+        $flightCodes = [];
+        foreach($flights as $flight){
+            $fl = [];
+            $fl['code'] = $flight['airlineCode'] . $flight['no'];
+            $fl['time'] =  substr($flight['fromTime'], 0, strrpos($flight['fromTime'], ':'));
+            $flightCodes[] = $fl;
+        }
         return $flightCodes;
     }
 
