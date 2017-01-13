@@ -75,6 +75,10 @@ class ServiceController extends Controller
                     $return[] = $this->reloadData($requestData, $resCode);
                     break;
 
+                case 'users_profiles':
+                    $return[] = $this->getUsersProfiles($requestData);
+                    break;
+
 //                case 'registration':
 //                    $return[] = $this->registration($requestData['id'], $requestData['token']);
 //                    break;
@@ -274,6 +278,31 @@ class ServiceController extends Controller
             'chat_pass' => $user->getChatPass(),
             'ava' => $this->getUserImage($requestData['user_id'])
         ];
+    }
+
+    public function getUsersProfiles($requestData){
+        $userIDs = $requestData['user_ids'];
+        $userIDsArr = explode(',',$userIDs);
+        foreach($userIDsArr as $key => $idArr)
+            if(empty($idArr))
+                unset($userIDsArr[$key]);
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+        /** @var User[] $users */
+        $users = $em->getRepository('ServiceServiceBundle:User')->findBy(['chatId' => $userIDsArr]);
+
+        $profilesArr = [];
+        foreach($users as $user){
+            $userProfile = $user->getProfile();
+            $pr = [];
+            $pr['name'] = $userProfile->getName();
+            $pr['age'] = $userProfile->getAge();
+            $pr['ava'] = $this->getUserImage($user->getId());
+            $profilesArr[] = $pr;
+        }
+        return $profilesArr;
     }
 
 
