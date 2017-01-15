@@ -300,6 +300,7 @@ class ServiceController extends Controller
             $pr['name'] = $userProfile->getName();
             $pr['age'] = $userProfile->getAge();
             $pr['ava'] = $this->getUserImage($user->getId());
+            $pr['chat_id'] = $user->getChatId();
             $profilesArr[] = $pr;
         }
         return $profilesArr;
