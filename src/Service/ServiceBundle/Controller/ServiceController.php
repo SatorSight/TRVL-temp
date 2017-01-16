@@ -266,9 +266,12 @@ class ServiceController extends Controller
 
     public function sendFeedback($requestData){
 
+        $data = json_decode($requestData['data']);
+
+        //todo mail to admin maybe or save to db or both...
         //mail();
 
-        return 'ok';
+        return $data;
 
     }
 
