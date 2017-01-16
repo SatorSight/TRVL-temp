@@ -5,6 +5,7 @@ namespace Service\ServiceBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use Service\ServiceBundle\Entity\City;
 use Service\ServiceBundle\Entity\Flight;
+use Service\ServiceBundle\Entity\Like;
 use Service\ServiceBundle\Entity\Repository\Messager;
 use Service\ServiceBundle\Entity\Repository\FlightRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -78,6 +79,34 @@ class ServiceController extends Controller
                 case 'users_profiles':
                     $return[] = $this->getUsersProfiles($requestData);
                     break;
+
+
+
+                case 'like_user':
+                    $return[] = $this->likeUser($requestData);
+                    break;
+
+                case 'get_who_liked_me':
+                    $return[] = $this->getWhoLikedMe($requestData);
+                    break;
+
+                case 'get_who_i_liked':
+                    $return[] = $this->getWhoILiked($requestData);
+                    break;
+
+                case 'get_user_liked_count_by_id':
+                    $return[] = $this->getLikedCountByID($requestData);
+                    break;
+
+                case 'get_liked_count_me':
+                    $return[] = $this->getLikedCountMe($requestData);
+                    break;
+
+                case 'get_mutual_likes':
+                    $return[] = $this->getMutualLikes($requestData);
+                    break;
+
+
 
 //                case 'registration':
 //                    $return[] = $this->registration($requestData['id'], $requestData['token']);
@@ -232,6 +261,132 @@ class ServiceController extends Controller
 
 
 
+    public function likeUser($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+        $targetUserID = $requestData['user_to'];
+        $targetUser = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => $targetUserID]);
+
+        $like = new Like();
+        $like->setUserFrom($user);
+        $like->setUserTo($targetUser);
+        $like->setCreated(new \DateTime());
+
+        $em->persist($like);
+        $em->flush();
+
+        return true;
+    }
+
+    public function getLikedCountByID($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => $requestData['user_id']]);
+
+        /** @var Like[] $likes */
+        $likes = $em->getRepository('ServiceServiceBundle:Like')->findBy(['user_to' => $user->getId()]);
+        $count = 0;
+        foreach($likes as $like)
+            $count++;
+        return ['count' => $count];
+
+    }
+
+    public function getLikedCountMe($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+
+        /** @var Like[] $likes */
+        $likes = $em->getRepository('ServiceServiceBundle:Like')->findBy(['user_to' => $user->getId()]);
+        $count = 0;
+        foreach($likes as $like)
+            $count++;
+        return ['count' => $count];
+
+    }
+
+    public function getMutualLikes($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+
+        /** @var Like[] $likesToMe */
+        $likesToMe = $em->getRepository('ServiceServiceBundle:Like')->findBy(['user_to' => $user->getId()]);
+
+        /** @var Like[] $likesFromMe */
+        $likesFromMe = $em->getRepository('ServiceServiceBundle:Like')->findBy(['user_from' => $user->getId()]);
+
+        $mutualLikesArr = [];
+
+        foreach($likesFromMe as $like){
+            foreach($likesToMe as $likeToMe){
+                if($like->getUserTo()->getId() == $likeToMe->getUserFrom()->getId()){
+                    $ml = [];
+                    $ml['uid'] = $like->getUserTo()->getId();
+                    $ml['date'] = $like->getCreated()->format('Y-m-d H:i:s');
+                    $ml['name'] = $like->getUserTo()->getProfile()->getName();
+                    $ml['chat_id'] = $like->getUserTo()->getChatId();
+                    $ml['ava'] = $this->getUserImage($like->getUserTo()->getId());
+
+                    $mutualLikesArr[] = $ml;
+                }
+            }
+        }
+
+        return ['mutual' => $mutualLikesArr];
+    }
+
+    /**
+     * @param $requestData
+     */
+    public function getWhoLikedMe($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+
+        /** @var Like[] $likes */
+        $likes = $em->getRepository('ServiceServiceBundle:Like')->findBy(['user_to' => $user->getId()]);
+
+        $result = [];
+
+        /** @var Like $like */
+        foreach($likes as $like) {
+            $data = [];
+            $data['uid'] = $like->getUserFrom()->getId();
+            $data['ava'] = $this->getUserImage($like->getUserFrom()->getId());
+            $data['date'] = $like->getCreated()->format('Y-m-d H:i:s');
+            $data['chat_id'] = $like->getUserTo()->getChatId();
+
+            $result[] = $data;
+        }
+
+        return $result;
+
+    }
+
+    public function getWhoILiked($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+        /** @var Like[] $likes */
+        $likes = $em->getRepository('ServiceServiceBundle:Like')->findBy(['user_from' => $user->getId()]);
+
+        $userIDArr = [];
+
+        /** @var Like $like */
+        foreach($likes as $like)
+            $userIDArr[] = $like->getUserTo()->getId();
+
+        return $userIDArr;
+    }
 
 
     public function chatRegister($requestData){

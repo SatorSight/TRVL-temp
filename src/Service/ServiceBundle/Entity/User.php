@@ -81,6 +81,16 @@ class User
     private $userFlights;
 
     /**
+     * @ORM\OneToMany(targetEntity="Like", mappedBy="user", cascade={"all"})
+     */
+    private $like_from;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Like", mappedBy="user", cascade={"all"})
+     */
+    private $like_to;
+
+    /**
      * @ORM\OneToOne(targetEntity="Profile", orphanRemoval=true)
      * @ORM\JoinColumn(name="profile_id", referencedColumnName="id")
      */
@@ -352,5 +362,73 @@ class User
     public function getChatPass()
     {
         return $this->chatPass;
+    }
+
+    /**
+     * Add likeFrom
+     *
+     * @param \Service\ServiceBundle\Entity\Like $likeFrom
+     *
+     * @return User
+     */
+    public function addLikeFrom(\Service\ServiceBundle\Entity\Like $likeFrom)
+    {
+        $this->like_from[] = $likeFrom;
+
+        return $this;
+    }
+
+    /**
+     * Remove likeFrom
+     *
+     * @param \Service\ServiceBundle\Entity\Like $likeFrom
+     */
+    public function removeLikeFrom(\Service\ServiceBundle\Entity\Like $likeFrom)
+    {
+        $this->like_from->removeElement($likeFrom);
+    }
+
+    /**
+     * Get likeFrom
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getLikeFrom()
+    {
+        return $this->like_from;
+    }
+
+    /**
+     * Add likeTo
+     *
+     * @param \Service\ServiceBundle\Entity\Like $likeTo
+     *
+     * @return User
+     */
+    public function addLikeTo(\Service\ServiceBundle\Entity\Like $likeTo)
+    {
+        $this->like_to[] = $likeTo;
+
+        return $this;
+    }
+
+    /**
+     * Remove likeTo
+     *
+     * @param \Service\ServiceBundle\Entity\Like $likeTo
+     */
+    public function removeLikeTo(\Service\ServiceBundle\Entity\Like $likeTo)
+    {
+        $this->like_to->removeElement($likeTo);
+    }
+
+    /**
+     * Get likeTo
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getLikeTo()
+    {
+        return $this->like_to;
     }
 }
