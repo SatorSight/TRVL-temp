@@ -971,6 +971,10 @@ class ServiceController extends Controller
         $em = $this->getDoctrine()->getManager();
         /** @var Flight $flight */
         $flight = $em->getRepository('ServiceServiceBundle:Flight')->findOneBy(['id' => $requestData['flight_id']]);
+        /** @var User $currentUser */
+        $currentUser = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+
+
         if(!$flight) return [];
         $userFlights = $flight->getUserFlights();
         $flightUserIDs = [];
@@ -985,19 +989,21 @@ class ServiceController extends Controller
 
         /** @var User $user */
         foreach($users as $user){
-            /** @var Profile $profile */
-            $profile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
+            if($user->getId() != $currentUser->getId()) {
+                /** @var Profile $profile */
+                $profile = $em->getRepository('ServiceServiceBundle:Profile')->findOneBy(['userId' => $user->getId()]);
 
-            if($profile) {
-                $usr = [];
-                $usr['id'] = $user->getId();
-                $usr['name'] = $profile->getName();
-                $usr['age'] = $profile->getAge();
-                $usr['city'] = $profile->getCity();
-                $usr['chat_id'] = $user->getChatId();
-                $usr['ava'] = $this->getUserImage($user->getId());
+                if ($profile) {
+                    $usr = [];
+                    $usr['id'] = $user->getId();
+                    $usr['name'] = $profile->getName();
+                    $usr['age'] = $profile->getAge();
+                    $usr['city'] = $profile->getCity();
+                    $usr['chat_id'] = $user->getChatId();
+                    $usr['ava'] = $this->getUserImage($user->getId());
 
-                $returnUsers[] = $usr;
+                    $returnUsers[] = $usr;
+                }
             }
 
         }
