@@ -1041,19 +1041,19 @@ class ServiceController extends Controller
         foreach($flights as $flight){
             if(count($flight->getUserFlights()) > 0) {
 
-                $break = false;
-                /** @var UserFlight[] $userFlights */
-                $userFlights = $em->getRepository('ServiceServiceBundle:UserFlight')->findBy(['flight' => $flight->getId()]);
-                if(count($userFlights) == 0) break;
-
-                if(count($userFlights) == 1){
-                    /** @var UserFlight $uFl */
-                    $uFl = array_shift($userFlights);
-                    if($uFl->getUser()->getId() == $currentUser->getId())
-                    $break = true;
-                }
-
-                if($break) break;
+//                $break = false;
+//                /** @var UserFlight[] $userFlights */
+//                $userFlights = $em->getRepository('ServiceServiceBundle:UserFlight')->findBy(['flight' => $flight->getId()]);
+//                if(count($userFlights) == 0) break;
+//
+//                if(count($userFlights) == 1){
+//                    /** @var UserFlight $uFl */
+//                    $uFl = array_shift($userFlights);
+//                    if($uFl->getUser()->getId() == $currentUser->getId())
+//                    $break = true;
+//                }
+//
+//                if($break) break;
 
                 $fl = [];
                 $fl['id'] = $flight->getId();
