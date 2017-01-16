@@ -417,6 +417,7 @@ class ServiceController extends Controller
 
         return [
             'userID' => $user->getAppId(),
+            'id' => $user->getId(),
             'name' => $userProfile->getName(),
             'age' => $userProfile->getAge(),
             'sex' => $userProfile->getSex(),
