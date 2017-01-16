@@ -339,7 +339,7 @@ class ServiceController extends Controller
             }
         }
 
-        return ['mutual' => $mutualLikesArr];
+        return $mutualLikesArr;
     }
 
     /**
