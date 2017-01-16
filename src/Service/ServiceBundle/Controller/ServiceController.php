@@ -1031,12 +1031,30 @@ class ServiceController extends Controller
         /** @var Flight $flight */
         $flights = $em->getRepository('ServiceServiceBundle:Flight')->getFlightsByDateAndDir($from, $to, new \DateTime($data['date']));
 
+        /** @var User $currentUser */
+        $currentUser = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+
         if(empty($flights)) return [];
 
         $returnFlights = [];
         
         foreach($flights as $flight){
             if(count($flight->getUserFlights()) > 0) {
+
+                $break = false;
+                /** @var UserFlight[] $userFlights */
+                $userFlights = $em->getRepository('ServiceServiceBundle:UserFlight')->findBy(['flight' => $flight->getId()]);
+                if(count($userFlights) == 0) break;
+
+                if(count($userFlights) == 1){
+                    /** @var UserFlight $uFl */
+                    $uFl = array_shift($userFlights);
+                    if($uFl->getUser()->getId() == $currentUser->getId())
+                    $break = true;
+                }
+
+                if($break) break;
+
                 $fl = [];
                 $fl['id'] = $flight->getId();
                 $fl['fromCode'] = $flight->getFromCode();
