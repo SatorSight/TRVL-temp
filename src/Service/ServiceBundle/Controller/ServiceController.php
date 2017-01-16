@@ -518,7 +518,7 @@ class ServiceController extends Controller
 
     public function getCities(){
         $em = $this->getDoctrine()->getManager();
-        $cities = $em->getRepository('ServiceServiceBundle:City')->findAll();
+        $cities = $em->getRepository('ServiceServiceBundle:City')->findBy([], ['name_ru' => 'asc']);
         $citiesArr = [];
         /** @var City $city */
         foreach($cities as $city){
