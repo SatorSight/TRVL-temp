@@ -164,6 +164,10 @@ class ServiceController extends Controller
                     break;
 
 
+                case 'send_feedback':
+                    $return[] = $this->sendFeedback($requestData);
+                    break;
+
 
 
 
@@ -259,6 +263,14 @@ class ServiceController extends Controller
 
     }
 
+
+    public function sendFeedback($requestData){
+
+        //mail();
+
+        return 'ok';
+
+    }
 
 
     public function likeUser($requestData){
