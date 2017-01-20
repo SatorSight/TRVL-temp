@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Service\ServiceBundle\Entity\City;
 use Service\ServiceBundle\Entity\Flight;
 use Service\ServiceBundle\Entity\Like;
+use Service\ServiceBundle\Entity\Photo;
 use Service\ServiceBundle\Entity\Repository\Messager;
 use Service\ServiceBundle\Entity\Repository\FlightRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -104,6 +105,25 @@ class ServiceController extends Controller
 
                 case 'get_mutual_likes':
                     $return[] = $this->getMutualLikes($requestData);
+                    break;
+
+
+                //photos
+
+                case 'get_my_photos':
+                    $return[] = $this->getMyPhotos($requestData);
+                    break;
+
+                case 'get_user_photos':
+                    $return[] = $this->getUserPhotos($requestData);
+                    break;
+
+                case 'save_photo':
+                    $return[] = $this->savePhoto($requestData);
+                    break;
+
+                case 'get_user_photo_by_id':
+                    $return[] = $this->getUserPhotoByID($requestData);
                     break;
 
 
@@ -261,6 +281,74 @@ class ServiceController extends Controller
 //        $em = $this->getDoctrine()->getManager();
 //        $airports = $em->getRepository('ServiceServiceBundle:AirportTest')->findAll();
 
+    }
+
+
+    public function getMyPhotos($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+        
+        $photosArr = [];
+        /** @var Photo $photo */
+        foreach($user->getPhotos() as $photo)
+            $photosArr[] = $photo->getId();
+
+        return $photosArr;
+    }
+
+    public function getUserPhotos($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => $requestData['user_id']]);
+
+        $photosArr = [];
+        /** @var Photo $photo */
+        foreach($user->getPhotos() as $photo)
+            $photosArr[] = $photo->getId();
+
+        return $photosArr;
+    }
+
+    public function savePhoto($requestData){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
+
+        $p = $user->getPhotos()->count();
+        $img = $requestData['image'];
+        $link = $this->saveImage($img, $user->getProfile()->getId().$p);
+
+        $photo  = new Photo();
+        $photo->setImage($link);
+        $photo->setUploaded(new \DateTime());
+        $photo->setUser($user);
+        $em->persist($photo);
+        $em->flush();
+
+        return [
+            'id' => $photo->getId(),
+            'link' => $photo->getImage(),
+            'uploaded' => $photo->getUploaded()
+        ];
+
+    }
+
+    public function getUserPhotoByID($requestData){
+        $id = (int)$requestData['photo_id'];
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var Photo $photo */
+        $photo = $em->getRepository('ServiceServiceBundle:Photo')->findOneBy(['id' => $id]);
+
+        return [
+            'id' => $photo->getId(),
+            'link' => $photo->getImage(),
+            'uploaded' => $photo->getUploaded()
+        ];
     }
 
 
@@ -486,6 +574,8 @@ class ServiceController extends Controller
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
 
         $userFlights = $user->getUserFlights();
+
+        //todo sort novyi vverh
 
         $flights = [];
         /** @var UserFlight $userFlight */

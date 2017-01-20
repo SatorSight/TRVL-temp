@@ -96,6 +96,11 @@ class User
      */
     private $profile;
 
+    /**
+     * @ORM\OneToMany(targetEntity="Photo", mappedBy="user", cascade={"all"})
+     */
+    private $photos;
+
 
     /**
      * Set token
@@ -430,5 +435,39 @@ class User
     public function getLikeTo()
     {
         return $this->like_to;
+    }
+
+    /**
+     * Add photo
+     *
+     * @param \Service\ServiceBundle\Entity\Photo $photo
+     *
+     * @return User
+     */
+    public function addPhoto(\Service\ServiceBundle\Entity\Photo $photo)
+    {
+        $this->photos[] = $photo;
+
+        return $this;
+    }
+
+    /**
+     * Remove photo
+     *
+     * @param \Service\ServiceBundle\Entity\Photo $photo
+     */
+    public function removePhoto(\Service\ServiceBundle\Entity\Photo $photo)
+    {
+        $this->photos->removeElement($photo);
+    }
+
+    /**
+     * Get photos
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getPhotos()
+    {
+        return $this->photos;
     }
 }
