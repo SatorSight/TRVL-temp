@@ -345,7 +345,7 @@ class ServiceController extends Controller
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         /** @var Photo $photo */
-        $photo = $em->getRepository('ServiceServiceBundle:Photo')->findOneBy(['photo_id' => $id]);
+        $photo = $em->getRepository('ServiceServiceBundle:Photo')->findOneBy(['id' => $id]);
 
         return [
             'id' => $photo->getId(),
