@@ -129,4 +129,28 @@ class Photo
     {
         return $this->user;
     }
+
+    /**
+     * Set description
+     *
+     * @param string $description
+     *
+     * @return Photo
+     */
+    public function setDescription($description)
+    {
+        $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Get description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 }

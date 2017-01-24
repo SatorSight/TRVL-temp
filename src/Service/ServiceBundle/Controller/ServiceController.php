@@ -322,8 +322,11 @@ class ServiceController extends Controller
         $img = $requestData['image'];
         $link = $this->saveImage($img, $user->getProfile()->getId().$p);
 
+        $description = $requestData['description'];
+
         $photo  = new Photo();
         $photo->setImage($link);
+        $photo->setDescription($description);
         $photo->setUploaded(new \DateTime());
         $photo->setUser($user);
         $em->persist($photo);
@@ -347,6 +350,7 @@ class ServiceController extends Controller
         return [
             'id' => $photo->getId(),
             'link' => $photo->getImage(),
+            'description' => $photo->getDescription(),
             'uploaded' => $photo->getUploaded()
         ];
     }
