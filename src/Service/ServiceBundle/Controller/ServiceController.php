@@ -126,6 +126,9 @@ class ServiceController extends Controller
                     $return[] = $this->getUserPhotoByID($requestData);
                     break;
 
+                case 'get_user_photo_contents':
+                    $return[] = $this->getUserPhotoContentsByURL($requestData);
+                    break;
 
 
 //                case 'registration':
@@ -886,6 +889,22 @@ class ServiceController extends Controller
 
         $imgPath = $userProfile->getImage();
         $data = file_get_contents($imgPath);
+        $base64 = base64_encode($data);
+
+        return $base64;
+    }
+
+    public function getUserPhotoContentsByURL($requestData){
+
+        $url = $requestData['url'];
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var Photo $image */
+        $image = $em->getRepository('ServiceServiceBundle:Photo')->findOneBy(['image' => $url]);
+
+        if(!$image) return ['Image not found'];
+
+        $data = file_get_contents($url);
         $base64 = base64_encode($data);
 
         return $base64;
