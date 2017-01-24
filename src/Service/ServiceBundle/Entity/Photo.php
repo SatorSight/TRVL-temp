@@ -29,6 +29,13 @@ class Photo
     private $image;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="description", type="string", nullable=true)
+     */
+    private $description;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="uploaded", type="datetime", nullable=true)
