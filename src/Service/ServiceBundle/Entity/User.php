@@ -98,7 +98,7 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity="Photo", mappedBy="user", cascade={"all"})
-     * @ORM\OrderBy({"uploaded" = "ASC"})
+     * @ORM\OrderBy({"uploaded" = "DESC"})
      */
     private $photos;
 
