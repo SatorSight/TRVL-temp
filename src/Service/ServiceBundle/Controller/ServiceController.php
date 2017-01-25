@@ -338,6 +338,7 @@ class ServiceController extends Controller
         return [
             'id' => $photo->getId(),
             'link' => $photo->getImage(),
+            'description' => $photo->getDescription(),
             'uploaded' => $photo->getUploaded()->format('Y-m-d H:i:s')
         ];
 
