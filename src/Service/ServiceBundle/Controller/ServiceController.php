@@ -399,15 +399,26 @@ class ServiceController extends Controller
         $targetUserID = $requestData['user_to'];
         $targetUser = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => $targetUserID]);
 
-        $like = new Like();
-        $like->setUserFrom($user);
-        $like->setUserTo($targetUser);
-        $like->setCreated(new \DateTime());
+        $likeExists = $em->getRepository('ServiceServiceBundle:Like')->findOneBy(['user_from' => $user->getId(), 'user_to' => $targetUser->getId()]);
 
-        $em->persist($like);
-        $em->flush();
+        $return = 'liked';
+        if($likeExists){
+            $em->remove($likeExists);
+            $em->flush();
+            $return = 'unliked';
+        }else{
 
-        return true;
+
+            $like = new Like();
+            $like->setUserFrom($user);
+            $like->setUserTo($targetUser);
+            $like->setCreated(new \DateTime());
+
+            $em->persist($like);
+            $em->flush();
+        }
+
+        return $return;
     }
 
     public function getLikedCountByID($requestData){
