@@ -639,6 +639,12 @@ class ServiceController extends Controller
 
         }
 
+        usort($flights,function($a,$b){
+            if ($a['id'] == $b['id'])
+                return 0;
+            return ($a['id'] < $b['id']) ? 1 : -1;
+        });
+
         return $flights;
 
 
