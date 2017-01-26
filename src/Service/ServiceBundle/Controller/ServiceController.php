@@ -130,6 +130,9 @@ class ServiceController extends Controller
                     $return[] = $this->getUserPhotoContentsByURL($requestData);
                     break;
 
+                case 'get_user_ok_photos':
+                    $return[] = $this->getUserOKPhotos($requestData);
+                    break;
 
 //                case 'registration':
 //                    $return[] = $this->registration($requestData['id'], $requestData['token']);
@@ -284,6 +287,22 @@ class ServiceController extends Controller
 //        $em = $this->getDoctrine()->getManager();
 //        $airports = $em->getRepository('ServiceServiceBundle:AirportTest')->findAll();
 
+    }
+
+    public function getUserOKPhotos($requestData){
+        $token = $requestData['token'];
+        $app_key = $this->container->getParameter('service_service.ok_app_key');
+        $app_secret_key = $this->container->getParameter('service_service.ok_app_secret_key');
+        $sig = md5($token.$app_secret_key);
+        $sig = md5('application_key='.$app_key.'format=jsonmethod=photos.getPhotosuid='.$requestData['id'].''.$app_secret_key);
+        $ok_response = file_get_contents('https://api.ok.ru/fb.do?application_key='.$app_key.'&format=json&method=photos.getPhotos&uid='.$requestData['id'].'&sig='.$sig);
+        $ok_response_decoded = (array)json_decode($ok_response);
+
+        $links = [];
+        foreach($ok_response_decoded['photos'] as $obj){
+            $links[] = $obj->pic640x480;
+        }
+        return $links;
     }
 
 
