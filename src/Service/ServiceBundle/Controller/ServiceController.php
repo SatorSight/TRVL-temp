@@ -1019,8 +1019,6 @@ class ServiceController extends Controller
         if(empty($data)) return ['Empty data'];
         $data = (array)$data;
 
-       // SUtils::trace($data);
-
         $date = $data['date'];
         $from = strtoupper($data['from']);
         $to = strtoupper($data['to']);
@@ -1030,126 +1028,122 @@ class ServiceController extends Controller
         $response = json_decode(file_get_contents($apiQuery));
 
 
-        $yandexQuery = 'https://api.rasp.yandex.net/v1.0/search/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&from='.$from.'&to='.$to.'&lang=ru&[date='.$date.'&transport_types=plane&system=iata';
-        $yaResponse = json_decode(file_get_contents($yandexQuery));
-
-//        SUtils::dump($yaResponse);
+//        $yandexQuery = 'https://api.rasp.yandex.net/v1.0/search/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&from='.$from.'&to='.$to.'&lang=ru&[date='.$date.'&transport_types=plane&system=iata';
+//        $yaResponse = json_decode(file_get_contents($yandexQuery));
 //
-//        SUtils::dump($response);
-
-
-        $yaFlights = [];
-        foreach($yaResponse->threads as $key => $thread){
-
-
-            $no = str_replace(' ','',str_replace($thread->carrier->codes->iata,'',$thread->number));
-
-
-            $station = $thread->from->code;
-            $yandexAirportQuery = 'https://api.rasp.yandex.net/v1.0/schedule/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&station='.$station.'&lang=ru&date='.$date.'&transport_types=plane&show_systems=iata';
-            SUtils::dump($yandexAirportQuery);
-            $resp = file_get_contents($yandexAirportQuery);
-            SUtils::dump($resp);
-
-            $fromCode = $resp->station->codes->iata;
-
-            $station = $thread->to->code;
-            $yandexAirportQuery = 'https://api.rasp.yandex.net/v1.0/schedule/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&station='.$station.'&lang=ru&date='.$date.'&transport_types=plane&show_systems=iata';
-            SUtils::dump($yandexAirportQuery);
-            $resp = file_get_contents($yandexAirportQuery);
-            SUtils::dump($resp);
-
-            $toCode = $resp->station->codes->iata;
-
-
-            $fromCity = $thread->title;
-            $fromCity = substr($fromCity,0,strpos($fromCity,'-'));
-            $fromCity = str_replace(' ','',$fromCity);
-            $fromCity = str_replace('-','',$fromCity);
-
-            $toCity = $thread->title;
-            $toCity = substr($toCity,0,strpos($toCity,'-'));
-            $toCity = str_replace(' ','',$toCity);
-            $toCity = str_replace('-','',$toCity);
-
-            /** @var EntityManager $em */
-            $em = $this->getDoctrine()->getManager();
-
-
-            /** @var City $fromCityObj */
-            $fromCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['name_ru' => $fromCity]);
-            if($fromCityObj)
-                $fromCityCountry = $fromCityObj->getCountry()->getRuName();
-            else
-                $fromCityCountry = '';
-
-            /** @var City $toCityObj */
-            $toCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['name_ru' => $toCity]);
-            if($toCityObj)
-                $toCityCountry = $toCityObj->getCountry()->getRuName();
-            else
-                $toCityCountry = '';
-
-
-//            SUtils::trace(json_decode($resp));
-
-            $fromObj = new \stdClass();
-            $toObj = new \stdClass();
-
-
-            $fromObj->code = $fromCode;
-            $fromObj->airport = $thread->from->title;
-            $fromObj->city = $fromCity;
-            $fromObj->country = $fromCityCountry;
-
-            $toObj->code = $toCode;
-            $toObj->airport = $thread->to->title;
-            $toObj->city = $toCity;
-            $toObj->country = $toCityCountry;
-
-
-
-            $fromTime = $thread->departure;
-            $toTime = $thread->arrival;
-
-            $fromDate = $date;
-
-            $time = new \DateTime($fromTime);
-            $time2 = new \DateTime($toTime);
-
-            if($time > $time2 || $time == $time2) {
-
-                $toDateObj = date_create_from_format('Y-m-d', $date);
-                $timeStamp = $toDateObj->getTimestamp();
-                $newDate = date('Y-m-d', strtotime('+1 day', $timeStamp));
-                $toDateObj = $newDate;
-            }else {
-                $toDateObj = date_create_from_format('Y-m-d', $date);
-            }
-
-            $toDate = $toDateObj->format('Y-m-d');
-
-
-//            foreach($data->segments as $key2 => $segment){
-//            foreach($thread as $key3 => $flight){
-            $fl = [];
-            $fl['fromCode'] = $from;
-            $fl['toCode'] = $to;
-            $fl['no'] = $no;
-            $fl['airlineCode'] = $thread->carrier->codes->iata;
-            $fl['code'] = str_replace(' ','',$thread->thread->number);
-            $fl['from'] = $fromObj;
-            $fl['to'] = $toObj;
-            $fl['fromDate'] = $fromDate;
-            $fl['fromTime'] = $fromTime;
-            $fl['toDate'] = $toDate;
-            $fl['toTime'] = $toTime;
-            $yaFlights[] = $fl;
+//
+//        $yaFlights = [];
+//        foreach($yaResponse->threads as $key => $thread){
+//
+//
+//            $no = str_replace(' ','',str_replace($thread->carrier->codes->iata,'',$thread->number));
+//
+//
+//            $station = $thread->from->code;
+//            $yandexAirportQuery = 'https://api.rasp.yandex.net/v1.0/schedule/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&station='.$station.'&lang=ru&date='.$date.'&transport_types=plane&show_systems=iata';
+//            SUtils::dump($yandexAirportQuery);
+//            $resp = file_get_contents($yandexAirportQuery);
+//            SUtils::dump($resp);
+//
+//            $fromCode = $resp->station->codes->iata;
+//
+//            $station = $thread->to->code;
+//            $yandexAirportQuery = 'https://api.rasp.yandex.net/v1.0/schedule/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&station='.$station.'&lang=ru&date='.$date.'&transport_types=plane&show_systems=iata';
+//            SUtils::dump($yandexAirportQuery);
+//            $resp = file_get_contents($yandexAirportQuery);
+//            SUtils::dump($resp);
+//
+//            $toCode = $resp->station->codes->iata;
+//
+//
+//            $fromCity = $thread->title;
+//            $fromCity = substr($fromCity,0,strpos($fromCity,'-'));
+//            $fromCity = str_replace(' ','',$fromCity);
+//            $fromCity = str_replace('-','',$fromCity);
+//
+//            $toCity = $thread->title;
+//            $toCity = substr($toCity,0,strpos($toCity,'-'));
+//            $toCity = str_replace(' ','',$toCity);
+//            $toCity = str_replace('-','',$toCity);
+//
+//            /** @var EntityManager $em */
+//            $em = $this->getDoctrine()->getManager();
+//
+//
+//            /** @var City $fromCityObj */
+//            $fromCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['name_ru' => $fromCity]);
+//            if($fromCityObj)
+//                $fromCityCountry = $fromCityObj->getCountry()->getRuName();
+//            else
+//                $fromCityCountry = '';
+//
+//            /** @var City $toCityObj */
+//            $toCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['name_ru' => $toCity]);
+//            if($toCityObj)
+//                $toCityCountry = $toCityObj->getCountry()->getRuName();
+//            else
+//                $toCityCountry = '';
+//
+//
+////            SUtils::trace(json_decode($resp));
+//
+//            $fromObj = new \stdClass();
+//            $toObj = new \stdClass();
+//
+//
+//            $fromObj->code = $fromCode;
+//            $fromObj->airport = $thread->from->title;
+//            $fromObj->city = $fromCity;
+//            $fromObj->country = $fromCityCountry;
+//
+//            $toObj->code = $toCode;
+//            $toObj->airport = $thread->to->title;
+//            $toObj->city = $toCity;
+//            $toObj->country = $toCityCountry;
+//
+//
+//
+//            $fromTime = $thread->departure;
+//            $toTime = $thread->arrival;
+//
+//            $fromDate = $date;
+//
+//            $time = new \DateTime($fromTime);
+//            $time2 = new \DateTime($toTime);
+//
+//            if($time > $time2 || $time == $time2) {
+//
+//                $toDateObj = date_create_from_format('Y-m-d', $date);
+//                $timeStamp = $toDateObj->getTimestamp();
+//                $newDate = date('Y-m-d', strtotime('+1 day', $timeStamp));
+//                $toDateObj = $newDate;
+//            }else {
+//                $toDateObj = date_create_from_format('Y-m-d', $date);
 //            }
-//            }
-        }
-
-        SUtils::trace($yaFlights);
+//
+//            $toDate = $toDateObj->format('Y-m-d');
+//
+//
+////            foreach($data->segments as $key2 => $segment){
+////            foreach($thread as $key3 => $flight){
+//            $fl = [];
+//            $fl['fromCode'] = $from;
+//            $fl['toCode'] = $to;
+//            $fl['no'] = $no;
+//            $fl['airlineCode'] = $thread->carrier->codes->iata;
+//            $fl['code'] = str_replace(' ','',$thread->thread->number);
+//            $fl['from'] = $fromObj;
+//            $fl['to'] = $toObj;
+//            $fl['fromDate'] = $fromDate;
+//            $fl['fromTime'] = $fromTime;
+//            $fl['toDate'] = $toDate;
+//            $fl['toTime'] = $toTime;
+//            $yaFlights[] = $fl;
+////            }
+////            }
+//        }
+//
+//        SUtils::trace($yaFlights);
 
 
         $flights = [];
@@ -1174,7 +1168,7 @@ class ServiceController extends Controller
         }
 
 
-        SUtils::trace($flights);
+//        SUtils::trace($flights);
 
         return $flights;
     }
