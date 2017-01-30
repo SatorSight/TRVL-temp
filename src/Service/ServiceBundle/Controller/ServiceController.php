@@ -1061,7 +1061,7 @@ class ServiceController extends Controller
         $to = strtoupper($data['to']);
 
 
-        $yandexQuery = 'https://api.rasp.yandex.net/v1.0/search/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&from='.$from.'&to='.$to.'&lang=ru&[date='.$date.'&transport_types=train&system=iata';
+        $yandexQuery = 'https://api.rasp.yandex.net/v1.0/search/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&from='.$from.'&to='.$to.'&lang=ru&date='.$date.'&transport_types=train&system=iata';
         $yaResponse = json_decode(file_get_contents($yandexQuery));
 
 
