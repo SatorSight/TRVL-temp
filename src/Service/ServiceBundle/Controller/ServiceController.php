@@ -1546,6 +1546,7 @@ class ServiceController extends Controller
 
                 $fl = [];
                 $fl['id'] = $flight->getId();
+                $fl['type'] = $flight->getType() ? 'train' : 'plane';
                 $fl['fromCode'] = $flight->getFromCode();
                 $fl['toCode'] = $flight->getToCode();
                 $fl['no'] = $flight->getNo();
