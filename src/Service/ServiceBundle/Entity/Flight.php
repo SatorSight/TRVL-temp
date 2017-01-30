@@ -15,6 +15,14 @@ class Flight
     /**
      * @var integer
      *
+     * @ORM\Column(name="type", type="integer", nullable=true)
+     * 0 - plane
+     * 1 - train
+     */
+    private $type;
+    /**
+     * @var integer
+     *
      * @ORM\Column(name="no", type="integer", nullable=true)
      */
     private $no;
@@ -539,5 +547,29 @@ class Flight
     public function getTo()
     {
         return $this->to;
+    }
+
+    /**
+     * Set type
+     *
+     * @param integer $type
+     *
+     * @return Flight
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
+     * Get type
+     *
+     * @return integer
+     */
+    public function getType()
+    {
+        return $this->type;
     }
 }

@@ -60,7 +60,7 @@ class ServiceController extends Controller
 
 
                 case 'test':
-                    $return[] = $this->getFlightsFromData($requestData);
+                    $return[] = $this->getTrainsFromData($requestData);
                     break;
 
                 case 'auth':
@@ -627,6 +627,7 @@ class ServiceController extends Controller
             $flight = $userFlight->getFlight();
             $fl = [];
             $fl['id'] = $flight->getId();
+            $fl['type'] = $flight->getType() == 0 ? 'plane' : 'train';
             $fl['fromCode'] = $flight->getFromCode();
             $fl['toCode'] = $flight->getToCode();
             $fl['no'] = $flight->getNo();
@@ -958,7 +959,17 @@ class ServiceController extends Controller
 
         $code = strtoupper(str_replace(' ','',trim($requestData['code'])));
         if(empty($code)) return ['Flight not found'];
-        $flights = $this->getFlightsFromData($requestData);
+
+
+        $data = json_decode($requestData['data']);
+        if(empty($data)) return ['Empty data'];
+        $data = (array)$data;
+        if($data['type'] == 'plane')
+            $flights = $this->getFlightsFromData($requestData);
+        else
+            $flights = $this->getTrainsFromData($requestData);
+
+//        $flights = $this->getFlightsFromData($requestData);
 
         if(empty($flights) || $flights[key($flights)] == 'Empty data') return ['Flight not found'];
 
@@ -975,7 +986,14 @@ class ServiceController extends Controller
      * @return array
      */
     public function getFlightCodesFromData($requestData){
-        $flights = $this->getFlightsFromData($requestData);
+
+        $data = json_decode($requestData['data']);
+        if(empty($data)) return ['Empty data'];
+        $data = (array)$data;
+        if($data['type'] == 'plane')
+            $flights = $this->getFlightsFromData($requestData);
+        else
+            $flights = $this->getTrainsFromData($requestData);
 
         $flightCodes = [];
         foreach($flights as $flight)
@@ -989,7 +1007,14 @@ class ServiceController extends Controller
      * @return array
      */
     public function getFlightCodesWithDateFromData($requestData){
-        $flights = $this->getFlightsFromData($requestData);
+
+        $data = json_decode($requestData['data']);
+        if(empty($data)) return ['Empty data'];
+        $data = (array)$data;
+        if($data['type'] == 'plane')
+            $flights = $this->getFlightsFromData($requestData);
+        else
+            $flights = $this->getTrainsFromData($requestData);
         $flightCodes = [];
         foreach($flights as $flight){
             $fl = [];
@@ -1000,6 +1025,154 @@ class ServiceController extends Controller
         return $flightCodes;
     }
 
+
+
+    /**
+     *
+     * @param $requestData
+     * @return array
+     */
+    public function getTrainsFromData($requestData){
+        $data = json_decode($requestData['data']);
+        if(empty($data)) return ['Empty data'];
+        $data = (array)$data;
+
+        $date = $data['date'];
+        $from = strtoupper($data['from']);
+        $to = strtoupper($data['to']);
+
+
+        $yandexQuery = 'https://api.rasp.yandex.net/v1.0/search/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&from='.$from.'&to='.$to.'&lang=ru&[date='.$date.'&transport_types=train&system=iata';
+        $yaResponse = json_decode(file_get_contents($yandexQuery));
+
+
+//        SUtils::trace($yaResponse);
+
+        $yaFlights = [];
+        foreach($yaResponse->threads as $key => $thread){
+
+
+//            $no = str_replace(' ','',str_replace($thread->carrier->codes->iata,'',$thread->number));
+//            $no = $thread->number;
+
+
+//            $station = $thread->from->code;
+//            $yandexAirportQuery = 'https://api.rasp.yandex.net/v1.0/schedule/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&station='.$station.'&lang=ru&date='.$date.'&transport_types=plane&show_systems=iata';
+//            SUtils::dump($yandexAirportQuery);
+//            $resp = file_get_contents($yandexAirportQuery);
+//            SUtils::dump($resp);
+//
+//
+//            $station = $thread->to->code;
+//            $yandexAirportQuery = 'https://api.rasp.yandex.net/v1.0/schedule/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&station='.$station.'&lang=ru&date='.$date.'&transport_types=plane&show_systems=iata';
+//            SUtils::dump($yandexAirportQuery);
+//            $resp = file_get_contents($yandexAirportQuery);
+//            SUtils::dump($resp);
+
+            $fromCode = '';
+            $toCode = '';
+
+
+            $fromCity = substr($thread->from->title,0,strpos($thread->from->title,' '));
+//            $fromCity = substr($fromCity,0,strpos($fromCity,'-'));
+//            $fromCity = str_replace(' ','',$fromCity);
+//            $fromCity = str_replace('-','',$fromCity);
+
+            $toCity = substr($thread->to->title,0,strpos($thread->to->title,' '));
+//            $toCity = substr($toCity,0,strpos($toCity,'-'));
+//            $toCity = str_replace(' ','',$toCity);
+//            $toCity = str_replace('-','',$toCity);
+
+            /** @var EntityManager $em */
+            $em = $this->getDoctrine()->getManager();
+
+
+            /** @var City $fromCityObj */
+            $fromCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['code' => $from]);
+            if($fromCityObj)
+                $fromCityCountry = $fromCityObj->getCountry()->getRuName();
+            else
+                $fromCityCountry = '';
+
+            /** @var City $toCityObj */
+            $toCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['code' => $to]);
+            if($toCityObj)
+                $toCityCountry = $toCityObj->getCountry()->getRuName();
+            else
+                $toCityCountry = '';
+
+
+//            SUtils::trace(json_decode($resp));
+
+            $fromObj = new \stdClass();
+            $toObj = new \stdClass();
+
+
+            $fromObj->code = $fromCode;
+            $fromObj->airport = $thread->from->title;
+            $fromObj->city = $fromCity;
+            $fromObj->country = $fromCityCountry;
+
+            $toObj->code = $toCode;
+            $toObj->airport = $thread->to->title;
+            $toObj->city = $toCity;
+            $toObj->country = $toCityCountry;
+
+
+
+            $fromTime = $thread->departure;
+            $toTime = $thread->arrival;
+
+            $fromDate = $date;
+
+            $time = new \DateTime($fromTime);
+            $time2 = new \DateTime($toTime);
+
+//            SUtils::dump($date);
+
+
+            if($time > $time2 || $time == $time2) {
+
+                $toDateObj = date_create_from_format('Y-m-d', $date);
+                $timeStamp = $toDateObj->getTimestamp();
+                $newDate = date('Y-m-d', strtotime('+1 day', $timeStamp));
+                $toDateObj = $newDate;
+                $toDate = $toDateObj;
+            }else {
+                $toDateObj = date_create_from_format('Y-m-d', $date);
+                $toDate = $toDateObj->format('Y-m-d');
+            }
+
+//            SUtils::dump($fromDate);
+//            var_dump($toDateObj);
+
+
+
+
+//            foreach($data->segments as $key2 => $segment){
+//            foreach($thread as $key3 => $flight){
+            $fl = [];
+            $fl['fromCode'] = $from;
+            $fl['toCode'] = $to;
+            $fl['no'] = $thread->carrier->code;
+            $fl['airlineCode'] = $thread->carrier->codes->iata;
+            $fl['code'] = str_replace(' ','',$thread->thread->number);
+            $fl['from'] = $fromObj;
+            $fl['to'] = $toObj;
+            $fl['fromDate'] = $fromDate;
+            $fl['fromTime'] = $fromTime;
+            $fl['toDate'] = $toDate;
+            $fl['toTime'] = $toTime;
+            $yaFlights[] = $fl;
+//            }
+//            }
+        }
+
+        SUtils::trace($yaFlights);
+
+
+
+    }
 
     /**
      *
@@ -1198,6 +1371,7 @@ class ServiceController extends Controller
     }
 
     public function addUserToFlight($requestData){
+
 
         $flightData = $this->getFlightDetails($requestData);
 
