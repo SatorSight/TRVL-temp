@@ -1395,6 +1395,14 @@ class ServiceController extends Controller
 
         $flightData = $this->getFlightDetails($requestData);
 
+
+        $data = json_decode($requestData['data']);
+        if(empty($data)) return ['Empty data'];
+        $data = (array)$data;
+        $isPlane = true;
+        if($data['type'] == 'train')
+            $isPlane = false;
+
 //        SUtils::trace($flightData);
 
         /** @var EntityManager $em */
@@ -1410,6 +1418,8 @@ class ServiceController extends Controller
             $newFlight->setCode($flightData['code']);
             $newFlight->setAirlineCode($flightData['airlineCode']);
             $newFlight->setNo($flightData['no']);
+
+            $newFlight->setType($isPlane ? 0 : 1);
 
             $newFlight->setFrom($flightData['fromCode']);
             $newFlight->setTo($flightData['toCode']);
