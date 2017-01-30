@@ -1067,9 +1067,13 @@ class ServiceController extends Controller
 
 //        SUtils::trace($yaResponse);
 
+        $yaCodes = [];
+
         $yaFlights = [];
         foreach($yaResponse->threads as $key => $thread){
 
+            if(!in_array($thread->thread->carrier->code,$yaCodes)) {
+                $yaCodes[] = $thread->thread->carrier->code;
 
 //            $no = str_replace(' ','',str_replace($thread->carrier->codes->iata,'',$thread->number));
 //            $no = $thread->number;
@@ -1088,101 +1092,99 @@ class ServiceController extends Controller
 //            $resp = file_get_contents($yandexAirportQuery);
 //            SUtils::dump($resp);
 
-            $fromCode = '';
-            $toCode = '';
+                $fromCode = '';
+                $toCode = '';
 
 
-            $fromCity = substr($thread->from->title,0,strpos($thread->from->title,' '));
+                $fromCity = substr($thread->from->title, 0, strpos($thread->from->title, ' '));
 //            $fromCity = substr($fromCity,0,strpos($fromCity,'-'));
 //            $fromCity = str_replace(' ','',$fromCity);
 //            $fromCity = str_replace('-','',$fromCity);
 
-            $toCity = substr($thread->to->title,0,strpos($thread->to->title,' '));
+                $toCity = substr($thread->to->title, 0, strpos($thread->to->title, ' '));
 //            $toCity = substr($toCity,0,strpos($toCity,'-'));
 //            $toCity = str_replace(' ','',$toCity);
 //            $toCity = str_replace('-','',$toCity);
 
-            /** @var EntityManager $em */
-            $em = $this->getDoctrine()->getManager();
+                /** @var EntityManager $em */
+                $em = $this->getDoctrine()->getManager();
 
 
-            /** @var City $fromCityObj */
-            $fromCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['code' => $from]);
-            if($fromCityObj)
-                $fromCityCountry = $fromCityObj->getCountry()->getRuName();
-            else
-                $fromCityCountry = '';
+                /** @var City $fromCityObj */
+                $fromCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['code' => $from]);
+                if ($fromCityObj)
+                    $fromCityCountry = $fromCityObj->getCountry()->getRuName();
+                else
+                    $fromCityCountry = '';
 
-            /** @var City $toCityObj */
-            $toCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['code' => $to]);
-            if($toCityObj)
-                $toCityCountry = $toCityObj->getCountry()->getRuName();
-            else
-                $toCityCountry = '';
+                /** @var City $toCityObj */
+                $toCityObj = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['code' => $to]);
+                if ($toCityObj)
+                    $toCityCountry = $toCityObj->getCountry()->getRuName();
+                else
+                    $toCityCountry = '';
 
 
 //            SUtils::trace(json_decode($resp));
 
-            $fromObj = new \stdClass();
-            $toObj = new \stdClass();
+                $fromObj = new \stdClass();
+                $toObj = new \stdClass();
 
 
-            $fromObj->code = $fromCode;
-            $fromObj->airport = $thread->from->title;
-            $fromObj->city = $fromCity;
-            $fromObj->country = $fromCityCountry;
+                $fromObj->code = $fromCode;
+                $fromObj->airport = $thread->from->title;
+                $fromObj->city = $fromCity;
+                $fromObj->country = $fromCityCountry;
 
-            $toObj->code = $toCode;
-            $toObj->airport = $thread->to->title;
-            $toObj->city = $toCity;
-            $toObj->country = $toCityCountry;
+                $toObj->code = $toCode;
+                $toObj->airport = $thread->to->title;
+                $toObj->city = $toCity;
+                $toObj->country = $toCityCountry;
 
 
+                $fromTime = $thread->departure;
+                $toTime = $thread->arrival;
 
-            $fromTime = $thread->departure;
-            $toTime = $thread->arrival;
+                $fromDate = $date;
 
-            $fromDate = $date;
-
-            $time = new \DateTime($fromTime);
-            $time2 = new \DateTime($toTime);
+                $time = new \DateTime($fromTime);
+                $time2 = new \DateTime($toTime);
 
 //            SUtils::dump($date);
 
 
-            if($time > $time2 || $time == $time2) {
+                if ($time > $time2 || $time == $time2) {
 
-                $toDateObj = date_create_from_format('Y-m-d', $date);
-                $timeStamp = $toDateObj->getTimestamp();
-                $newDate = date('Y-m-d', strtotime('+1 day', $timeStamp));
-                $toDateObj = $newDate;
-                $toDate = $toDateObj;
-            }else {
-                $toDateObj = date_create_from_format('Y-m-d', $date);
-                $toDate = $toDateObj->format('Y-m-d');
-            }
+                    $toDateObj = date_create_from_format('Y-m-d', $date);
+                    $timeStamp = $toDateObj->getTimestamp();
+                    $newDate = date('Y-m-d', strtotime('+1 day', $timeStamp));
+                    $toDateObj = $newDate;
+                    $toDate = $toDateObj;
+                } else {
+                    $toDateObj = date_create_from_format('Y-m-d', $date);
+                    $toDate = $toDateObj->format('Y-m-d');
+                }
 
 //            SUtils::dump($fromDate);
 //            var_dump($toDateObj);
 
 
-
-
 //            foreach($data->segments as $key2 => $segment){
 //            foreach($thread as $key3 => $flight){
-            $fl = [];
-            $fl['fromCode'] = $from;
-            $fl['toCode'] = $to;
-            $fl['no'] = $thread->thread->carrier->code;
-            $fl['airlineCode'] = $thread->thread->carrier->codes->iata;
-            $fl['code'] = str_replace(' ','',$thread->thread->number);
-            $fl['from'] = $fromObj;
-            $fl['to'] = $toObj;
-            $fl['fromDate'] = $fromDate;
-            $fl['fromTime'] = $fromTime;
-            $fl['toDate'] = $toDate;
-            $fl['toTime'] = $toTime;
-            $yaFlights[] = $fl;
+                $fl = [];
+                $fl['fromCode'] = $from;
+                $fl['toCode'] = $to;
+                $fl['no'] = $thread->thread->carrier->code;
+                $fl['airlineCode'] = $thread->thread->carrier->codes->iata;
+                $fl['code'] = str_replace(' ', '', $thread->thread->number);
+                $fl['from'] = $fromObj;
+                $fl['to'] = $toObj;
+                $fl['fromDate'] = $fromDate;
+                $fl['fromTime'] = $fromTime;
+                $fl['toDate'] = $toDate;
+                $fl['toTime'] = $toTime;
+                $yaFlights[] = $fl;
+            }
 //            }
 //            }
         }
