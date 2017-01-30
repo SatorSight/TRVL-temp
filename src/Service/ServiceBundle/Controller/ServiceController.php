@@ -1154,8 +1154,8 @@ class ServiceController extends Controller
             $fl = [];
             $fl['fromCode'] = $from;
             $fl['toCode'] = $to;
-            $fl['no'] = $thread->carrier->code;
-            $fl['airlineCode'] = $thread->carrier->codes->iata;
+            $fl['no'] = $thread->thread->carrier->code;
+            $fl['airlineCode'] = $thread->thread->carrier->codes->iata;
             $fl['code'] = str_replace(' ','',$thread->thread->number);
             $fl['from'] = $fromObj;
             $fl['to'] = $toObj;
