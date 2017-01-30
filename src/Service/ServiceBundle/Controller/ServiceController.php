@@ -969,13 +969,32 @@ class ServiceController extends Controller
         else
             $flights = $this->getTrainsFromData($requestData);
 
+//        SUtils::trace($flights);
+
 //        $flights = $this->getFlightsFromData($requestData);
 
         if(empty($flights) || $flights[key($flights)] == 'Empty data') return ['Flight not found'];
 
-        foreach($flights as $flight)
-            if($flight['code'] == $code)
+
+
+
+        foreach($flights as $flight) {
+
+//            SUtils::dump($flight);
+
+            if($data['type'] == 'train')
+                $fCode = $flight['no'];
+            else
+                $fCode = $flight['code'];
+
+//            SUtils::dump($data);
+//            SUtils::dump($fCode);
+//            SUtils::dump($code);
+
+            if ($fCode == $code)
                 return $flight;
+
+        }
 
         return ['Flight not found'];
     }
@@ -1375,6 +1394,8 @@ class ServiceController extends Controller
 
 
         $flightData = $this->getFlightDetails($requestData);
+
+//        SUtils::trace($flightData);
 
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
