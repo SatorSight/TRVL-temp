@@ -1168,7 +1168,8 @@ class ServiceController extends Controller
 //            }
         }
 
-        SUtils::trace($yaFlights);
+//        SUtils::trace($yaFlights);
+        return $yaFlights;
 
 
 
