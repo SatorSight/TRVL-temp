@@ -1038,7 +1038,10 @@ class ServiceController extends Controller
         foreach($flights as $flight){
             $fl = [];
             $fl['code'] = $flight['airlineCode'] . $flight['no'];
-            $fl['time'] =  substr($flight['fromTime'], 0, strrpos($flight['fromTime'], ':'));
+            if($data['type'] == 'plane')
+                $fl['time'] =  substr($flight['fromTime'], 0, strrpos($flight['fromTime'], ':'));
+            else
+                $fl['time'] =  substr($flight['fromTime'], 0, strrpos($flight['fromTime'], ' '));
             $flightCodes[] = $fl;
         }
         return $flightCodes;
