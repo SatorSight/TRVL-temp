@@ -1041,7 +1041,7 @@ class ServiceController extends Controller
             if($data['type'] == 'plane')
                 $fl['time'] =  substr($flight['fromTime'], 0, strrpos($flight['fromTime'], ':'));
             else
-                $fl['time'] =  substr($flight['fromTime'], strrpos($flight['fromTime'], ' '));
+                $fl['time'] =  substr(substr($flight['fromTime'], strrpos($flight['fromTime'], ' ')),0, strrpos($flight['fromTime'], ':'));
             $flightCodes[] = $fl;
         }
         return $flightCodes;
