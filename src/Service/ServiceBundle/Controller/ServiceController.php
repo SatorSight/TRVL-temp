@@ -60,7 +60,8 @@ class ServiceController extends Controller
 
 
                 case 'test':
-                    $return[] = $this->getTrainsFromData($requestData);
+
+                    SUtils::trace($this->getTrainsFromData($requestData));
                     break;
 
                 case 'auth':
@@ -1179,7 +1180,7 @@ class ServiceController extends Controller
                 $fl = [];
                 $fl['fromCode'] = $from;
                 $fl['toCode'] = $to;
-                $fl['no'] = $thread->thread->carrier->code;
+                $fl['no'] = str_replace(' ', '', $thread->thread->number);
                 $fl['airlineCode'] = $thread->thread->carrier->codes->iata;
                 $fl['code'] = str_replace(' ', '', $thread->thread->number);
                 $fl['from'] = $fromObj;
