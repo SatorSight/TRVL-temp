@@ -1040,8 +1040,10 @@ class ServiceController extends Controller
             $fl['code'] = $flight['airlineCode'] . $flight['no'];
             if($data['type'] == 'plane')
                 $fl['time'] =  substr($flight['fromTime'], 0, strrpos($flight['fromTime'], ':'));
-            else
-                $fl['time'] =  substr(substr($flight['fromTime'], strrpos($flight['fromTime'], ' ')),0, strrpos($flight['fromTime'], ':'));
+            else {
+                $fl['time'] = substr($flight['fromTime'], strrpos($flight['fromTime'], ' '));
+                $fl['time'] = substr($fl['time'], 0, strrpos($fl['time'], ':'));
+            }
             $flightCodes[] = $fl;
         }
         return $flightCodes;
