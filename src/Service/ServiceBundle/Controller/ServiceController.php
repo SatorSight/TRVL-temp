@@ -970,6 +970,8 @@ class ServiceController extends Controller
         else
             $flights = $this->getTrainsFromData($requestData);
 
+
+//        SUtils::dump($code);
 //        SUtils::trace($flights);
 
 //        $flights = $this->getFlightsFromData($requestData);
@@ -1102,12 +1104,12 @@ class ServiceController extends Controller
                 $toCode = '';
 
 
-                $fromCity = substr($thread->from->title, 0, strpos($thread->from->title, ' '));
+                //$fromCity = substr($thread->from->title, 0, strpos($thread->from->title, ' '));
 //            $fromCity = substr($fromCity,0,strpos($fromCity,'-'));
 //            $fromCity = str_replace(' ','',$fromCity);
 //            $fromCity = str_replace('-','',$fromCity);
 
-                $toCity = substr($thread->to->title, 0, strpos($thread->to->title, ' '));
+                //$toCity = substr($thread->to->title, 0, strpos($thread->to->title, ' '));
 //            $toCity = substr($toCity,0,strpos($toCity,'-'));
 //            $toCity = str_replace(' ','',$toCity);
 //            $toCity = str_replace('-','',$toCity);
@@ -1139,37 +1141,40 @@ class ServiceController extends Controller
 
                 $fromObj->code = $fromCode;
                 $fromObj->airport = $thread->from->title;
-                $fromObj->city = $fromCity;
+                $fromObj->city = $yaResponse->search->from->title;
                 $fromObj->country = $fromCityCountry;
 
                 $toObj->code = $toCode;
                 $toObj->airport = $thread->to->title;
-                $toObj->city = $toCity;
+                $toObj->city = $yaResponse->search->to->title;
                 $toObj->country = $toCityCountry;
 
+                $fDate = new \DateTime($thread->departure);
+                $tDate = new \DateTime($thread->arrival);
 
-                $fromTime = $thread->departure;
-                $toTime = $thread->arrival;
+                $fromTime = $fDate->format('H:i:s');
+                $toTime = $tDate->format('H:i:s');
 
-                $fromDate = $date;
+                $fromDate = $fDate->format('Y-m-d');
+                $toDate = $tDate->format('Y-m-d');
 
-                $time = new \DateTime($fromTime);
-                $time2 = new \DateTime($toTime);
+//                $time = new \DateTime($fromTime);
+//                $time2 = new \DateTime($toTime);
 
 //            SUtils::dump($date);
 
 
-                if ($time > $time2 || $time == $time2) {
-
-                    $toDateObj = date_create_from_format('Y-m-d', $date);
-                    $timeStamp = $toDateObj->getTimestamp();
-                    $newDate = date('Y-m-d', strtotime('+1 day', $timeStamp));
-                    $toDateObj = $newDate;
-                    $toDate = $toDateObj;
-                } else {
-                    $toDateObj = date_create_from_format('Y-m-d', $date);
-                    $toDate = $toDateObj->format('Y-m-d');
-                }
+//                if ($time > $time2 || $time == $time2) {
+//
+//                    $toDateObj = date_create_from_format('Y-m-d', $date);
+//                    $timeStamp = $toDateObj->getTimestamp();
+//                    $newDate = date('Y-m-d', strtotime('+1 day', $timeStamp));
+//                    $toDateObj = $newDate;
+//                    $toDate = $toDateObj;
+//                } else {
+//                    $toDateObj = date_create_from_format('Y-m-d', $date);
+//                    $toDate = $toDateObj->format('Y-m-d');
+//                }
 
 //            SUtils::dump($fromDate);
 //            var_dump($toDateObj);
@@ -1403,6 +1408,7 @@ class ServiceController extends Controller
 
         $flightData = $this->getFlightDetails($requestData);
 
+//        SUtils::trace($flightData);
 
         $data = json_decode($requestData['data']);
         if(empty($data)) return ['Empty data'];
@@ -1436,19 +1442,19 @@ class ServiceController extends Controller
             $newFlight->setFromCity($flightData['from']->city);
             $newFlight->setFromCode($flightData['from']->code);
             $newFlight->setFromCountry($flightData['from']->country);
-            if($isPlane)
-                $newFlight->setFromDate(new \DateTime($flightData['fromDate'].' '.$flightData['fromTime']));
-            else
-                $newFlight->setFromDate(new \DateTime($flightData['fromTime']));
+//            if($isPlane)
+            $newFlight->setFromDate(new \DateTime($flightData['fromDate'].' '.$flightData['fromTime']));
+//            else
+//                $newFlight->setFromDate(new \DateTime($flightData['fromTime']));
 
             $newFlight->setToAirport($flightData['to']->airport);
             $newFlight->setToCity($flightData['to']->city);
             $newFlight->setToCode($flightData['to']->code);
             $newFlight->setToCountry($flightData['to']->country);
-            if($isPlane)
-                $newFlight->setToDate(new \DateTime($flightData['toDate'].' '.$flightData['toTime']));
-            else
-                $newFlight->setToDate(new \DateTime($flightData['toTime']));
+//            if($isPlane)
+            $newFlight->setToDate(new \DateTime($flightData['toDate'].' '.$flightData['toTime']));
+//            else
+//                $newFlight->setToDate(new \DateTime($flightData['toTime']));
 //            $newFlight->setToDate(new \DateTime($flightData['toDate'].' '.$flightData['toTime']));
 
             $em->persist($newFlight);
