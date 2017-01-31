@@ -1436,13 +1436,20 @@ class ServiceController extends Controller
             $newFlight->setFromCity($flightData['from']->city);
             $newFlight->setFromCode($flightData['from']->code);
             $newFlight->setFromCountry($flightData['from']->country);
-            $newFlight->setFromDate(new \DateTime($flightData['fromDate'].' '.$flightData['fromTime']));
+            if($isPlane)
+                $newFlight->setFromDate(new \DateTime($flightData['fromDate'].' '.$flightData['fromTime']));
+            else
+                $newFlight->setFromDate(new \DateTime($flightData['fromTime']));
 
             $newFlight->setToAirport($flightData['to']->airport);
             $newFlight->setToCity($flightData['to']->city);
             $newFlight->setToCode($flightData['to']->code);
             $newFlight->setToCountry($flightData['to']->country);
-            $newFlight->setToDate(new \DateTime($flightData['toDate'].' '.$flightData['toTime']));
+            if($isPlane)
+                $newFlight->setToDate(new \DateTime($flightData['toDate'].' '.$flightData['toTime']));
+            else
+                $newFlight->setToDate(new \DateTime($flightData['toTime']));
+//            $newFlight->setToDate(new \DateTime($flightData['toDate'].' '.$flightData['toTime']));
 
             $em->persist($newFlight);
             $em->flush();
