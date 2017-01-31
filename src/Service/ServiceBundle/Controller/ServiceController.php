@@ -983,10 +983,10 @@ class ServiceController extends Controller
 
 //            SUtils::dump($flight);
 
-            if($data['type'] == 'train')
-                $fCode = $flight['no'];
-            else
-                $fCode = $flight['code'];
+//            if($data['type'] == 'train')
+//                $fCode = $flight['no'];
+//            else
+            $fCode = $flight['code'];
 
 //            SUtils::dump($data);
 //            SUtils::dump($fCode);
