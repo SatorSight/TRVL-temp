@@ -23,7 +23,7 @@ class Flight
     /**
      * @var integer
      *
-     * @ORM\Column(name="no", type="integer", nullable=true)
+     * @ORM\Column(name="no", type="string", nullable=true)
      */
     private $no;
 
