@@ -3,3 +3,5 @@ parameters:
       service_service.ok_app_key: CBADGFHLEBABABABA
       service_service.ok_app_secret_key: F0E47DD9BB65C81A2BE6C24A
       service_service.image.url: /var/www/html/TRVL-temp/web/images/
+      service_service.yandex_api_key: c875b8df-2d10-4728-bd23-7bd35040ad16
+      service_service.aviasales_marker: 55128
