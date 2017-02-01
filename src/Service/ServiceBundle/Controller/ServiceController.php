@@ -1068,8 +1068,9 @@ class ServiceController extends Controller
         $from = strtoupper($data['from']);
         $to = strtoupper($data['to']);
 
+        $yandexApiKey = $this->container->getParameter('service_service.yandex_api_key');
 
-        $yandexQuery = 'https://api.rasp.yandex.net/v1.0/search/?apikey=c875b8df-2d10-4728-bd23-7bd35040ad16&format=json&from='.$from.'&to='.$to.'&lang=ru&date='.$date.'&transport_types=train&system=iata';
+        $yandexQuery = 'https://api.rasp.yandex.net/v1.0/search/?apikey='.$yandexApiKey.'&format=json&from='.$from.'&to='.$to.'&lang=ru&date='.$date.'&transport_types=train&system=iata';
         $yaResponse = json_decode(file_get_contents($yandexQuery));
 
 
@@ -1194,6 +1195,8 @@ class ServiceController extends Controller
                 $fl['fromTime'] = $fromTime;
                 $fl['toDate'] = $toDate;
                 $fl['toTime'] = $toTime;
+
+                $fl['link'] = $this->createPartnerLink($requestData);
                 $yaFlights[] = $fl;
             }
 //            }
@@ -1368,6 +1371,8 @@ class ServiceController extends Controller
                     $fl['fromTime'] = $flight->flightLegs[0]->fromTime;
                     $fl['toDate'] = $flight->flightLegs[0]->toDate;
                     $fl['toTime'] = $flight->flightLegs[0]->toTime;
+
+                    $fl['link'] = $this->createPartnerLink($requestData);
                     $flights[] = $fl;
                 }
             }
@@ -1582,11 +1587,30 @@ class ServiceController extends Controller
                 $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
                 $fl['toTime'] = $flight->getToDate()->format('H:i');
                 $fl['user_count'] = count($flight->getUserFlights());
+
+                $fl['link'] = $this->createPartnerLink($requestData);
                 $returnFlights[] = $fl;
             }
         }
 
         return $returnFlights;
+    }
+
+    public function createPartnerLink($requestData){
+
+        $data = json_decode($requestData['data']);
+        if(empty($data)) return ['Empty data'];
+        $data = (array)$data;
+
+        $date = $data['date'];
+        $from = strtoupper($data['from']);
+        $to = strtoupper($data['to']);
+
+        $marker = $this->container->getParameter('service_service.aviasales_marker');
+
+        $link = 'http://hydra.aviasales.ru/searches/new?origin_iata='.$from.'&destination_iata='.$to.'&depart_date='.$date.'&return_date&oneway&adults=1&children=0&infants=0&trip_class=0&marker='.$marker.'&with_request=true';
+
+        return $link;
     }
 
     public function loadProfile($requestData){
