@@ -1020,6 +1020,8 @@ class ServiceController extends Controller
         else
             $flights = $this->getTrainsFromData($requestData);
 
+//        SUtils::trace($flights);
+
         $flightCodes = [];
         foreach($flights as $flight)
             $flightCodes[] = $flight['airlineCode'].$flight['no'];
@@ -1225,7 +1227,7 @@ class ServiceController extends Controller
 
 
 
-        //SUtils::trace('qqq');
+//        SUtils::trace('qqq');
 
         $data = json_decode($requestData['data']);
         if(empty($data)) return ['Empty data'];
@@ -1375,11 +1377,13 @@ class ServiceController extends Controller
                     $fl['toDate'] = $flight->flightLegs[0]->toDate;
                     $fl['toTime'] = $flight->flightLegs[0]->toTime;
 
-                    $fl['link'] = $this->createPartnerLink($fl['fromDate'],$fl['from'],$fl['to']);
+                    $fl['link'] = $this->createPartnerLink($fl['fromDate'],$fl['from']->code,$fl['to']->code);
                     $flights[] = $fl;
                 }
             }
         }
+
+//        SUtils::trace($flights);
 
 
 //        SUtils::trace($flights);
@@ -1602,6 +1606,8 @@ class ServiceController extends Controller
     public function createPartnerLink($date, $from, $to){
 
         $marker = $this->container->getParameter('service_service.aviasales_marker');
+
+//        SUtils::trace($marker,'xxx');
 
         $link = 'http://hydra.aviasales.ru/searches/new?origin_iata='.$from.'&destination_iata='.$to.'&depart_date='.$date.'&return_date&oneway&adults=1&children=0&infants=0&trip_class=0&marker='.$marker.'&with_request=true';
 
