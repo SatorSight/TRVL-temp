@@ -644,7 +644,7 @@ class ServiceController extends Controller
             $fl['toTime'] = $flight->getToDate()->format('H:i');
             $fl['user_count'] = count($flight->getUserFlights());
 
-            $fl['link'] = $this->createPartnerLink($requestData);
+            $fl['link'] = $this->createPartnerLink($fl['fromDate'],$fl['from'],$fl['to']);
 
             $flights[] = $fl;
 
@@ -1199,7 +1199,7 @@ class ServiceController extends Controller
                 $fl['toDate'] = $toDate;
                 $fl['toTime'] = $toTime;
 
-                $fl['link'] = $this->createPartnerLink($requestData);
+                $fl['link'] = $this->createPartnerLink($fl['fromDate'],$fromObj->code,$toObj->code);
                 $yaFlights[] = $fl;
             }
 //            }
@@ -1375,7 +1375,7 @@ class ServiceController extends Controller
                     $fl['toDate'] = $flight->flightLegs[0]->toDate;
                     $fl['toTime'] = $flight->flightLegs[0]->toTime;
 
-                    $fl['link'] = $this->createPartnerLink($requestData);
+                    $fl['link'] = $this->createPartnerLink($fl['fromDate'],$fl['from'],$fl['to']);
                     $flights[] = $fl;
                 }
             }
@@ -1591,7 +1591,7 @@ class ServiceController extends Controller
                 $fl['toTime'] = $flight->getToDate()->format('H:i');
                 $fl['user_count'] = count($flight->getUserFlights());
 
-                $fl['link'] = $this->createPartnerLink($requestData);
+                $fl['link'] = $this->createPartnerLink($fl['fromDate'],$fl['fromCode'],$fl['toCode']);
                 $returnFlights[] = $fl;
             }
         }
@@ -1599,15 +1599,7 @@ class ServiceController extends Controller
         return $returnFlights;
     }
 
-    public function createPartnerLink($requestData){
-
-        $data = json_decode($requestData['data']);
-        if(empty($data)) return ['Empty data'];
-        $data = (array)$data;
-
-        $date = $data['date'];
-        $from = strtoupper($data['from']);
-        $to = strtoupper($data['to']);
+    public function createPartnerLink($date, $from, $to){
 
         $marker = $this->container->getParameter('service_service.aviasales_marker');
 
