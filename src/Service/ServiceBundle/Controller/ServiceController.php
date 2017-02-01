@@ -643,6 +643,9 @@ class ServiceController extends Controller
             $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
             $fl['toTime'] = $flight->getToDate()->format('H:i');
             $fl['user_count'] = count($flight->getUserFlights());
+
+            $fl['link'] = $this->createPartnerLink($requestData);
+
             $flights[] = $fl;
 
         }
