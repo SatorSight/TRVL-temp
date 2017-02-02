@@ -51,7 +51,7 @@ class ServiceController extends Controller
         if(!in_array($requestData['action'], $noAuthActions) && !$errors) {
             $err = $this->checkToken($requestData);
             if(!$err)
-                return 'token mismatch';
+                $errors = 'token mismatch';
 
 //            $errors = $this->checkToken($requestData) ? false : ['Token mismatch'];
         }
@@ -293,7 +293,8 @@ class ServiceController extends Controller
 
             }
         }elseif($errors)
-            echo json_encode($errors);
+            $return = $errors;
+//            echo json_encode($errors);
 
         return $this->render('ServiceServiceBundle:Service:index.html.php', array(
             'result' => OutputHandler::handle(null, $return, null, '', $resCode)
