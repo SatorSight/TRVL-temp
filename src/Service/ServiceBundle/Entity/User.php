@@ -30,7 +30,12 @@ class User
      * @ORM\Column(name="token", type="string", nullable=false)
      */
     private $token;
-
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="device_token", type="string", nullable=false)
+     */
+    private $deviceToken;
     /**
      * @var string
      *
@@ -470,5 +475,29 @@ class User
     public function getPhotos()
     {
         return $this->photos;
+    }
+
+    /**
+     * Set deviceToken
+     *
+     * @param string $deviceToken
+     *
+     * @return User
+     */
+    public function setDeviceToken($deviceToken)
+    {
+        $this->deviceToken = $deviceToken;
+
+        return $this;
+    }
+
+    /**
+     * Get deviceToken
+     *
+     * @return string
+     */
+    public function getDeviceToken()
+    {
+        return $this->deviceToken;
     }
 }

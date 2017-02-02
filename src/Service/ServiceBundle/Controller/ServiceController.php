@@ -61,7 +61,9 @@ class ServiceController extends Controller
 
                 case 'test':
 
-                    SUtils::trace($this->getTrainsFromData($requestData));
+                    $this->sendPush($requestData);
+                    die('push stop');
+                    //SUtils::trace($this->getTrainsFromData($requestData));
                     break;
 
                 case 'auth':
@@ -1614,6 +1616,64 @@ class ServiceController extends Controller
         return $link;
     }
 
+    public function sendPush($requestData){
+
+
+        $passPhrase = '?';
+        $message = 'push test';
+        $deviceToken = '?';
+
+        $ctx = stream_context_create();
+        stream_context_set_option($ctx, 'ssl', 'local_cert', 'ckipad.pem');
+        stream_context_set_option($ctx, 'ssl', 'passphrase', $passPhrase);
+
+        $fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195',
+            $err,
+            $errstr,
+            60,
+            STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT,
+            $ctx);
+
+        SUtils::dump($err);
+        SUtils::dump($errstr);
+        SUtils::dump($fp);
+        var_dump($fp);
+
+
+        //if (!$fp)
+        //exit("Failed to connect amarnew: $err $errstr" . PHP_EOL);
+
+        //echo 'Connected to APNS' . PHP_EOL;
+
+        // Create the payload body
+        $body['aps'] = array(
+            'badge' => +1,
+            'alert' => $message,
+            'sound' => 'default'
+        );
+
+        SUtils::dump($body);
+
+        $payload = json_encode($body);
+
+        // Build the binary notification
+        $msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+
+        // Send it to the server
+        $result = fwrite($fp, $msg, strlen($msg));
+
+        if (!$result)
+            echo 'Message not delivered' . PHP_EOL;
+        else
+            echo 'Message successfully delivered amar'.$message. PHP_EOL;
+
+        // Close the connection to the server
+        fclose($fp);
+
+
+
+    }
+
     public function loadProfile($requestData){
         $em = $this->getDoctrine()->getManager();
         /** @var Profile $userProfile */
@@ -1631,6 +1691,7 @@ class ServiceController extends Controller
         $user->setAppType($requestData['app_type']);
         $user->setChatPass(substr(md5($user->getAppId().$user->getAppType()),0,12));
         $user->setBanned(false);
+        $user->setDeviceToken($requestData['device_token']);
 
         $em->persist($user);
         $em->flush();
