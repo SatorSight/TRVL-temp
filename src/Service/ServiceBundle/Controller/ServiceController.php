@@ -47,8 +47,14 @@ class ServiceController extends Controller
 
         $noAuthActions = ['auth', 'get_cities', 'test'];
 
-        if(!in_array($requestData['action'], $noAuthActions) && !$errors)
-            $errors = $this->checkToken($requestData) ? false : ['Token mismatch'];
+        $tokenFailed = false;
+        if(!in_array($requestData['action'], $noAuthActions) && !$errors) {
+            $err = $this->checkToken($requestData);
+            if(!$err)
+                return 'token mismatch';
+
+//            $errors = $this->checkToken($requestData) ? false : ['Token mismatch'];
+        }
 
         $return = [];
 
