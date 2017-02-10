@@ -45,7 +45,7 @@ class ServiceController extends Controller
         $requestData = RequestParser::parseRequest($request);
         $errors = RequestParser::checkApiKey($request, $this->container->getParameter('service_service.api_key'));
 
-        $noAuthActions = ['auth', 'get_cities', 'test'];
+        $noAuthActions = ['auth', 'get_cities', 'test', 'get_politics', 'get_rules'];
 
         $tokenFailed = false;
         if(!in_array($requestData['action'], $noAuthActions) && !$errors) {
@@ -155,6 +155,15 @@ class ServiceController extends Controller
 
                 case 'get_cities':
                     $return[] = $this->getCities();
+                    break;
+
+
+                case 'get_politics':
+                    $return[] = $this->getPolitics();
+                    break;
+
+                case 'get_rules':
+                    $return[] = $this->getRules();
                     break;
 
 
@@ -304,6 +313,22 @@ class ServiceController extends Controller
 //        $airports = $em->getRepository('ServiceServiceBundle:AirportTest')->findAll();
 
     }
+
+
+    public function getPolitics(){
+        $path = '/var/www/html/TRVL-temp/app/Resources/politika.html';
+        $text = file_get_contents($path);
+        return ['text' => $text];
+    }
+
+
+    public function getRules(){
+        $path = '/var/www/html/TRVL-temp/app/Resources/pravila.html';
+        $text = file_get_contents($path);
+        return ['text' => $text];
+    }
+
+
 
     public function getUserOKPhotos($requestData){
         $token = $requestData['token'];
