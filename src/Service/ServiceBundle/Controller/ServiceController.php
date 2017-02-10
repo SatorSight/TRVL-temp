@@ -1717,8 +1717,8 @@ class ServiceController extends Controller
         $passPhrase = 'TRVL16';
 
         //$deviceToken = '6fe2352d7e5338344ea358da7000a6ffab72d89b5ae6e94d94d8f5e80b5e8dd6';
-        $deviceToken = $userTo->getDeviceToken();
-//        $deviceToken = '68d091953becf439ecefb9c969578b5da52b94c2bd74684c60410ae6b54261d9';
+//        $deviceToken = $userTo->getDeviceToken();
+        $deviceToken = '68d091953becf439ecefb9c969578b5da52b94c2bd74684c60410ae6b54261d9';
         $link = "ssl://gateway.sandbox.push.apple.com:2195";
 
         $keyPath = $_SERVER['DOCUMENT_ROOT'].'/Resources/PushCert.pem';
