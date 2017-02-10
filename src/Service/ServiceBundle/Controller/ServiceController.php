@@ -1721,7 +1721,8 @@ class ServiceController extends Controller
         $deviceToken = '68d091953becf439ecefb9c969578b5da52b94c2bd74684c60410ae6b54261d9';
         $link = "ssl://gateway.sandbox.push.apple.com:2195";
 
-        $keyPath = $_SERVER['DOCUMENT_ROOT'].'/Resources/PushCert.pem';
+        $keyPath = '/var/www/html/TRVL-temp/app/Resources/PushCert.pem';
+//        $keyPath = $_SERVER['DOCUMENT_ROOT'].'/Resources/PushCert.pem';
 
 
         $ctx = stream_context_create();
