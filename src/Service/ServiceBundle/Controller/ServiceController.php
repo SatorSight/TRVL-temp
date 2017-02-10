@@ -424,7 +424,6 @@ class ServiceController extends Controller
             $return = 'unliked';
         }else{
 
-
             $like = new Like();
             $like->setUserFrom($user);
             $like->setUserTo($targetUser);
@@ -432,6 +431,11 @@ class ServiceController extends Controller
 
             $em->persist($like);
             $em->flush();
+
+
+            if(!empty($targetUser->getDeviceToken()))
+                $this->sendPush($targetUser,'Вы понравились '.$user->getProfile()->getName().' , посмотрите симпатию');
+
         }
 
         return $return;
@@ -1423,6 +1427,18 @@ class ServiceController extends Controller
             $userFlight->setUser($user);
             $em->persist($userFlight);
             $em->flush();
+
+            $uFlights = $flight->getUserFlights();
+            if($uFlights){
+                /** @var UserFlight $uFlight */
+                foreach($uFlights as $uFlight){
+                    $pUser = $uFlight->getUser();
+                    $dev_token = $pUser->getDeviceToken();
+                    if(!empty($dev_token)){
+                        $this->sendPush($pUser,'На ваш рейс/поезд зарегистрировались новые попутчики, посмотрите их.');
+                    }
+                }
+            }
         }
 
         return $userFlight;
@@ -1451,6 +1467,8 @@ class ServiceController extends Controller
         $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['appId' => $requestData['id'], 'appType' => $requestData['app_type']]);
         /** @var Flight $flight */
         $flight = $em->getRepository('ServiceServiceBundle:Flight')->findOneBy(['code' => $flightData['code'], 'fromDate' => new \DateTime($flightData['fromDate'].' '.$flightData['fromTime'])]);
+
+        $existed = true;
 
         if(!$flight){
 
@@ -1486,6 +1504,8 @@ class ServiceController extends Controller
             $em->persist($newFlight);
             $em->flush();
 
+            $existed = false;
+
             $flight = $em->getRepository('ServiceServiceBundle:Flight')->findOneBy(['code' => $flightData['code'], 'fromDate' => new \DateTime($flightData['fromDate'].' '.$flightData['fromTime'])]);
         }
 
@@ -1498,6 +1518,23 @@ class ServiceController extends Controller
             $userFlight->setUser($user);
             $em->persist($userFlight);
             $em->flush();
+
+            if($existed){
+                $uFlights = $flight->getUserFlights();
+                if($uFlights){
+                    /** @var UserFlight $uFlight */
+                    foreach($uFlights as $uFlight){
+
+                        $pUser = $uFlight->getUser();
+                        $dev_token = $pUser->getDeviceToken();
+                        if(!empty($dev_token)){
+                            $this->sendPush($pUser,'На ваш рейс/поезд зарегистрировались новые попутчики, посмотрите их.');
+                        }
+                    }
+                }
+            }
+
+
         }
 
         return $userFlight;
@@ -1628,7 +1665,7 @@ class ServiceController extends Controller
         return $link;
     }
 
-    public function sendPush($requestData){
+    public function sendPush(User $userTo, $message){
 
 
 //        $i = new \stdClass();
@@ -1678,9 +1715,10 @@ class ServiceController extends Controller
 //        die('end e');
 
         $passPhrase = 'TRVL16';
-        $message = 'push test';
+
         //$deviceToken = '6fe2352d7e5338344ea358da7000a6ffab72d89b5ae6e94d94d8f5e80b5e8dd6';
-        $deviceToken = '68d091953becf439ecefb9c969578b5da52b94c2bd74684c60410ae6b54261d9';
+        $deviceToken = $userTo->getDeviceToken();
+//        $deviceToken = '68d091953becf439ecefb9c969578b5da52b94c2bd74684c60410ae6b54261d9';
         $link = "ssl://gateway.sandbox.push.apple.com:2195";
 
         $keyPath = $_SERVER['DOCUMENT_ROOT'].'/Resources/PushCert.pem';
@@ -1717,7 +1755,7 @@ class ServiceController extends Controller
         $result = fwrite($fp, $msg, strlen($msg));
         fclose($fp);
 
-        SUtils::trace($result);
+        //SUtils::trace($result);
 
 //        die('end');
 
