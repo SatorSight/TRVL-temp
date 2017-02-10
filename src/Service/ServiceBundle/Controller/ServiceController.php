@@ -1735,10 +1735,10 @@ class ServiceController extends Controller
             STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT,
             $ctx);
 
-        SUtils::dump($err);
-        SUtils::dump($errstr);
-        SUtils::dump($fp);
-        var_dump($fp);
+//        SUtils::dump($err);
+//        SUtils::dump($errstr);
+//        SUtils::dump($fp);
+//        var_dump($fp);
 
         $body['aps'] = array(
             'type' => "new",
@@ -1748,7 +1748,7 @@ class ServiceController extends Controller
 
         $payload = json_encode($body);
 
-        SUtils::dump($payload);
+//        SUtils::dump($payload);
 
         $msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
 
