@@ -698,7 +698,12 @@ class ServiceController extends Controller
         if(!$user)
             return $this->registration($requestData);
         else{
-            if($this->authToken($user, $requestData, $em))
+            if($this->authToken($user, $requestData, $em)) {
+
+                if(!empty($requestData['device_token'])) {
+                    $user->setDeviceToken($requestData['device_token']);
+                    $em->flush();
+                }
                 return ['message' => 'user authenticated', 'data' =>
                     [
                         'id' => $user->getId(),
@@ -708,7 +713,7 @@ class ServiceController extends Controller
                         'chat_pass' => $user->getChatPass()
                     ]
                 ];
-            else return ['Failed to authorize'];
+            }else return ['Failed to authorize'];
         }
     }
 
@@ -1626,15 +1631,66 @@ class ServiceController extends Controller
     public function sendPush($requestData){
 
 
-        $passPhrase = '?';
+//        $i = new \stdClass();
+//        $i->type = 'text';
+//        $i->text = 'test text';
+//
+//
+//        $j = new \stdClass();
+//        $j->media = [$i];
+//
+//        SUtils::dump($j);
+//
+//        $att = json_encode($j);
+//
+//        SUtils::dump($att);
+//
+////        $att = '{"media":[{"type":"text","text":"my text"}]}';
+//        $secret = 'F0E47DD9BB65C81A2BE6C24A';
+//
+//        $sig = md5('st.attachment='.$att.$secret);
+//
+//
+//        $str = 'https://connect.ok.ru/dk?st.cmd=WidgetMediatopicPost&st.app=1249141248&st.attachment='.$att.'&st.signature='.$sig;
+//
+//
+//
+//        echo $str;
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//        die('end e');
+
+        $passPhrase = 'TRVL16';
         $message = 'push test';
-        $deviceToken = '?';
+        //$deviceToken = '6fe2352d7e5338344ea358da7000a6ffab72d89b5ae6e94d94d8f5e80b5e8dd6';
+        $deviceToken = '68d091953becf439ecefb9c969578b5da52b94c2bd74684c60410ae6b54261d9';
+        $link = "ssl://gateway.sandbox.push.apple.com:2195";
+
+        $keyPath = $_SERVER['DOCUMENT_ROOT'].'/Resources/PushCert.pem';
+
 
         $ctx = stream_context_create();
-        stream_context_set_option($ctx, 'ssl', 'local_cert', 'ckipad.pem');
+        stream_context_set_option($ctx, 'ssl', 'local_cert', $keyPath);
         stream_context_set_option($ctx, 'ssl', 'passphrase', $passPhrase);
 
-        $fp = stream_socket_client('ssl://gateway.sandbox.push.apple.com:2195',
+        $fp = stream_socket_client($link,
             $err,
             $errstr,
             60,
@@ -1646,6 +1702,25 @@ class ServiceController extends Controller
         SUtils::dump($fp);
         var_dump($fp);
 
+        $body['aps'] = array(
+            'type' => "new",
+            'alert' => $message,
+            'sound' => 'default'
+        );
+
+        $payload = json_encode($body);
+
+        SUtils::dump($payload);
+
+        $msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+
+        $result = fwrite($fp, $msg, strlen($msg));
+        fclose($fp);
+
+        SUtils::trace($result);
+
+//        die('end');
+
 
         //if (!$fp)
         //exit("Failed to connect amarnew: $err $errstr" . PHP_EOL);
@@ -1653,29 +1728,29 @@ class ServiceController extends Controller
         //echo 'Connected to APNS' . PHP_EOL;
 
         // Create the payload body
-        $body['aps'] = array(
-            'badge' => +1,
-            'alert' => $message,
-            'sound' => 'default'
-        );
-
-        SUtils::dump($body);
-
-        $payload = json_encode($body);
-
-        // Build the binary notification
-        $msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
-
-        // Send it to the server
-        $result = fwrite($fp, $msg, strlen($msg));
-
-        if (!$result)
-            echo 'Message not delivered' . PHP_EOL;
-        else
-            echo 'Message successfully delivered amar'.$message. PHP_EOL;
-
-        // Close the connection to the server
-        fclose($fp);
+//        $body['aps'] = array(
+//            'badge' => +1,
+//            'alert' => $message,
+//            'sound' => 'default'
+//        );
+//
+//        SUtils::dump($body);
+//
+//        $payload = json_encode($body);
+//
+//        // Build the binary notification
+//        $msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+//
+//        // Send it to the server
+//        $result = fwrite($fp, $msg, strlen($msg));
+//
+//        if (!$result)
+//            echo 'Message not delivered' . PHP_EOL;
+//        else
+//            echo 'Message successfully delivered amar'.$message. PHP_EOL;
+//
+//        // Close the connection to the server
+//        fclose($fp);
 
 
 
