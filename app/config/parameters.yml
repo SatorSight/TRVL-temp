@@ -1,7 +1,7 @@
 # This file is auto-generated during the composer install
 parameters:
-    database_host: localhost
-    database_port: null
+    database_host: 62.76.188.165
+    database_port: 3306
     database_name: c1together
     database_user: phpmyadmin
     database_password: 123

@@ -5,6 +5,7 @@ namespace Service\ServiceBundle\Controller;
 use Doctrine\ORM\EntityManager;
 use Service\ServiceBundle\Entity\City;
 use Service\ServiceBundle\Entity\Country;
+use Service\ServiceBundle\Entity\Feedback;
 use Service\ServiceBundle\Entity\Flight;
 use Service\ServiceBundle\Entity\Like;
 use Service\ServiceBundle\Entity\Photo;
@@ -43,9 +44,11 @@ class ServiceController extends Controller
     public function indexAction(Request $request){
 
         $requestData = RequestParser::parseRequest($request);
-        $errors = RequestParser::checkApiKey($request, $this->container->getParameter('service_service.api_key'));
 
-        $noAuthActions = ['auth', 'get_cities', 'test', 'get_politics', 'get_rules'];
+        if($requestData['action'] != 'admin')
+            $errors = RequestParser::checkApiKey($request, $this->container->getParameter('service_service.api_key'));
+
+        $noAuthActions = ['auth', 'get_cities', 'test', 'get_politics', 'get_rules', 'admin'];
 
         $tokenFailed = false;
         if(!in_array($requestData['action'], $noAuthActions) && !$errors) {
@@ -70,6 +73,10 @@ class ServiceController extends Controller
                     $this->sendPush($requestData);
                     die('push stop');
                     //SUtils::trace($this->getTrainsFromData($requestData));
+                    break;
+
+                case 'admin':
+                    return $this->admin();
                     break;
 
                 case 'auth':
@@ -313,6 +320,223 @@ class ServiceController extends Controller
 //        $airports = $em->getRepository('ServiceServiceBundle:AirportTest')->findAll();
 
     }
+    
+    
+    
+    public function admin(){
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        
+        if(!$_GET['sub'] || $_GET['sub'] == 'users'){
+
+
+
+
+            $userArr = [];
+
+
+            /** @var User[] $users */
+            $users = $em->getRepository('ServiceServiceBundle:User')->findAll();
+
+            foreach($users as $user){
+
+                /** @var Profile $profile */
+                $profile = $user->getProfile();
+
+
+                $u = [];
+                $u['id'] = $user->getId();
+                $u['created'] = $user->getInserted()->format('Y-m-d');
+                $u['banned'] = $user->getBanned();
+                $u['app_type'] = $user->getAppType();
+                $u['chat_id'] = $user->getChatId();
+                $u['name'] = $profile->getName();
+                $u['last_visit'] = $profile->getLastVisit()->format('Y-m-d');
+                $u['about'] = $profile->getAbout();
+                $u['orientation'] = $profile->getOrientation();
+                $u['appearance'] = $profile->getAppearance();
+                $u['age'] = $profile->getAge();
+                $u['city'] = $profile->getCity();
+                $u['sex'] = $profile->getSex();
+                $u['wannaCommunicate'] = $profile->getWannaCommunicate();
+                $u['findCompanion'] = $profile->getFindCompanion();
+                $u['findCouple'] = $profile->getFindCouple();
+                $u['findFriends'] = $profile->getFindFriends();
+                $u['free'] = $profile->getFree();
+
+                $userArr[] = $u;
+
+            }
+
+            return $this->render('ServiceServiceBundle:Service:admin.html.php', array(
+                'users' => $userArr
+            ));
+
+
+            
+        }elseif($_GET['sub'] == 'stat'){
+
+            $man = $woman = 0;
+            $age18 = $age25 = $age38 = $age50 = $age100 = 0;
+            $fromArr = $toArr = [];
+
+
+            /** @var User[] $users */
+            $users = $em->getRepository('ServiceServiceBundle:User')->findAll();
+
+
+            foreach($users as $user){
+                $profile = $user->getProfile();
+
+                if(!empty($profile->getAge())){
+                    if($profile->getAge() < 18){
+                        $age18++;
+                    }elseif($profile->getAge() < 25){
+                        $age25++;
+                    }elseif($profile->getAge() < 38){
+                        $age38++;
+                    }elseif($profile->getAge() < 50){
+                        $age50++;
+                    }else $age100++;
+
+                }
+
+                if($profile->getSex() == 0)
+                    $woman++;
+                else
+                    $man++;
+
+
+                $userFlights = $user->getUserFlights();
+                /** @var UserFlight $userFlight */
+                foreach($userFlights as $userFlight){
+                    $flight = $userFlight->getFlight();
+
+                    if(!isset($fromArr[$flight->getFromCity()]))
+                        $fromArr[$flight->getFromCity()] = 0;
+
+                    $fromArr[$flight->getFromCity()]++;
+
+                    if(!isset($toArr[$flight->getToCity()]))
+                        $toArr[$flight->getToCity()] = 0;
+
+                    $toArr[$flight->getToCity()]++;
+
+                }
+
+
+            }
+
+
+            return $this->render('ServiceServiceBundle:Service:stat.html.php', [
+                'man' => $man,
+                'woman' => $woman,
+                'age18' => $age18,
+                'age25' => $age25,
+                'age38' => $age38,
+                'age50' => $age50,
+                'age100' => $age100,
+                'from' => $fromArr,
+                'to' => $toArr
+            ]);
+
+        }elseif($_GET['sub'] == 'feedback'){
+
+            $feedbacks = $em->getRepository('ServiceServiceBundle:Feedback')->findAll();
+
+            $feedbackArr = [];
+
+            foreach($feedbacks as $feedback){
+                $f = [];
+                $f['name'] = $feedback->getName();
+                $f['created'] = $feedback->getCreated()->format('Y-m-d');
+                $f['email'] = $feedback->getEmail();
+                $f['text'] = $feedback->getText();
+
+                $feedbackArr[] = $f;
+            }
+
+
+
+            return $this->render('ServiceServiceBundle:Service:feedback.html.php', [
+                'feedback' => $feedbackArr
+            ]);
+
+        }elseif($_GET['sub'] == 'flights'){
+
+
+            $flightsArr = [];
+
+            /** @var Flight[] $flights */
+            $flights = $em->getRepository('ServiceServiceBundle:Flight')->findAll();
+
+
+            foreach($flights as $flight){
+                $fl = [];
+
+                $fl['id'] = $flight->getId();
+                $fl['type'] = $flight->getType();
+                $fl['no'] = $flight->getNo();
+                $fl['from'] = $flight->getFrom();
+                $fl['to'] = $flight->getTo();
+                $fl['airlineCode'] = $flight->getAirlineCode();
+                $fl['code'] = $flight->getCode();
+                $fl['fromCode'] = $flight->getFromCode();
+                $fl['fromAirport'] = $flight->getFromAirport();
+                $fl['fromCity'] = $flight->getFromCity();
+                $fl['fromCountry'] = $flight->getFromCountry();
+                $fl['toCode'] = $flight->getToCode();
+                $fl['toAirport'] = $flight->getToAirport();
+                $fl['toCity'] = $flight->getToCity();
+                $fl['toCountry'] = $flight->getToCountry();
+                $fl['fromDate'] = $flight->getFromDate()->format('Y-m-d');
+                $fl['toDate'] = $flight->getToDate()->format('Y-m-d');
+
+
+
+                $flightsArr[] = $fl;
+            }
+
+
+
+
+            return $this->render('ServiceServiceBundle:Service:flights.html.php', ['flights' => $flightsArr]);
+
+        }elseif($_GET['sub'] == 'banned'){
+
+            $banned = $em->getRepository('ServiceServiceBundle:User')->findBy(['banned' => 1]);
+            $bannedArr = [];
+            foreach($banned as $user){
+                $profile = $user->getProfile();
+
+
+                $u = [];
+                $u['id'] = $user->getId();
+                $u['created'] = $user->getInserted()->format('Y-m-d');
+                $u['banned'] = $user->getBanned();
+                $u['app_type'] = $user->getAppType();
+                $u['chat_id'] = $user->getChatId();
+                $u['name'] = $profile->getName();
+                $u['last_visit'] = $profile->getLastVisit()->format('Y-m-d');
+
+                $bannedArr[] = $u;
+
+            }
+
+            return $this->render('ServiceServiceBundle:Service:banned.html.php', [
+                'banned' => $bannedArr
+            ]);
+            
+        }
+        
+        
+        
+        
+        
+
+        
+    }
 
 
     public function getPolitics(){
@@ -423,6 +647,26 @@ class ServiceController extends Controller
     public function sendFeedback($requestData){
 
         $data = json_decode($requestData['data']);
+
+        if(is_array($data) && count($data) == 1)
+            $data = array_shift($data);
+
+
+//        SUtils::trace($data);
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+
+
+        $feedback = new Feedback();
+
+        $feedback->setName($data->name);
+        $feedback->setEmail($data->email);
+        $feedback->setText($data->text);
+        $feedback->setCreated(new \DateTime());
+
+        $em->persist($feedback);
+        $em->flush();
 
         //todo mail to admin maybe or save to db or both...
         //mail();
@@ -1997,6 +2241,10 @@ class ServiceController extends Controller
     }
 
     public function push_feedback(){
+        
+        
+        
+        
         //todo this
     }
 

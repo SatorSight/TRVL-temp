@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="dataSourceStorageLocal">
-    <data-source name="MySQL - c1together@localhost" uuid="ead7571f-f0f0-411d-8f41-7dac22a2b61d">
+    <data-source name="MySQL - c1together@62.76.188.165" uuid="3674aea6-fbc1-4775-8fac-418ed1703ff7">
       <secret-storage>master_key</secret-storage>
-      <user-name>root</user-name>
-      <schema-pattern>c1together.*</schema-pattern>
-      <default-schemas>c1together.*</default-schemas>
+      <user-name>phpmyadmin</user-name>
     </data-source>
   </component>
 </project>
