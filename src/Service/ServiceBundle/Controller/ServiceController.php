@@ -587,7 +587,26 @@ class ServiceController extends Controller
 
         }elseif($_GET['sub'] == 'texts'){
 
-            return $this->render('ServiceServiceBundle:Service:texts.html.php', []);
+            if($_POST['politics']){
+                file_put_contents($_SERVER['DOCUMENT_ROOT'].'/Resources/politika.html',$_POST['politics']);
+            }
+            if($_POST['rules']){
+                file_put_contents($_SERVER['DOCUMENT_ROOT'].'/Resources/pravila.html',$_POST['rules']);
+            }
+
+
+
+
+            $path = $_SERVER['DOCUMENT_ROOT'].'/Resources/politika.html';
+            $politics = file_get_contents($path);
+
+            $path = $_SERVER['DOCUMENT_ROOT'].'/Resources/pravila.html';
+            $rules = file_get_contents($path);
+
+            return $this->render('ServiceServiceBundle:Service:texts.html.php', [
+                'politics' => $politics,
+                'rules' => $rules
+            ]);
 
 
 
@@ -1071,6 +1090,7 @@ class ServiceController extends Controller
             'userID' => $user->getAppId(),
             'userToken' => $user->getToken(),
             'userAppType' => $user->getAppType(),
+            'banned' => $user->getBanned(),
             'name' => $userProfile->getName(),
             'age' => $userProfile->getAge(),
             'sex' => $userProfile->getSex(),

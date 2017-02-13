@@ -6,14 +6,20 @@
  * Time: 15:12
  */
 
-
+/** @var mixed $politics */
+/** @var mixed $rules */
 
 ?>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-<script src="/app/Resources/jeditor/jquery-te-1.4.0.min.js"></script>
-<script src="/app/Resources/jeditor/jquery-te-1.4.0.css"></script>
+<script src="//cloud.tinymce.com/stable/tinymce.min.js?apiKey=9ma3bjr5b07uhoi32cugjqnmek7uokdh5curj0lyrj12t3dl"></script>
 <script>
-    $(".text").jqte();
+    tinymce.init({
+        selector: 'textarea',
+        height: 500,
+        theme: 'modern',
+        plugins: [
+            'autolink lists link charmap print preview hr anchor pagebreak',
+            'code']
+    });
 </script>
 
 <h1>Тексты</h1>
@@ -29,9 +35,15 @@
     </tr>
     </tbody>
 </table>
-<textarea class="text">
-
-    text
-
-</textarea>
-
+<h2>Политика конфиденциальности</h2>
+<form action="" method="post">
+    <textarea name="politics" class="text"><?php echo $politics;?></textarea>
+    <br>
+    <button type="submit">Сохранить</button>
+</form>
+<h2>Соглашение пользователя</h2>
+<form action="" method="post">
+    <textarea name="rules" class="text"><?php echo $rules;?></textarea>
+    <br>
+    <button type="submit">Сохранить</button>
+</form>
