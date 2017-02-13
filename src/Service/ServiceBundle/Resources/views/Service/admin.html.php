@@ -26,6 +26,7 @@
         <td><a href="/?action=admin&sub=feedback">Обращения</a></td>
         <td><a href="/?action=admin&sub=flights">Направления</a></td>
         <td><a href="/?action=admin&sub=banned">Забаненные</a></td>
+        <td><a href="/?action=admin&sub=texts">Тексты</a></td>
     </tr>
     </tbody>
 </table>
@@ -49,6 +50,7 @@
             <td>Найти пару</td>
             <td>Найти друзей</td>
             <td>Отношения</td>
+            <td>Бан</td>
         </tr>
     </thead>
     <tbody>
@@ -88,6 +90,16 @@
                     if($user['free'] == 1) echo 'Св. отношения';
                     if($user['free'] == 2) echo 'В паре';
                     ?>
+                </td>
+                <td>
+                    <?php if(!$user['banned']){?>
+                        <form action="" method="post">
+                            <input type="hidden" name="ban_him" value="<?php echo $user['id'];?>"/>
+                            <button type="submit">Забанить</button>
+                        </form>
+                    <?php }else{ ?>
+                        Забанен
+                    <?php }?>
                 </td>
             </tr>
         <?php }?>

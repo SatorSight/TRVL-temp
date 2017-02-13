@@ -37,6 +37,7 @@
         <td><a href="/?action=admin&sub=feedback">Обращения</a></td>
         <td><a href="/?action=admin&sub=flights">Направления</a></td>
         <td><a href="/?action=admin&sub=banned">Забаненные</a></td>
+        <td><a href="/?action=admin&sub=texts">Тексты</a></td>
     </tr>
     </tbody>
 </table>

@@ -26,6 +26,7 @@
         <td><a href="/?action=admin&sub=feedback">Обращения</a></td>
         <td><a href="/?action=admin&sub=flights">Направления</a></td>
         <td><a href="/?action=admin&sub=banned">Забаненные</a></td>
+        <td><a href="/?action=admin&sub=texts">Тексты</a></td>
     </tr>
     </tbody>
 </table>
@@ -37,6 +38,7 @@
         <td>Соц. сеть</td>
         <td>ID чата</td>
         <td>Имя</td>
+        <td>Бан</td>
     </tr>
     </thead>
     <tbody>
@@ -47,6 +49,12 @@
             <td><?php echo $f['app_type'];?></td>
             <td><?php echo $f['chat_id'];?></td>
             <td><?php echo $f['name'];?></td>
+            <td>
+                <form action="" method="post">
+                    <input type="hidden" name="unban_him" value="<?php echo $f['id'];?>">
+                    <button type="submit">Разбанить</button>
+                </form>
+            </td>
         </tr>
     <?php }?>
     </tbody>

@@ -320,15 +320,68 @@ class ServiceController extends Controller
 //        $airports = $em->getRepository('ServiceServiceBundle:AirportTest')->findAll();
 
     }
+
+    public function banUser($id){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => $id]);
+        $user->setBanned(true);
+        $em->flush();
+    }
+
+    public function unbanUser($id){
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var User $user */
+        $user = $em->getRepository('ServiceServiceBundle:User')->findOneBy(['id' => $id]);
+        $user->setBanned(false);
+        $em->flush();
+    }
     
     
     
     public function admin(){
 
+        session_start();
+
+        $user = 'admin';
+        $pass = '123';
+
+        $wrong = false;
+
+        if($_POST['user'] && $_POST['pass']){
+
+
+            if($_POST['user'] == $user && $_POST['pass'] == $pass){
+                $_SESSION['user'] = $user;
+                $_SESSION['pass'] = $pass;
+
+            }else
+                $wrong = true;
+
+
+        }
+
+
+        //(!isset($_SESSION['user']) || !isset($_SESSION['pass'])) ||
+        if($_SESSION['user'] != $user || $_SESSION['pass'] != $pass){
+
+            return $this->render('ServiceServiceBundle:Service:login.html.php', ['wrong' => $wrong]);
+            
+        }
+
+
+
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         
         if(!$_GET['sub'] || $_GET['sub'] == 'users'){
+
+
+            if($_POST['ban_him']){
+                $this->banUser($_POST['ban_him']);
+            }
 
 
 
@@ -505,6 +558,10 @@ class ServiceController extends Controller
 
         }elseif($_GET['sub'] == 'banned'){
 
+            if($_POST['unban_him']){
+                $this->unbanUser($_POST['unban_him']);
+            }
+
             $banned = $em->getRepository('ServiceServiceBundle:User')->findBy(['banned' => 1]);
             $bannedArr = [];
             foreach($banned as $user){
@@ -527,7 +584,13 @@ class ServiceController extends Controller
             return $this->render('ServiceServiceBundle:Service:banned.html.php', [
                 'banned' => $bannedArr
             ]);
-            
+
+        }elseif($_GET['sub'] == 'texts'){
+
+            return $this->render('ServiceServiceBundle:Service:texts.html.php', []);
+
+
+
         }
         
         
