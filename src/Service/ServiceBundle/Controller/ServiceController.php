@@ -588,10 +588,10 @@ class ServiceController extends Controller
         }elseif($_GET['sub'] == 'texts'){
 
             if($_POST['politics']){
-                file_put_contents($_SERVER['DOCUMENT_ROOT'].'/Resources/politika.html',$_POST['politics']);
+                file_put_contents('/var/www/html/TRVL-temp/app/Resources/politika.html',$_POST['politics']);
             }
             if($_POST['rules']){
-                file_put_contents($_SERVER['DOCUMENT_ROOT'].'/Resources/pravila.html',$_POST['rules']);
+                file_put_contents('/var/www/html/TRVL-temp/app/Resources/pravila.html',$_POST['rules']);
             }
 
 
