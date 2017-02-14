@@ -423,7 +423,8 @@ class ServiceController extends Controller
             }
 
             return $this->render('ServiceServiceBundle:Service:admin.html.php', array(
-                'users' => $userArr
+                'users' => $userArr,
+                'forPage' => 20
             ));
 
 
@@ -513,7 +514,8 @@ class ServiceController extends Controller
 
 
             return $this->render('ServiceServiceBundle:Service:feedback.html.php', [
-                'feedback' => $feedbackArr
+                'feedback' => $feedbackArr,
+                'forPage' => 20
             ]);
 
         }elseif($_GET['sub'] == 'flights'){
@@ -554,7 +556,10 @@ class ServiceController extends Controller
 
 
 
-            return $this->render('ServiceServiceBundle:Service:flights.html.php', ['flights' => $flightsArr]);
+            return $this->render('ServiceServiceBundle:Service:flights.html.php', [
+                'flights' => $flightsArr,
+                'forPage' => 20
+            ]);
 
         }elseif($_GET['sub'] == 'banned'){
 

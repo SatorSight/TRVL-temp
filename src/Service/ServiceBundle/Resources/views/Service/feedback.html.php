@@ -7,6 +7,30 @@
  * Time: 19:59
  */
 /** @var mixed $feedback */
+/** @var mixed $forPage */
+
+
+if(!empty($_POST['select']))
+    foreach($feedback as $key => $flight)
+        if($flight[$_POST['select']] != $_POST['val'])
+            unset($feedback[$key]);
+
+if(count($feedback) > $forPage) {
+    $paged = true;
+    if (!$_GET['page'])
+        $page = 1;
+    else
+        $page = $_GET['page'];
+}
+
+
+$fields = [
+    'name' => 'Имя',
+    'email' => 'Email',
+    'created' => 'Дата обращения'
+];
+
+$pageCount = ((int)(count($feedback) / $forPage)) + 1;
 ?>
 <style>
     td{
@@ -32,6 +56,16 @@
     </tr>
     </tbody>
 </table>
+<span><b>Поиск &nbsp;</b></span>
+<form style="display: inline;" action="" method="post">
+    <select name="select">
+        <?php foreach($fields as $key => $field){?>
+            <option value="<?php echo $key;?>"><?php echo $field;?></option>
+        <?php }?>
+    </select>
+    <input type="text" name="val"/>
+    <button type="submit">Искать</button>
+</form>
 <table>
     <thead>
         <tr>
@@ -42,13 +76,40 @@
         </tr>
     </thead>
     <tbody>
-        <?php foreach($feedback as $f){?>
-            <tr>
-                <td><?php echo $f['name'];?></td>
-                <td><?php echo $f['email'];?></td>
-                <td><?php echo $f['text'];?></td>
-                <td><?php echo $f['created'];?></td>
-            </tr>
+        <?php if(!$paged){?>
+            <?php foreach($feedback as $f){?>
+                <tr>
+                    <td><?php echo $f['name'];?></td>
+                    <td><?php echo $f['email'];?></td>
+                    <td><?php echo $f['text'];?></td>
+                    <td><?php echo $f['created'];?></td>
+                </tr>
+            <?php }?>
+        <?php }else{?>
+            <?php foreach($feedback as $key => $f){?>
+                <?php if($key > ($page - 1) * $forPage - 1 && $key < $page * $forPage){?>
+                    <tr>
+                        <td><?php echo $f['name'];?></td>
+                        <td><?php echo $f['email'];?></td>
+                        <td><?php echo $f['text'];?></td>
+                        <td><?php echo $f['created'];?></td>
+                    </tr>
+                <?php }?>
+            <?php }?>
         <?php }?>
     </tbody>
 </table>
+<?php
+if($paged) {
+    if (!$_GET['sub']) $sub = 'users';
+    else $sub = $_GET['sub'];
+    for ($i = 0; $i < $pageCount; $i++) {
+        if ($page == $i + 1) {
+            ?>
+            <?php echo $i + 1; ?>
+        <?php } else {
+            ?>
+            <a href="/?action=admin&sub=<?php echo $_GET['sub']; ?>&page=<?php echo $i + 1; ?>"><?php echo $i + 1; ?></a>
+        <?php } ?>
+    <?php }
+}
