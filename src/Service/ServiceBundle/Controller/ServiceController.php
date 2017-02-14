@@ -597,10 +597,10 @@ class ServiceController extends Controller
 
 
 
-            $path = $_SERVER['DOCUMENT_ROOT'].'/Resources/politika.html';
+            $path = '/var/www/html/TRVL-temp/app/Resources/politika.html';
             $politics = file_get_contents($path);
 
-            $path = $_SERVER['DOCUMENT_ROOT'].'/Resources/pravila.html';
+            $path = '/var/www/html/TRVL-temp/app/Resources/pravila.html';
             $rules = file_get_contents($path);
 
             return $this->render('ServiceServiceBundle:Service:texts.html.php', [
