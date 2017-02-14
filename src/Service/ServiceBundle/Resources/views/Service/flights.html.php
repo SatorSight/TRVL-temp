@@ -7,6 +7,17 @@
  * Time: 19:59
  */
 /** @var mixed $flights */
+
+$paged = false;
+//
+//if(count($flights) > 10) {
+//    $paged = true;
+//    if (!$_GET['page'])
+//        $page = 1;
+//
+//
+//}
+
 ?>
 <style>
     td{
@@ -27,6 +38,8 @@
         <td><a href="/?action=admin&sub=flights">Направления</a></td>
         <td><a href="/?action=admin&sub=banned">Забаненные</a></td>
         <td><a href="/?action=admin&sub=texts">Тексты</a></td>
+        <td><a href="/?action=admin&sub=push">Push уведомления</a></td>
+        <td><a href="/?action=admin&sub=logout">Выход</a></td>
     </tr>
     </tbody>
 </table>

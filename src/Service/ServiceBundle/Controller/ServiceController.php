@@ -610,6 +610,36 @@ class ServiceController extends Controller
 
 
 
+        }elseif($_GET['sub'] == 'logout'){
+
+            unset($_SESSION['user']);
+            unset($_SESSION['pass']);
+            header('Location: /?action=admin');
+
+
+        }elseif($_GET['sub'] == 'push'){
+
+
+            if($_POST['push_id'] && $_POST['push_val']){
+                $psh = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => $_POST['push_id']]);
+                $psh->setValue($_POST['push_val']);
+                $em->flush();
+            }
+
+            $pushesArr = [];
+            $pushes = $em->getRepository('ServiceServiceBundle:PushText')->findAll();
+            foreach($pushes as $push){
+                $p = [];
+                $p['id'] = $push->getId();
+                $p['label'] = $push->getLabel();
+                $p['value'] = $push->getValue();
+                $pushesArr[] = $p;
+            }
+
+            return $this->render('ServiceServiceBundle:Service:push.html.php', [
+                'pushes' => $pushesArr
+            ]);
+
         }
         
         
@@ -782,10 +812,14 @@ class ServiceController extends Controller
 
             $em->persist($like);
             $em->flush();
+            
 
-
-            if(!empty($targetUser->getDeviceToken()))
-                $this->sendPush($targetUser,'Вы понравились '.$user->getProfile()->getName().' , посмотрите симпатию');
+            if(!empty($targetUser->getDeviceToken())){
+                $pushTextObj = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => 1]);
+                $pushText = $pushTextObj->getValue();
+                $pushText = str_replace($pushText,'#VAR#',$user->getProfile()->getName());
+                $this->sendPush($targetUser, $pushText);
+            }
 
         }
 
@@ -1787,7 +1821,10 @@ class ServiceController extends Controller
                     $pUser = $uFlight->getUser();
                     $dev_token = $pUser->getDeviceToken();
                     if(!empty($dev_token)){
-                        $this->sendPush($pUser,'На ваш рейс/поезд зарегистрировались новые попутчики, посмотрите их.');
+
+                        $pushTextObj = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => 2]);
+                        $pushText = $pushTextObj->getValue();
+                        $this->sendPush($pUser, $pushText);
                     }
                 }
             }
@@ -1880,7 +1917,9 @@ class ServiceController extends Controller
                         $pUser = $uFlight->getUser();
                         $dev_token = $pUser->getDeviceToken();
                         if(!empty($dev_token)){
-                            $this->sendPush($pUser,'На ваш рейс/поезд зарегистрировались новые попутчики, посмотрите их.');
+                            $pushTextObj = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => 2]);
+                            $pushText = $pushTextObj->getValue();
+                            $this->sendPush($pUser, $pushText);
                         }
                     }
                 }
