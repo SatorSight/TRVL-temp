@@ -367,10 +367,8 @@ class ServiceController extends Controller
         $text = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => 4]);
 
         $t = $text->getValue();
-        if(strpos($t, '#FROM#'))
-            $t = str_replace('#FROM#', $requestData['from'], $t);
-        if(strpos($t, '#TO#'))
-            $t = str_replace('#TO#', $requestData['to'], $t);
+        if(strpos($t, '#ROUTE#'))
+            $t = str_replace('#ROUTE#', $requestData['route'], $t);
         if(strpos($t, '#DATE#'))
             $t = str_replace('#DATE#', $requestData['date'], $t);
 
