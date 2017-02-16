@@ -769,12 +769,14 @@ class ServiceController extends Controller
             $data = array_shift($data);
 
 
-        $message = 'Новое обращение в Traveltogether\n';
-        $message .= 'Имя: '.$data->name.'\n';
-        $message .= 'Email: '.$data->email.'\n';
-        $message .= 'Текст: '.$data->text.'\n';
+        $message = 'Новое обращение в Traveltogether'."\n";;
+        $message .= 'Имя: '.$data->name."\n";
+        $message .= 'Email: '.$data->email."\n";
+        $message .= 'Текст: '.$data->text."\n";
 
-        mail('satorsight@gmail.com','Новое обращение в Traveltogether',$message);
+        $headers = "From: admin@traveltogether.ru\r\n";
+
+        mail('satorsight@gmail.com','Новое обращение в Traveltogether',$message,$headers);
 
 
 //        SUtils::trace($data);
