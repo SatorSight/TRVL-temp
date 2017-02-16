@@ -332,15 +332,15 @@ class ServiceController extends Controller
 
     public function getSettingsShare(){
 
-        SUtils::dump('hi');
+//        SUtils::dump('hi');
 
         /** @var EntityManager $em */
         $em = $this->getDoctrine()->getManager();
         /** @var PushText $text */
         $text = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => 3]);
 
-        SUtils::dump($text->getId());
-        SUtils::dump($text->getLabel());
+//        SUtils::dump($text->getId());
+//        SUtils::dump($text->getLabel());
 
         if(empty($text->getAddText()) || empty($text->getAddValue()))
             $l = false;
@@ -354,7 +354,7 @@ class ServiceController extends Controller
             'link' => $l ? 'yes' : 'no'
         ];
 
-        SUtils::dump($arr);
+//        SUtils::dump($arr);
 
         return $arr;
     }
