@@ -776,7 +776,7 @@ class ServiceController extends Controller
 
         $headers = "From: admin@traveltogether.ru\r\n";
 
-        mail('satorsight@gmail.com','Новое обращение в Traveltogether',$message,$headers);
+        mail('oviktorr1988@gmail.com','Новое обращение в Traveltogether',$message,$headers);
 
 
 //        SUtils::trace($data);
