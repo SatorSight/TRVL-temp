@@ -9,6 +9,7 @@ use Service\ServiceBundle\Entity\Feedback;
 use Service\ServiceBundle\Entity\Flight;
 use Service\ServiceBundle\Entity\Like;
 use Service\ServiceBundle\Entity\Photo;
+use Service\ServiceBundle\Entity\PushText;
 use Service\ServiceBundle\Entity\Repository\Messager;
 use Service\ServiceBundle\Entity\Repository\FlightRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -48,7 +49,7 @@ class ServiceController extends Controller
         if($requestData['action'] != 'admin')
             $errors = RequestParser::checkApiKey($request, $this->container->getParameter('service_service.api_key'));
 
-        $noAuthActions = ['auth', 'get_cities', 'test', 'get_politics', 'get_rules', 'admin'];
+        $noAuthActions = ['auth', 'get_cities', 'test', 'get_politics', 'get_rules', 'admin', 'get_settings_share', 'get_flights_share'];
 
         $tokenFailed = false;
         if(!in_array($requestData['action'], $noAuthActions) && !$errors) {
@@ -171,6 +172,14 @@ class ServiceController extends Controller
 
                 case 'get_rules':
                     $return[] = $this->getRules();
+                    break;
+
+                case 'get_settings_share':
+                    $return[] = $this->getSettingsShare();
+                    break;
+
+                case 'get_flights_share':
+                    $return[] = $this->getFlightsShare($requestData);
                     break;
 
 
@@ -320,6 +329,70 @@ class ServiceController extends Controller
 //        $airports = $em->getRepository('ServiceServiceBundle:AirportTest')->findAll();
 
     }
+
+    public function getSettingsShare(){
+
+        SUtils::dump('hi');
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var PushText $text */
+        $text = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => 3]);
+
+        SUtils::dump($text->getId());
+        SUtils::dump($text->getLabel());
+
+        if(empty($text->getAddText()) || empty($text->getAddValue()))
+            $l = false;
+        else $l = true;
+
+        $arr = [
+            'id' => $text->getId(),
+            'text' => $text->getValue(),
+            'text_link' => $text->getAddText(),
+            'text_link_val' => $text->getAddValue(),
+            'link' => $l ? 'yes' : 'no'
+        ];
+
+        SUtils::dump($arr);
+
+        return $arr;
+    }
+
+    public function getFlightsShare($requestData){
+
+        /** @var EntityManager $em */
+        $em = $this->getDoctrine()->getManager();
+        /** @var PushText $text */
+        $text = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => 4]);
+
+        $t = $text->getValue();
+        if(strpos($t, '#FROM#'))
+            $t = str_replace('#FROM#', $requestData['from'], $t);
+        if(strpos($t, '#TO#'))
+            $t = str_replace('#TO#', $requestData['to'], $t);
+        if(strpos($t, '#DATE#'))
+            $t = str_replace('#DATE#', $requestData['date'], $t);
+
+
+
+
+
+        if(empty($text->getAddText()) || empty($text->getAddValue()))
+            $l = false;
+        else $l = true;
+
+        $arr = [
+            'id' => $text->getId(),
+            'text' => $t,
+            'text_link' => $text->getAddText(),
+            'text_link_val' => $text->getAddValue(),
+            'link' => $l ? 'yes' : 'no'
+        ];
+
+        return $arr;
+    }
+
 
     public function banUser($id){
         /** @var EntityManager $em */
@@ -631,6 +704,15 @@ class ServiceController extends Controller
                 $em->flush();
             }
 
+
+            if($_POST['text_id'] && $_POST['text_val']){
+                $psh = $em->getRepository('ServiceServiceBundle:PushText')->findOneBy(['id' => $_POST['text_id']]);
+                $psh->setValue($_POST['text_val']);
+                $psh->setAddText($_POST['text_link_label']);
+                $psh->setAddValue($_POST['text_link_val']);
+                $em->flush();
+            }
+
             $pushesArr = [];
             $pushes = $em->getRepository('ServiceServiceBundle:PushText')->findAll();
             foreach($pushes as $push){
@@ -638,6 +720,8 @@ class ServiceController extends Controller
                 $p['id'] = $push->getId();
                 $p['label'] = $push->getLabel();
                 $p['value'] = $push->getValue();
+                $p['link_text'] = $push->getAddText();
+                $p['link_val'] = $push->getAddValue();
                 $pushesArr[] = $p;
             }
 

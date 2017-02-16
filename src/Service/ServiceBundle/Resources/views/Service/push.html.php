@@ -87,19 +87,63 @@
     </thead>
     <tbody>
     <?php foreach($pushes as $p){?>
-        <tr>
-            <td><?php echo $p['label'];?></td>
-            <form action="" method="post">
-                <td>
+        <?php if($p['id'] < 3){?>
+            <tr>
+                <td><?php echo $p['label'];?></td>
+                <form action="" method="post">
+                    <td>
 
-                    <input type="hidden" name="push_id" value="<?php echo $p['id'];?>">
-                    <textarea style="width: 100%;" name="push_val"><?php echo $p['value'];?></textarea>
+                        <input type="hidden" name="push_id" value="<?php echo $p['id'];?>">
+                        <textarea style="width: 100%;" name="push_val"><?php echo $p['value'];?></textarea>
 
-                </td>
-                <td style="width: 20px; border: none;"><button type="submit">Сохранить</button> </td>
-            </form>
-        </tr>
+                    </td>
+                    <td style="width: 20px; border: none;"><button type="submit">Сохранить</button> </td>
+                </form>
+            </tr>
+        <?php }?>
     <?php }?>
     </tbody>
 </table>
 <span style="color: red">* Вместо #VAR# будет подставлено имя.</span>
+
+
+<table style="width: 100%;">
+    <thead>
+    <tr>
+        <td>Назначение</td>
+        <td>Текст</td>
+        <td>Текст ссылки</td>
+        <td>URL</td>
+    </tr>
+    </thead>
+    <tbody>
+        <?php foreach($pushes as $p){?>
+            <?php if($p['id'] > 2){?>
+                <tr>
+                    <td><?php echo $p['label'];?></td>
+                    <form action="" method="post">
+                        <td>
+                            <input type="hidden" name="text_id" value="<?php echo $p['id'];?>">
+                            <textarea style="width: 100%;" name="text_val"><?php echo $p['value'];?></textarea>
+
+                        </td>
+                        <td>
+                            <input type="text" name="text_link_label" value="<?php echo $p['link_text'];?>">
+                        </td>
+                        <td>
+                            <input type="text" name="text_link_val" value="<?php echo $p['link_val'];?>">
+                        </td>
+                        <td style="width: 20px; border: none;"><button type="submit">Сохранить</button> </td>
+                    </form>
+                </tr>
+            <?php }?>
+        <?php }?>
+    </tbody>
+</table>
+<span style="color: red">* В поле текст для "Поделиться в рейсе" доступны следующие подстановки:<br>
+    #FROM# - город отправления<br>
+    #TO# - город прибытия<br>
+    #DATE# - дата отбытия<br>
+    Например, "Я путешествую из #FROM# в #TO# #DATE# числа!"<br><br>
+    Если оставить поле "Текст ссылки" или "URL" пустыми, ссылки не будет
+</span>

@@ -33,6 +33,18 @@ class PushText
      * @ORM\Column(name="value", type="string", nullable=true)
      */
     private $value;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="add_text", type="string", nullable=true)
+     */
+    private $addText;
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="add_value", type="string", nullable=true)
+     */
+    private $addValue;
 
 
     /**
@@ -91,5 +103,53 @@ class PushText
     public function getValue()
     {
         return $this->value;
+    }
+
+    /**
+     * Set addValue
+     *
+     * @param string $addValue
+     *
+     * @return PushText
+     */
+    public function setAddValue($addValue)
+    {
+        $this->addValue = $addValue;
+
+        return $this;
+    }
+
+    /**
+     * Get addValue
+     *
+     * @return string
+     */
+    public function getAddValue()
+    {
+        return $this->addValue;
+    }
+
+    /**
+     * Set addText
+     *
+     * @param string $addText
+     *
+     * @return PushText
+     */
+    public function setAddText($addText)
+    {
+        $this->addText = $addText;
+
+        return $this;
+    }
+
+    /**
+     * Get addText
+     *
+     * @return string
+     */
+    public function getAddText()
+    {
+        return $this->addText;
     }
 }
