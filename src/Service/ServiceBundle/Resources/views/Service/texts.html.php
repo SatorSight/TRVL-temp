@@ -22,6 +22,11 @@
         toolbar: "bold, italic, underline, strikethrough, alignleft, aligncenter, alignright, alignjustify, styleselect, formatselect, fontselect, fontsizeselect, cut, copy, paste, bullist, numlist, outdent, indent, blockquote, undo, redo, removeformat, forecolor, backcolor, link"
     });
 </script>
+<style>
+    .mce-widget.mce-notification.mce-notification-warning.mce-has-close.mce-in {
+        display: none!important;
+    }
+</style>
 
 <h1>Тексты</h1>
 <table>
