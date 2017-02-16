@@ -66,18 +66,64 @@ if(count($users) > $forPage) {
 $pageCount = ((int)(count($users) / $forPage)) + 1;
 ?>
 <style>
-    td{
-        border: 1px solid black;
-    }
-
-    .no-border td{
-        border: none;
-    }
+	body {
+	font-family: 'Open Sans', Arial, sans-serif;
+	}
+	h1 {
+	text-align: center;
+	}
+    table {
+	border-spacing: 0 10px;
+	width: 80%;
+	margin: 0 auto;
+	}
+	table th, table thead {
+	font-weight: bold;
+	}
+	table th {
+	padding: 10px 20px;
+	background: #56433D;
+	color: #F9C941;
+	border-right: 2px solid; 
+	font-size: 0.9em;
+	}
+	table th:first-child {
+	text-align: left;
+	}
+	table th:last-child {
+	border-right: none;
+	}
+	table td {
+	vertical-align: middle;
+	padding: 10px;
+	font-size: 14px;
+	text-align: center;
+	border-top: 2px solid #56433D;
+	border-bottom: 2px solid #56433D;
+	border-right: 2px solid #56433D;
+	background:white;
+	}
+	table td:first-child {
+	border-left: 2px solid #56433D;
+	}
+	table td:nth-child(2){
+	text-align: left;
+	}
+	table td.caption {
+	border: none;
+	margin: 20px 0;
+	}
+	table tr:hover td, .menu td {
+	border-color: #C61359;
+	}
+	.menu td {
+	background:#ededed;
+	}
 </style>
 <h1>Пользователи</h1>
 <table>
     <tbody>
-    <tr class="no-border">
+    <tr class="no-border menu">
         <td><a href="/?action=admin&sub=users">Пользователи</a></td>
         <td><a href="/?action=admin&sub=stat">Статистика</a></td>
         <td><a href="/?action=admin&sub=feedback">Обращения</a></td>
