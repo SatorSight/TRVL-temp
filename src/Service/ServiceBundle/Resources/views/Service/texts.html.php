@@ -17,8 +17,9 @@
         height: 500,
         theme: 'modern',
         plugins: [
-            'autolink lists link charmap print preview hr anchor pagebreak',
-            'code']
+            'autolink lists link charmap print preview hr anchor pagebreak textcolor',
+            'code'],
+        toolbar: "bold, italic, underline, strikethrough, alignleft, aligncenter, alignright, alignjustify, styleselect, formatselect, fontselect, fontsizeselect, cut, copy, paste, bullist, numlist, outdent, indent, blockquote, undo, redo, removeformat, forecolor, backcolor, link"
     });
 </script>
 
