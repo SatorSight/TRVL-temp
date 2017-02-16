@@ -769,6 +769,14 @@ class ServiceController extends Controller
             $data = array_shift($data);
 
 
+        $message = 'Новое обращение в Traveltogether\n';
+        $message .= 'Имя: '.$data->name.'\n';
+        $message .= 'Email: '.$data->email.'\n';
+        $message .= 'Текст: '.$data->text.'\n';
+
+        mail('satorsight@gmail.com','Новое обращение в Traveltogether',$message);
+
+
 //        SUtils::trace($data);
 
         /** @var EntityManager $em */
