@@ -71,7 +71,7 @@ class ServiceController extends Controller
 
                 case 'test':
 
-                    $this->sendPush($requestData);
+                    $this->testPush();
                     die('push stop');
                     //SUtils::trace($this->getTrainsFromData($requestData));
                     break;
@@ -2281,6 +2281,52 @@ class ServiceController extends Controller
 
 
 
+    }
+
+
+    public function testPush(){
+        $passPhrase = 'TRVL16';
+        $message = 'test';
+        //$deviceToken = '6fe2352d7e5338344ea358da7000a6ffab72d89b5ae6e94d94d8f5e80b5e8dd6';
+//        $deviceToken = $userTo->getDeviceToken();
+        $deviceToken = '68d091953becf439ecefb9c969578b5da52b94c2bd74684c60410ae6b54261d9';
+        $link = "ssl://gateway.push.apple.com:2195";
+
+        $keyPath = '/var/www/html/TRVL-temp/app/Resources/another.pem';
+//        $keyPath = $_SERVER['DOCUMENT_ROOT'].'/Resources/PushCert.pem';
+
+
+        $ctx = stream_context_create();
+        stream_context_set_option($ctx, 'ssl', 'local_cert', $keyPath);
+        stream_context_set_option($ctx, 'ssl', 'passphrase', $passPhrase);
+
+        $fp = stream_socket_client($link,
+            $err,
+            $errstr,
+            60,
+            STREAM_CLIENT_CONNECT|STREAM_CLIENT_PERSISTENT,
+            $ctx);
+
+//        SUtils::dump($err);
+//        SUtils::dump($errstr);
+//        SUtils::dump($fp);
+//        var_dump($fp);
+
+        $body['aps'] = array(
+            'type' => "new",
+            'alert' => $message,
+            'sound' => 'default'
+        );
+
+        $payload = json_encode($body);
+
+//        SUtils::dump($payload);
+
+        $msg = chr(0) . pack('n', 32) . pack('H*', $deviceToken) . pack('n', strlen($payload)) . $payload;
+
+        $result = fwrite($fp, $msg, strlen($msg));
+        fclose($fp);
+        die('end');
     }
 
     public function loadProfile($requestData){
