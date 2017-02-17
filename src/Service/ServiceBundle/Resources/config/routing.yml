@@ -8,7 +8,7 @@ ServiceServiceBundle_clear:
    defaults: { _controller: "ServiceServiceBundle:Service:cacheClear" }
    requirements:
         methods:  GET
-ServiceServiceBundle_clear:
+ServiceServiceBundle_politika:
    path:     /politika/
    defaults: { _controller: "ServiceServiceBundle:Service:politika" }
    requirements:
