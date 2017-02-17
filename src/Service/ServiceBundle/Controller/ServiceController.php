@@ -2588,5 +2588,11 @@ class ServiceController extends Controller
         die('done');
     }
 
+    public function politikaAction(){
+        $path = '/var/www/html/TRVL-temp/app/Resources/politika.html';
+        $politics = file_get_contents($path);
+        echo $politics;
+        die();
+    }
 
 }
