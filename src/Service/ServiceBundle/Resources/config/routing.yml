@@ -13,3 +13,8 @@ ServiceServiceBundle_politika:
    defaults: { _controller: "ServiceServiceBundle:Service:politika" }
    requirements:
         methods:  GET
+ServiceServiceBundle_support:
+   path:     /support/
+   defaults: { _controller: "ServiceServiceBundle:Service:support" }
+   requirements:
+        methods:  GET

@@ -2641,4 +2641,8 @@ class ServiceController extends Controller
         die();
     }
 
+    public function supportAction(){
+        return $this->render('ServiceServiceBundle:Service:support.html.php', []);
+    }
+
 }
