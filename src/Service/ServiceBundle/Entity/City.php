@@ -22,6 +22,13 @@ class City
     /**
      * @var string
      *
+     * @ORM\Column(name="train_code", type="string")
+     */
+    private $train_code;
+
+    /**
+     * @var string
+     *
      * @ORM\Column(name="country_code", type="string")
      */
     private $country_code;
@@ -183,5 +190,29 @@ class City
     public function getCountry()
     {
         return $this->country;
+    }
+
+    /**
+     * Set trainCode
+     *
+     * @param string $trainCode
+     *
+     * @return City
+     */
+    public function setTrainCode($trainCode)
+    {
+        $this->train_code = $trainCode;
+
+        return $this;
+    }
+
+    /**
+     * Get trainCode
+     *
+     * @return string
+     */
+    public function getTrainCode()
+    {
+        return $this->train_code;
     }
 }

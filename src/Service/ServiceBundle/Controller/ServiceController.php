@@ -71,7 +71,7 @@ class ServiceController extends Controller
 
                 case 'test':
 
-                    $this->testPush();
+                    $this->createPartnerTrainLink('24032017','MOW','IKT');
                     die('push stop');
                     //SUtils::trace($this->getTrainsFromData($requestData));
                     break;
@@ -1139,7 +1139,10 @@ class ServiceController extends Controller
             $fl['toTime'] = $flight->getToDate()->format('H:i');
             $fl['user_count'] = count($flight->getUserFlights());
 
-            $fl['link'] = $this->createPartnerLink($fl['fromDate'],$fl['from'],$fl['to']);
+            if($fl['type'] == 'plane')
+                $fl['link'] = $this->createPartnerLink($fl['fromDate'],$fl['from'],$fl['to']);
+            else
+                $fl['link'] = $this->createPartnerTrainLink($flight->getFromDate()->format('dmY'),$fl['from'],$fl['to']);
 
             $flights[] = $fl;
 
@@ -2151,6 +2154,64 @@ class ServiceController extends Controller
         $link = 'http://hydra.aviasales.ru/searches/new?origin_iata='.$from.'&destination_iata='.$to.'&depart_date='.$date.'&return_date&oneway&adults=1&children=0&infants=0&trip_class=0&marker='.$marker.'&with_request=true';
 
         return $link;
+    }
+
+
+    public function createPartnerTrainLink($date, $from, $to){
+
+        $em = $this->getDoctrine()->getManager();
+        $date = str_replace('-','',$date);
+        /** @var City $cityFrom */
+        /** @var City $cityTo */
+        $cityFrom = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['code' => $from]);
+        $cityTo = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['code' => $to]);
+
+        if(!$cityFrom || !$cityTo)
+            return 'no';
+
+
+        $link = 'https://www.onetwotrip.com/ru/poezda/'.$cityFrom->getTrainCode().'_'.$cityTo->getTrainCode().'/?date='.$date.'&scp=60,affiliate,3886-10641-0-2&s';
+        
+//        SUtils::trace($link);
+
+        return $link;
+//
+//
+//        $q = file_get_contents($_SERVER['DOCUMENT_ROOT'].'/Resources/station.js');
+//
+//        $q = json_decode($q);
+//
+////        SUtils::dump($q);
+//
+//        $i = 0;
+//        $y = 0;
+//
+//        foreach($q as $key => $obj){
+//
+//            if($obj->country->en == 'Russia') {
+//
+//                /** @var City $city */
+//                $city = $em->getRepository('ServiceServiceBundle:City')->findOneBy(['name_ru' => $obj->name->ru, 'country_code' => 'RU']);
+//                if ($city) {
+//                    $city->setTrainCode($key);
+//                    $em->flush();
+//                    $i++;
+//                }
+//                $y++;
+//            }
+//
+//        }
+//
+//        SUtils::dump('Обновлено '.$i.' из '.$y);
+//        SUtils::trace('done');
+
+//        $marker = $this->container->getParameter('service_service.aviasales_marker');
+//
+////        SUtils::trace($marker,'xxx');
+//
+//        $link = 'http://hydra.aviasales.ru/searches/new?origin_iata='.$from.'&destination_iata='.$to.'&depart_date='.$date.'&return_date&oneway&adults=1&children=0&infants=0&trip_class=0&marker='.$marker.'&with_request=true';
+//
+//        return $link;
     }
 
     public function sendPush(User $userTo, $message){
